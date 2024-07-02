@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Switch</title>
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" media="screen" href="../_common/css/styles.css" />
+	<link rel="stylesheet" href="custom.css?v=13" />
+	<script src="../_common/js/jquery.min.js"></script>
+	<script src="../_common/js/jqueryui.min.js"></script>
+	<script src="../_common/js/game.js"></script>
+	<script src="../_common/js/platform.min.js"></script>
+	<script src="lib/easeljs-NEXT.combined.js"></script>
+	<script src="lib/tweenjs-NEXT.min.js"></script>
+	<script src="lib/soundjs-NEXT.min.js"></script>
+	<script src="lib/preloadjs-NEXT.min.js"></script>
+	<!-- <script src="joy.js"></script> -->
+	<script src="checklist.js"></script>
+	<script src="main.js?v=23"></script>
+</head>
+
+<body onLoad="Main();" style="background-color: #efefef;">
+
+	<div id="compatibility_message">
+        <div class="_title">Incompatible Screen Size or Orientation</div>
+        <div class="_text">This activity requires a minimum screen size of 1024px by 768px,
+            and if used on a touchscreen device, must be used in Landscape
+            orientation.</div>
+        <a href="#">
+            <div class="_button">Learn more about Compatibility</div>
+        </a>
+    </div>
+
+	<div id="opaque"></div>
+	<div id ="title">
+		<div id ="tside">
+			<img id="logo" src="./_common/css/PAT_roundel.png" />
+			<div class="logo-title">
+				Switch
+			</div>
+			<div id="setting">
+				<div id="exit_setting">Exit to Main Menu</div>
+			</div>
+		</div>
+		<div id ="tsiderx">- / -</div>
+		<div id ="tsider"></div>
+		<div id="tsidery">
+			<a href="javascript: void(0)" class="playpause"></a>
+			<a href="#" onclick="window.open( '/user-guide/switch', 'name', 'location=no,scrollbars=yes,status=no,toolbar=no,resizable=yes' )" target="”_blank”" rel="noopener" class="help"></a>
+			<a href="javascript:window.open('','_self').close();" class="exit"></a>
+		</div>
+		<div id="tsider-train">
+			<img src="images/icon_mortarboard.svg" />
+			<span>Training Mode</span>
+		</div>
+	</div>
+
+	<div id="progress-container">
+		<div id="bar-container"></div>
+		<div id="main-progress-bar" class="main-bar progress-bar"></div>
+		<div id="sub-progress-bar" class="sub-bar progress-bar"></div>
+	</div>
+	<div class="main-question">Where and in which order did the dots appear?</div>
+	<div class="btn-area submit-btn">
+		<button class="hover-btn" onclick="submitResult(this)">Submit</button>
+	</div>
+	<img src="./images/paused_indicator.png" alt="Pause" id="gamepause"/>
+	<div id ="mainb" style="position: relative; ;">
+		<div id="loader">
+			<img src="images/loading.gif" alt="ld" height="80" width="85">
+			<p id="load_percent"></p>
+		</div>
+		<div class="screen off" id="switch-first-screen">
+			<div id="subtitle">Switch</div>
+			<div>
+				<div id="PAT_exam_logo">
+				<span id="by_logo">by</span>
+				<img src="./images/PAT_exam_logo.png" alt="logo"/>
+				</div>
+			</div>
+			<button id="start-button" class="big start-button">Start Activity</button>
+			<button id="train-button" class="big train-button">Training Mode</button>
+			<a href="#" onclick="window.open( '/user-guide/switch', 'name', 'location=no,scrollbars=yes,status=no,toolbar=no,resizable=yes' )" target="”_blank”" rel="noopener">
+				<button id="userguide-button" class="big userguide-button">User Guide</button>
+			</a>
+		</div>
+		<div class="screen off" id="time-screen">
+			<div class="time-screen-title">Select number of Sets:</div>
+			<ul id="time-buttons">
+				<li>
+					<button class="big time-button" data-set="5" style="padding: 13px 75px;">5 Sets</button>
+				</li>
+				<li>
+					<button class="big time-button" data-set="10">10 Sets</button>
+				</li>
+				<li>
+					<button class="big time-button" data-set="15">15 Sets</button>
+				</li>
+			</ul>
+		</div>
+		<div class="screen off" id="set-title-screen">
+			<div id="set-title"></div>
+		</div>
+		<div class="screen off" id="main-screen">
+			<canvas id="circle" width="1440" height="800"></canvas>
+		</div>
+		<div class="screen off" id="sub-screen">
+			<canvas id="exam-canvas" width="1440" height="800"></canvas>
+			<div class="btn-area">
+				<button class="btn yes-btn hover-btn" onclick="answerQuestion(true)">Yes</button>
+				<button class="btn no-btn hover-btn" onclick="answerQuestion(false)">No</button>
+			</div>
+		</div>
+		<div class="screen off" id="results-screen">
+			<div id="result-container">
+				<div id="result-type">Your Performance</div>
+				<div id="results-lights-acknowledged">
+					<p>Overall Performance</p>
+					<!-- <span id="correct_answer">0</span>
+					<span class="outof">out of  </span>
+					<span id="total_question">0</span> -->
+					<span id="average_accuracy" class="percent"></span>%
+				</div>
+				<div id="overall-detail">
+					<div class="end-item">
+						<img src="./images/symmetry_ques_img.png" alt="symmetry"></img>
+						<div class="end-item-description">
+							<p>Symmetry Questioning</p>
+							<div class="flex-end">
+								<div><span id="symmetry_accuracy" class="percent"></span>&nbsp;%</div>
+								<div>
+									<div class="total">
+										You answered <span id="correct-symmetry">0</span> out of <span id="total-symmetry">0</span> questions correctly
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="end-item">
+						<img src="./images/rotation_ques_img.png" alt="rotation"></img>
+						<div class="end-item-description">
+							<p>Rotation Questioning</p>
+							<div class="flex-end">
+								<div><span id="rotation_accuracy" class="percent"></span>&nbsp;%</div>
+								<div>
+									<div class="total">You answered <span id="correct-rotation">0</span> out of <span id="total-rotation">0</span> questions correctly</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="end-item">
+						<img src="./images/equation_ques_img.png" alt="equation"></img>
+						<div class="end-item-description">
+							<p>Equation Questioning</p>
+							<div class="flex-end">
+								<div><span id="equation_accuracy" class="percent"></span>&nbsp;%</div>
+								<div>
+									<div class="total">You answered <span id="correct-equation">0</span> out of <span id="total-equation">0</span> questions correctly</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="end-item">
+						<img src="./images/memory_recall_img.png" alt="memory"></img>
+						<div class="end-item-description">
+							<p>Memory Recall Questioning</p>
+							<div class="flex-end">
+								<div><span id="memory_accuracy" class="percent"></span>&nbsp;%</div>
+								<div>
+									<div class="total">You answered <span id="correct-memory">0</span> out of <span id="total-memory">0</span> questions correctly</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="bottom">
+				<button id="restart-button" class="big start-button">
+					Restart Activity
+				</button>
+				<button id="main-menu-button" class="big return-main-button">
+					Return to Main Menu
+				</button>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

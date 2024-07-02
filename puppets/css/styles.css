@@ -1,0 +1,54 @@
+body {
+    width: 98%;
+    height: calc(100% - 20px);
+    background-color: #fff;
+    font-family: 'Open Sans';
+    margin: 10px auto;
+    border-radius: 9px !important;
+    box-shadow: 0px 1px 4px #aaa;
+    overflow: hidden;
+}
+#audio-screen #audio-icon {
+	margin: 0 auto;
+	margin-top: 10%;
+	width: 300px;
+	height: 300px;
+}
+#puppet-screen {
+	margin-left: auto;
+	margin-right: auto;
+}
+#puppet-screen ul#puppets {
+	margin: 0 auto;
+	margin-top: 10%;
+	padding: 0;
+	text-align: center;
+	display:table;
+	overflow: hidden;
+	list-style-type: none;
+}
+#puppet-screen ul#puppets li {
+	float: left;
+	width: 257px;
+	height: 257px;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+}
+@media all and (min-width: 1170px) {
+	#puppet-screen ul#puppets li { width: 339px; height: 339px; }
+}
+#puppet-screen ul#puppets li img {
+	width: 100%;
+	height: 100%
+}
+#puppet-screen .bottom #buttons {
+	position: relative;
+	bottom: 0.5em;
+}
+
+#results::after {
+	content: '%';
+	font-size: 0.5em;
+	padding-left: 10px;
+	color: #ccc
+}

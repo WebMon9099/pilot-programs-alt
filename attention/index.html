@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Attention</title>
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" media="screen" href="../_common/css/styles.css" />
+	<link rel="stylesheet" href="custom.css?v=3" />
+	<script src="../_common/js/jquery.min.js"></script>
+	<script src="../_common/js/jqueryui.min.js"></script>
+	<script src="../_common/js/game.js"></script>
+	<script src="../_common/js/platform.min.js"></script>
+	<script src="lib/easeljs-NEXT.combined.js"></script>
+	<script src="lib/tweenjs-NEXT.min.js"></script>
+	<script src="lib/soundjs-NEXT.min.js"></script>
+	<script src="lib/preloadjs-NEXT.min.js"></script>
+	<script src="checklist.js"></script>
+	<script src="main.js?v=33"></script>
+</head>
+
+<body onLoad="Main();" style="background-color: #efefef;">
+
+	<div id="compatibility_message">
+        <div class="_title">Incompatible Screen Size or Orientation</div>
+        <div class="_text">This activity requires a minimum screen size of 1024px by 768px,
+            and if used on a touchscreen device, must be used in Landscape
+            orientation.</div>
+        <a href="#">
+            <div class="_button">Learn more about Compatibility</div>
+        </a>
+    </div>
+
+	<div id="opaque"></div>
+	<div id ="title">
+		<div id ="tside">
+			<img id="logo" src="./_common/css/PAT_roundel.png" />
+			<div class="logo-title">
+				Attention
+			</div>
+			<div id="setting">
+				<div id="exit_setting">Exit to Main Menu</div>
+			</div>
+		</div>
+		<div id ="tsiderx"></div>
+		<div id ="tsider"></div>
+		<div id="tsidery">
+			<a href="javascript: void(0)" class="playpause"></a>
+			<a href="#" onclick="window.open( '/user-guide/attention', 'name', 'location=no,scrollbars=yes,status=no,toolbar=no,resizable=yes' )" target="”_blank”" rel="noopener" class="help"></a>
+			<a href="javascript:window.open('','_self').close();" class="exit"></a>
+		</div>
+		<div id="tsider-train">
+			<img src="images/icon_mortarboard.svg" />
+			<span>Training Mode</span>
+		</div>
+	</div>
+
+	<div id="progress-container">
+		<div id="bar-container"></div>
+		<div id="progress-bar" class="progress-bar"></div>
+	</div>
+	<div class="btn-area submit-btn">
+		<button class="hover-btn" onclick="switchQuestionScreen()">Go to Question
+			<img style="width: 15px;margin-left: 15px;" src="./images/go_to_next_ques_button.png" alt="arrow"/>
+		</button>
+	</div>
+	<img src="./images/paused_indicator.png" alt="Pause" id="gamepause"/>
+	<div id ="mainb" style="position: relative; ;">
+		<div id="loader">
+			<img src="images/loading.gif" alt="ld" height="80" width="85">
+			<p id="load_percent"></p>
+		</div>
+		<div class="screen off" id="attention-first-screen">
+			<div id="subtitle">Attention</div>
+			<div>
+				<div id="PAT_exam_logo">
+				<span id="by_logo">by</span>
+				<img src="./images/PAT_exam_logo.png" alt="logo"/>
+				</div>
+			</div>
+			<button id="start-button" class="big start-button">Start Activity</button>
+			<button id="train-button" class="big train-button">Training Mode</button>
+			<a href="#" onclick="window.open( '/user-guide/attention', 'name', 'location=no,scrollbars=yes,status=no,toolbar=no,resizable=yes' )" target="”_blank”" rel="noopener">
+				<button id="userguide-button" class="big userguide-button">User Guide</button>
+			</a>
+		</div>
+		<div class="screen off" id="time-screen">
+			<div class="time-screen-title">Select question quantity:</div>
+			<ul id="time-buttons">
+				<li>
+					<button class="big time-button" data-set="10" style="padding: 13px 75px;">10 questions</button>
+				</li>
+				<li>
+					<button class="big time-button" data-set="20">20 questions</button>
+				</li>
+				<li>
+					<button class="big time-button" data-set="30">30 questions</button>
+				</li>
+			</ul>
+		</div>
+		<div class="screen off" id="play-audio-screen">
+			<img class="play-button" id="playButton" onclick="playAudio()" src="./images/play_button.svg" alt="Play Audio"/>
+			<canvas id="waveform" width="1440" height="800"></canvas>
+		</div>
+		<div class="screen off" id="question-screen">
+			<div id="question" class="question"></div>
+			<div id="answer-options" class="answer-options"></div>
+		</div>
+		<div class="screen off" id="results-screen">
+			<div id="result-container">
+				<div id="result-type">Your Performance</div>
+				<div id="results-lights-acknowledged">
+					<p style="margin-bottom: 10px;">Total Correct</p>
+					<span id="correct_answer" class="percent">0</span>
+					<span class="outof">out of  </span>
+					<span id="total_question" class="percent">0</span>&nbsp;&nbsp;&nbsp;
+					(<span id="average_accuracy"></span>%)
+				</div>
+				<div id="overall-detail">
+					<div class="end-item">
+						<div class="end-item-description">
+							<p>Answered correctly on 1st Listen</p>
+							<div class="status-containter">
+								<div class="status-bar-container"></div>
+								<div id="first-status-bar" class="status-bar"></div>
+							</div>
+						</div>
+					</div>
+					<div class="end-item">
+						<div class="end-item-description">
+							<p>Answered correctly on 2nd Listen</p>
+							<div class="status-containter">
+								<div class="status-bar-container"></div>
+								<div id="second-status-bar" class="status-bar"></div>
+							</div>
+						</div>
+					</div>
+					<div class="end-item">
+						<div class="end-item-description">
+							<p>Answered correctly on 3rd Listen</p>
+							<div class="status-containter">
+								<div class="status-bar-container"></div>
+								<div id="third-status-bar" class="status-bar"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="bottom">
+				<button id="restart-button" class="big start-button">
+					Restart Activity
+				</button>
+				<button id="main-menu-button" class="big return-main-button">
+					Return to Main Menu
+				</button>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

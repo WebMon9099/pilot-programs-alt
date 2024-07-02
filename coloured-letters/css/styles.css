@@ -1,0 +1,70 @@
+/* Grid Stylesheet */
+
+#grid-screen #grid {
+	width: 707px;
+	height: 594px;
+	margin: 0 auto;
+	margin-top: 5em;
+	font-size: 1.4em;
+}
+#grid-screen #grid-cells {
+	position:  absolute;
+	top: 0;
+	margin-top: 6.4em;
+	margin-left: 9em;
+	width: 20em;
+}
+#grid-screen #grid-cells div {
+	text-align: left;
+	float: left;
+	width: 75px;
+	height: 67px;
+	margin-right: 0.1em;
+	margin-bottom: 0.1em;
+}
+#grid-screen #grid-cells div img {
+	width: 100%;
+	height: 100%;
+}
+#match-button {
+	color: #fff;
+	width: 3.7em;
+	/* height: 3.7em; */
+	border-radius: 6px;
+	font-size: 1.2em;
+	background: #8c8c8c;
+	position: relative;
+	top: -20.5em;
+	left: 78%;
+	/* font-size: 2.5em; */
+	padding: 10px 20px;
+	font-weight: 600;
+}
+#match-button:hover {
+	background: #353535;
+	cursor: pointer;
+}
+#match-button:active {
+	background: #6c6c6c;
+}
+#match-time {
+	width: 8.7em;
+	position: absolute;
+	top: 11em;
+	left: 78.5%;
+}
+@media all and (min-width: 1370px) {
+	#grid-screen #grid-cells { margin-left: 3.75em; margin-top: 6.45em; /*width: 24em;*/ }
+	#grid-screen #grid-cells div { width: 107px; height: 98px; margin-right: 0.3em; margin-bottom: 0.23em; }
+	#match-button {top: -11.6em;}
+}
+@media all and (max-width: 1370px) {
+	body { font-size: 1em; overflow-x: scroll; min-height: 432px; }
+	#game { min-height: 432px; }
+	img { width: 66%; height: 66%; }
+}
+@media all and (min-width: 1370px) {
+	body {font-size: 1.5em;overflow-x: hidden;min-height: 554px;background-color: #eee;}
+	#game { min-height: 554px; }
+	img { width: 100%; height: 100%; }
+}

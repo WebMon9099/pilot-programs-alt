@@ -1,0 +1,55 @@
+body {
+	width: 98%;
+	height: calc(100% - 20px);
+	background-color:#fff;
+	font-family: 'Open Sans';
+	margin: 10px auto;
+	border-radius: 9px !important;
+	box-shadow: 0px 1px 4px #aaa;
+	overflow: hidden;
+}
+#shapes-screen {
+	margin-left: auto;
+	margin-right: auto;
+}
+#shapes-screen ul#shapes {
+	margin: 0 auto;
+	margin-top: 30vh;
+	padding: 0;
+	text-align: center;
+	display:table;
+	overflow: hidden;
+	list-style-type: none;
+}
+#shapes-screen ul#shapes li {
+	float: left;
+	width: 200px;
+	height: 200px;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+}
+@media all and (min-width: 1170px) {
+	#shapes-screen ul#shapes li {width: 250px;height: 250px;}
+}
+#shapes-screen ul#shapes li img {
+	width: 75%;
+	height: 75%;
+}
+#shapes-screen .corner {
+	position: absolute;
+	width: 116px;
+	height: 113px;
+}
+#shapes-screen #corner-left {
+	top: 3%;
+	left: 2%;
+}
+#shapes-screen #corner-right {
+	top: 3%;
+	right: 2%;
+}
+#shapes-screen .bottom #corner-bottom {
+	width: 406px;
+	height: 47px;
+	margin: 0 auto;
+}
