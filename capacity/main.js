@@ -117,7 +117,7 @@ var ROCont,
 var activeTrk = false;
 var TRKcont, TRK, currentTRK = "0", oldTRK="0", targetTRK=0;
 // Current Question and Answer
-var currentQuestion, currentAnswer;
+var currentQuestion, currentAnswer, newAltitude;
 // Playing Audio
 var playingAudio = false;
 // Gameplay mode
@@ -412,6 +412,8 @@ $(document).on("click", "#time-screen #time-buttons .time-button", function () {
     real_question_index = 0;
     real_question_interval = totalSec / 15;
     real_question_in_progress = true;
+    currentAltitude = "43000";
+    oldAltitude = "43000";
   }
   createInterface();
 });
@@ -2526,6 +2528,11 @@ function audioQuestion(data) {
   currentQuestion = data.txt;
   currentAnswer = data.val;
   oldData[qType] = data.val;
+  if (data.new_alt > 0){
+    newAltitude = data.new_alt;
+  } else {
+    newAltitude = null;
+  }
   orderT.text = currentQuestion;
   playingAudio = true;
   var instance = createjs.Sound.play(data.file);
@@ -2722,8 +2729,17 @@ function confirmAnswer(b_flag) {
           if ( Math.abs(parseFloat(currentTRK) - currentAnswer) < trk_tolerance_range[tolernace + 1]){
             score.nav.correct++;
             totalScore++;
+            if (newAltitude > 0){
+              currentAltitude = newAltitude;
+              altitudeT.text = currentAltitude;
+              waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+            }
           } else {
-
+            if (newAltitude > 0){
+              currentAltitude = newAltitude;
+              altitudeT.text = currentAltitude;
+              waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+            }
           }
         }
         break;
@@ -2754,6 +2770,17 @@ function confirmAnswer(b_flag) {
             if (Math.abs(parseFloat(currentRO) - a_ro) < ro_tolerance_range[tolernace + 1]){
               score.nav.correct++;
               totalScore++;
+              if (newAltitude > 0){
+                currentAltitude = newAltitude;
+                altitudeT.text = currentAltitude;
+                waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+              }
+            } else {
+              if (newAltitude > 0){
+                currentAltitude = newAltitude;
+                altitudeT.text = currentAltitude;
+                waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+              }
             }
           }
           
