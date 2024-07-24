@@ -22,6 +22,10 @@ var totalCount = 0,
   totalScore = 0;
 var errors = 0;
 var trackTime;
+var tolernace = -1;
+const ro_tolerance_range = [50, 200, 500];
+const trk_tolerance_range = [0.5, 1, 3];
+var intensity = -1;
 // Duration for Per Task
 const timeChecklist = 30,
   timeAir = 25,
@@ -41,6 +45,7 @@ var timeCounterChecklist = 0,
   timeCounterRO = 0,
   timeCounterCurrentTask = 0;
 var trainMode = false;
+var random_mode = true;
 var showSetting = false;
 // Start time
 var startHour = "00";
@@ -108,6 +113,8 @@ var ROCont,
   currentRO = "0",
   targetRO = 0,
   oldRO = "0";
+var activeTrk = false;
+var TRKcont, TRK, currentTRK = "0", oldTRK="0", targetTRK=0;
 // Current Question and Answer
 var currentQuestion, currentAnswer;
 // Playing Audio
@@ -120,11 +127,18 @@ var oldData = {
   freq: null,
   alt: null,
   ro: null,
-  way: null
+  way: null,
+  trk:null,
 };
 var r_l = -1;
 var touchedPhotoButton = false;
 var playedCautionForSpump = false;
+
+const real_scenario_numbers = 5;
+var selected_real_scenaario_index = 0;
+var real_question_index = 0;
+var real_question_interval = 0;
+var real_question_in_progress = false;
 
 function Main() {
   canvas = document.getElementById("test");
@@ -293,10 +307,34 @@ function showSecondScreen(train) {
     $(".playpause").css("background-image", "url(./images/playpause.svg)");
     gamePaused = false;
   }
-  showScreen("#time-screen");
+  showScreen('#mode-screen');
+  
+  if (trainMode){
+    $('.most-popular-time-btn-area').css('background', '#7AD44A');
+    $('#time-screen ul#time-buttons li button').addClass('traing_mode');
+    $('.mode-group').addClass('traing_mode');
+  } else {
+    $('.most-popular-time-btn-area').css('background', '#63C3E5');
+    $('#time-screen ul#time-buttons li button').removeClass('traing_mode');
+    $('.mode-group').removeClass('traing_mode');
+  }
 }
+$(document).on('click', ".mode-group", function(){
+  if ($(this).hasClass('random_mode')){
+    random_mode = true;
+  } else {
+    random_mode = false;
+  }
+  showScreen("#time-screen");
+})
 $(document).on("click", "#time-screen #time-buttons .time-button", function () {
   totalSec = Number($(this).attr("data-time"));
+  if (random_mode == false){
+    selected_real_scenaario_index = Math.floor(Math.random() * real_scenario_numbers);
+    real_question_index = 0;
+    real_question_interval = totalSec / 15;
+    real_question_in_progress = true;
+  }
   createInterface();
 });
 function createInterface() {
@@ -306,9 +344,9 @@ function createInterface() {
   stage.addChild(gameCont);
   // Order Text
   orderT = new createjs.Text(
-    "Express Airways 101, climb to 35000 feet.",
-    "30px Open Sans",
-    "#000000"
+    "",
+    "30px Inter",
+    "#3f3f3f"
   );
   orderT.x = 720;
   orderT.y = isSafari ? -5 : 0;
@@ -361,14 +399,6 @@ function createInterface() {
   rectCont.addChild(wayAirLine);
 
   generateAir();
-
-  // Display the position
-  // bmp = addBmp("Dot", 285, 320, false);
-  // rectCont.addChild(bmp);
-  // bmp = addBmp("Dot", 285, 220, false);
-  // rectCont.addChild(bmp);
-  // bmp = addBmp("Dot", 285, 110, false);
-  // rectCont.addChild(bmp);
 
   // Time Text
   timeT = new createjs.Text("16 : 38 : 07", "24px Open Sans", "#FFFFFF");
@@ -557,7 +587,6 @@ function createInterface() {
   // elecCont.visible = false;
   rect2.addChild(elecCont);
 
-  // pickChecklist();
   bmp = addBmp("Checklist", 0, 0, false);
   bmp.scaleX = 0.95;
   bmp.scaleY = 0.95;
@@ -889,7 +918,7 @@ function createInterface() {
   btn.scaleY = 0.95;
   btn.name = "alt";
   btn.cursor = "pointer";
-  btn.on("click", clickAltRO);
+  btn.on("click", clickAltROTrk);
   altCont.addChild(btn);
 
   altitudeT = new createjs.Text(currentAltitude, "26px Open Sans", "#A9A9A9");
@@ -905,7 +934,7 @@ function createInterface() {
   btn.name = "c_alt";
   btn.addEventListener("mouseover", mouseOverButton);
   btn.addEventListener("mouseout", mouseOutButton);
-  btn.on("click", confirmAltRO);
+  btn.on("click", confirmAltROTrk);
   altCont.addChild(btn);
 
   txt = new createjs.Text("EDIT", "22px Open Sans", "#FFFFFF");
@@ -935,7 +964,7 @@ function createInterface() {
   btn.scaleY = 0.95;
   btn.name = "ro";
   btn.cursor = "pointer";
-  btn.on("click", clickAltRO);
+  btn.on("click", clickAltROTrk);
   ROCont.addChild(btn);
 
   ROT = new createjs.Text(currentRO, "26px Open Sans", "#A9A9A9");
@@ -951,7 +980,7 @@ function createInterface() {
   btn.name = "c_ro";
   btn.addEventListener("mouseover", mouseOverButton);
   btn.addEventListener("mouseout", mouseOutButton);
-  btn.on("click", confirmAltRO);
+  btn.on("click", confirmAltROTrk);
   ROCont.addChild(btn);
 
   txt = new createjs.Text("EDIT", "22px Open Sans", "#FFFFFF");
@@ -959,6 +988,52 @@ function createInterface() {
   txt.y = isSafari ? 55 : 62;
   txt.textAlign = "center";
   ROCont.addChild(txt);
+
+  // TRK Edit
+  TRKcont = new createjs.Container();
+  TRKcont.x = 0;
+  TRKcont.y = 390;
+  navCont.addChild(TRKcont);
+
+  bmp = addBmp("ChecklistBG", 40, 30, false);
+  bmp.scaleX = 0.7;
+  bmp.scaleY = 0.7;
+  TRKcont.addChild(bmp);
+
+  txt = new createjs.Text("TRK MILES", "22px Open Sans", "#A9A9A9");
+  txt.x = 60;
+  txt.y = isSafari ? 55 : 60;
+  TRKcont.addChild(txt);
+
+  btn = addBmp("Bblack", 200, 45, false);
+  btn.scaleX = 0.9;
+  btn.scaleY = 0.95;
+  btn.name = "trk";
+  btn.cursor = "pointer";
+  btn.on("click", clickAltROTrk);
+  TRKcont.addChild(btn);
+
+  TRK = new createjs.Text(currentTRK, "26px Open Sans", "#A9A9A9");
+  TRK.x = 335;
+  TRK.y = isSafari ? 54 : 60;
+  TRK.textAlign = "right";
+  TRKcont.addChild(TRK);
+
+  btn = addBmp("Bblue", 370, 50, false);
+  btn.scaleX = 0.7;
+  btn.scaleY = 0.75;
+  btn.cursor = "pointer";
+  btn.name = "c_trk";
+  btn.addEventListener("mouseover", mouseOverButton);
+  btn.addEventListener("mouseout", mouseOutButton);
+  btn.on("click", confirmAltROTrk);
+  TRKcont.addChild(btn);
+
+  txt = new createjs.Text("EDIT", "22px Open Sans", "#FFFFFF");
+  txt.x = 425;
+  txt.y = isSafari ? 55 : 62;
+  txt.textAlign = "center";
+  TRKcont.addChild(txt);
 
   // Waypoint Cont
   wayCont = new createjs.Container();
@@ -1033,7 +1108,7 @@ function createInterface() {
   btn.name = "c_way";
   btn.addEventListener("mouseover", mouseOverButton);
   btn.addEventListener("mouseout", mouseOutButton);
-  btn.on("click", confirmAltRO);
+  btn.on("click", confirmAltROTrk);
   wayCont.addChild(btn);
 
   txt = new createjs.Text("SELECT", "22px Open Sans", "#FFFFFF");
@@ -1057,7 +1132,6 @@ function createInterface() {
 }
 function getKeyDown(e) {
   e.preventDefault();
-  // console.log(e.keyCode);
   if (
     activeAltitude &&
     ((e.keyCode >= 96 && e.keyCode <= 105) ||
@@ -1085,60 +1159,92 @@ function getKeyDown(e) {
     }
     ROT.text = String(currentRO);
   }
+
+  if (
+    activeTrk &&
+    ((e.keyCode >= 96 && e.keyCode <= 105) ||
+      (e.keyCode >= 48 && e.keyCode <= 57) ||
+      e.keyCode == 8 || e.keyCode == 190)
+  ) {
+    if (e.keyCode == 8) currentTRK = currentTRK.slice(0, -1);
+    if (e.keyCode == 190 && currentTRK.includes('.')) {
+      return;
+    }
+    else {
+      if (currentTRK.length > 3) return;
+      currentTRK = currentTRK + String(e.key);
+    }
+    TRK.text = String(currentTRK);
+  }
 }
-function clickAltRO(e) {
+function clickAltROTrk(e) {
   let tname = e.target.name;
+  console.log('tname', tname);
   altCont.getChildByName("alt").image = loader.getResult("Bblack");
   ROCont.getChildByName("ro").image = loader.getResult("Bblack");
+  TRKcont.getChildByName("trk").image = loader.getResult("Bblack");
   e.target.image = loader.getResult("ABblack");
   if (tname == "alt") {
     activeAltitude = true;
     activeRO = false;
+    activeTrk = false;
     oldAltitude = currentAltitude;
     currentAltitude = "";
     currentRO = oldRO;
+    currentTRK = oldTRK;
   }
   if (tname == "ro") {
     activeAltitude = false;
     activeRO = true;
+    activeTrk = false;
     oldRO = currentRO;
     currentRO = "";
     currentAltitude = oldAltitude;
+    currentTRK = oldTRK;
+  }
+  if (tname == 'trk'){
+    activeAltitude = false;
+    activeRO = false;
+    activeTrk = true;
+    oldTRK = currentTRK;
+    currentTRK = '';
+    currentAltitude = oldAltitude;
+    currentRO = oldRO;
   }
   altitudeT.text = String(currentAltitude);
   ROT.text = String(currentRO);
+  TRK.text = String(currentTRK);
 }
-function confirmAltRO(e) {
+function confirmAltROTrk(e) {
   let tname = e.target.name;
+  console.log('confirmAltROTrk tname', tname);
   altCont.getChildByName("alt").image = loader.getResult("Bblack");
   ROCont.getChildByName("ro").image = loader.getResult("Bblack");
+  TRKcont.getChildByName("trk").image = loader.getResult("Bblack");
   activeAltitude = false;
   activeRO = false;
+  activeTrk = false;
   waypointCont.visible = false;
   if (tname == "c_way") {
     // wayAirT.text = currentWaypoint;
     console.log("Altitude", currentWaypoint);
   }
   if (tname == "c_alt") {
-    // console.log("Inputed Altitude", currentAltitude);
     if (currentAltitude == "") {
       currentAltitude = String(oldAltitude);
     }
-    // console.log("Setted Altitude", currentAltitude);
     waypointT.text = "FL" + currentAltitude.slice(0, -2);
     oldAltitude = currentAltitude;
     altitudeT.text = String(currentAltitude);
   }
   if (tname == "c_ro") {
-    // console.log("ROC/ROD", currentRO);
     oldRO = currentRO;
   }
+  if (tname == 'c_trk'){
+    oldTRK = currentTRK;
+  }
+  if (tname)
   confirmAnswer(false);
-  // if (qType = 'ro') {
-  //     if (String(currentAltitude) == String(targetAlt) && String(currentRO) == String(targetRO)) {
-  //         score.freq.correct++;
-  //     }
-  // }
 }
 function generateAir() {
   // Add Aircrafts left-top(0, 0). right-bottom(550, 500)
@@ -1178,11 +1284,9 @@ function generateAir() {
 
   if (Math.abs(feet) <= 1000 &&
      ( (xPos > 70 && xPos < 495) )
-    //  ( (xPos > 70 && xPos < 185) || (xPos > 380 && xPos < 495) )
   ) {
     score.tcas.total++;
     totalCount++;
-    // console.log("=======================", feet, score.tcas.total);
   }
 
   let _airCont = new createjs.Container();
@@ -1309,13 +1413,17 @@ function clickNEF(e) {
   if (trainMode && gamePaused) return;
   activeAltitude = false;
   activeRO = false;
+  activeTrk = false;
   waypointCont.visible = false;
   currentAltitude = oldAltitude;
   altitudeT.text = String(currentAltitude);
   currentRO = oldRO;
   ROT.text = String(currentRO);
+  currentTRK = oldTRK;
+  TRK.text = String(currentTRK);
   altCont.getChildByName("alt").image = loader.getResult("Bblack");
   ROCont.getChildByName("ro").image = loader.getResult("Bblack");
+  TRKcont.getChildByName("trk").image = loader.getResult("Bblack");
 
   var tname = String(e.target.name);
 
@@ -1710,19 +1818,6 @@ function completeTask(e) {
   var tname = String(e.target.name);
   var ind = parseInt(e.target.index);
 
-  // correct order
-  // if ( findex < tempChecklist.length && (findex + 1) == ind) {
-  //     checklistCont.getChildByName('txt-'+tname).alpha = 0.3;
-  //     findex++;
-  //     elecCont.removeChild(elecCont.getChildByName(tname));
-  //     var sname = String(tname + "0");
-  //     elecCont.removeChild(elecCont.getChildByName(sname));
-  // } else {
-  //     console.log("Incorrect item", findex, ind);
-  // }
-
-  // if (findex == (tempChecklist.length - 1)) confirmChecklist();
-
   // random order
   if (findex < tempChecklist.length) {
     checklistCont.getChildByName("txt-" + tname).alpha = 0.3;
@@ -1767,13 +1862,6 @@ function confirmChecklist() {
 
   timeCounterChecklist = 0;
   startChecklist = false;
-
-  // setTimeout(() => {
-  //     if (elecCont.children.length == 2) {
-  // totalScore++;
-  // score.elec.correct++;
-  //     }
-  // }, 3000);
 }
 function pickChecklist() {
   elecCont.removeAllChildren();
@@ -2229,10 +2317,14 @@ function chooseQuestionType() {
         if(qType != 'freq') _selecting = false;
         break;
       case 1:
-        if(qType != 'alt') _selecting = false;
+        if (random_mode){
+          if(qType != 'alt') _selecting = false;
+        }
         break;
       case 2:
-        if(qType != 'ro') _selecting = false;
+        if (random_mode){
+          if(qType != 'ro') _selecting = false;
+        }
         break;
       case 3:
         if(qType != 'way') _selecting = false;
@@ -2252,7 +2344,6 @@ function chooseCorrectItem(q) {
         data = q_frequencyList[correctItem];
         if (!oldData.freq) _choosing = false;
         else if (oldData.freq.rad != data.val.rad || oldData.freq.freq != data.val.freq ) _choosing = false;
-        // else console.log("Again Again Again", "freq")
       } 
       break;
     case 1:
@@ -2261,7 +2352,6 @@ function chooseCorrectItem(q) {
         data = q_altitudeList[correctItem];
         if (!oldData.alt) _choosing = false;
         else if (oldData.alt !== data.val) _choosing = false;
-        // else console.log("Again Again Again", "alt")
       } 
       break;
     case 2:
@@ -2270,7 +2360,6 @@ function chooseCorrectItem(q) {
         data = q_ROList[correctItem];
         if (!oldData.ro) _choosing = false;
         else if (oldData.ro.alt !== data.val.alt) _choosing = false;
-        // else console.log("Again Again Again", "ro")
       } 
       break;
     case 3:
@@ -2279,18 +2368,16 @@ function chooseCorrectItem(q) {
         data = q_waypointList[correctItem];
         if (!oldData.way) _choosing = false;
         else if (oldData.way !== data.val) _choosing = false;
-        // else console.log("Again Again Again", "way")
       } 
       break;
   }
   return correctItem;
 }
 function pickSound() {
+  if (real_question_in_progress) return;
   let w = chooseQuestionType();
   let data;
-    // w = 2;
   const f = chooseCorrectItem(w);
-// console.log(w, f, oldData)
   if (trainMode) {
     if (BtnNav.alpha > 0.2) {
       if (w > 0) w = w;
@@ -2302,17 +2389,6 @@ function pickSound() {
       if (freqCont.visible) w = 0;
       else return;
     }
-
-    // if (freqCont.visible) {
-    //     if (w == 0) w = w;
-    //     else {
-    //         if (BtnNav.alpha > 0.2) w = w;
-    //         else w = 0;
-    //     }
-    // } else {
-    //     if (BtnNav.alpha > 0.2) w = Math.floor(Math.random() * 3) + 1;
-    //     else return;
-    // }
   }
 
   totalCount++;
@@ -2320,14 +2396,12 @@ function pickSound() {
   switch (w) {
     case 0:
       qType = "freq";
-      // f = Math.floor(Math.random() * q_frequencyList.length);
       data = q_frequencyList[f];
       targetAudioTime = targetRadioTime;
       score.freq.total++;
       break;
     case 1:
       qType = "alt";
-      // f = Math.floor(Math.random() * q_altitudeList.length);
       data = q_altitudeList[f];
       if (Number(currentAltitude) > data.val) {
         if (data.file.includes("climb")) {
@@ -2357,13 +2431,11 @@ function pickSound() {
       data.val.old = Number(currentAltitude);
       targetAlt = data.val.alt;
       targetRO = Math.abs(Number(currentAltitude) - targetAlt) / data.val.time;
-      console.log("targetRO", targetRO);
       targetAudioTime = targetROTime;
       score.nav.total++;
       break;
     case 3:
       qType = "way";
-      // f = Math.floor(Math.random() * q_waypointList.length);
       data = q_waypointList[f];
       wayAirCont.visible = true;
       wayAirT.text = data.val;
@@ -2383,7 +2455,6 @@ function audioQuestion(data) {
   currentQuestion = data.txt;
   currentAnswer = data.val;
   oldData[qType] = data.val;
-  // console.log(qType, currentQuestion, currentAnswer);
   orderT.text = currentQuestion;
   playingAudio = true;
   var instance = createjs.Sound.play(data.file);
@@ -2393,12 +2464,26 @@ function audioQuestion(data) {
 function handleCompleteSoundC() {
   console.log("audio done");
   playingAudio = false;
+  real_question_in_progress = false;
 }
 function handleCompleteSoundWarning() {
   console.log("warning audio done");
 }
 function keepTime() {
   if (trainMode && gamePaused) return;
+  if (random_mode == false){
+    if (real_question_index < 15){
+      if (sec == real_question_index * real_question_interval){
+        score.nav.total++;
+        data = real_scenarios[selected_real_scenaario_index][real_question_index];
+        real_question_in_progress = true;
+        qType = data.type;
+        targetAudioTime = targetNavTime;
+        audioQuestion(data);
+        real_question_index++;
+      }
+    }
+  }
   sec++;
   var rsec = totalSec - sec;
   var tStr = String(Math.floor(rsec / 60) + " mins " + (rsec % 60) + " secs");
@@ -2497,42 +2582,21 @@ function keepTime() {
   }
   // checking Fuel
   if (startPump && (!trainMode || (trainMode && fuelCont.visible))) {
-    // if (timeCounterFuel == 0) {
-    //   totalCount++;
-    //   score.fuel.total++;
-    //   console.log("fuel fuel", score.fuel.total)
-    // }
     if (playedCaution)  timeCounterFuel++;
     console.log("fuel fuel", timeCounterFuel)
     if (timeCounterFuel > targetFuelTime) {
       console.log("fuel fuel confirm");
       confirmFuelStatus();
     }
-    // if (countingFuel) timeCounterFuel++;
-    // else {
-    //     if (!initFuel && timeCounterFuel > targetFuelTime) {
-    //         timeCounterFuel = 0;
-    //         totalScore++;
-    //         totalCount++;
-    //         score.fuel.total++;
-    //         score.fuel.correct++
-    //     }
-    // }
-    // if (!initFuel && countingFuel && timeCounterFuel > targetFuelTime ) {
-    //     totalCount++;
-    //     score.fuel.total++;
-    // }
 
     if (usingLSPump) timeCounterLSPump++;
     if (usingRSPump) timeCounterRSPump++;
   }
-  // checking audio
-  // if (!playingAudio) {
+  
   timeCounterCurrentTask++;
   if (timeCounterCurrentTask > targetAudioTime) {
     confirmAnswer(true);
   }
-  // }
 }
 function confirmAnswer(b_flag) {
   if (!b_flag && orderT.text == "") return;
@@ -2559,24 +2623,46 @@ function confirmAnswer(b_flag) {
           waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
         }
         break;
-      case "ro":
-        if (b_flag) {
-          let a_ro = Math.floor(
-            Math.abs(currentAnswer.old - currentAnswer.alt) / currentAnswer.time
-          );
-          if (
-            currentAltitude == String(currentAnswer.alt) &&
-            currentRO == String(a_ro)
-          ) {
+      case "trk":
+        if (b_flag || random_mode == false){
+          if ( Math.abs(parseFloat(currentTRK) - currentAnswer) < trk_tolerance_range[tolernace + 1]){
             score.nav.correct++;
             totalScore++;
           } else {
-            currentAltitude = currentAnswer.alt;
-            altitudeT.text = currentAltitude;
-            waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
-            currentRO = a_ro;
-            ROT.text = String(currentRO);
+
           }
+        }
+        break;
+      case "ro":
+        if (b_flag || random_mode == false){
+          let a_ro = currentAnswer;
+          if (random_mode){
+            a_ro = Math.floor(
+              Math.abs(currentAnswer.old - currentAnswer.alt) / currentAnswer.time
+            );
+          }
+
+          if (random_mode){
+            if (
+              currentAltitude == String(currentAnswer.alt) &&
+              Math.abs(parseFloat(currentRO) - a_ro) < ro_tolerance_range[tolernace + 1]
+            ) {
+              score.nav.correct++;
+              totalScore++;
+            } else {
+              currentAltitude = currentAnswer.alt;
+              altitudeT.text = currentAltitude;
+              waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+              currentRO = a_ro;
+              ROT.text = String(currentRO);
+            }
+          } else {
+            if (Math.abs(parseFloat(currentRO) - a_ro) < ro_tolerance_range[tolernace + 1]){
+              score.nav.correct++;
+              totalScore++;
+            }
+          }
+          
           oldAltitude = currentAltitude;
           oldRO = currentRO;
         }
@@ -2591,7 +2677,12 @@ function confirmAnswer(b_flag) {
         }
         break;
     }
-    if (qType != "ro") orderT.text = "";
+    if (qType != "ro" && qType != 'trk') orderT.text = "";
+    if (random_mode == false) orderT.text = "";
+  }
+  real_question_in_progress = false;
+  if (random_mode == false){
+    timeCounterCurrentTask = 0;
   }
   if (b_flag) {
     timeCounterCurrentTask = 0;
@@ -2615,7 +2706,8 @@ function startMain() {
     freq: null,
     alt: null,
     ro: null,
-    way: null
+    way: null,
+    trk:null,
   };
 
   createjs.Ticker.setFPS(60);
@@ -2654,13 +2746,6 @@ function gameOver() {
 }
 function showEndScreen() {
   document.getElementById("tsider").innerHTML = String("End of Exam");
-  // $("#correct_answer").text(totalScore);
-  // $("#total_question").text(totalCount);
-  // $("#average_accuracy").text(
-  //   totalCount == 0
-  //   ? "( 0% )"
-  //   : "( " + ((totalScore / totalCount) * 100).toFixed(0) + "% )"
-  //   );
   let _totalScore = score.nav.correct + 
                     score.fuel.correct +
                     score.elec.correct +
@@ -2712,27 +2797,6 @@ function startAgain() {
 function saveLoaded() {
   var accu = Math.round((score / 40) * 100);
   insertResults(accu, totalSec);
-  //   // Create our XMLHttpRequest object
-  //   var hr = new XMLHttpRequest();
-
-  //   var datastring = "";
-  //   var accu = Math.round((score / 40) * 100);
-  //   datastring += "adjust_errors" + "=" + errors + "&";
-  //   datastring += "accuracy" + "=" + accu + "&";
-  //   datastring += "duration" + "=" + totalSec;
-  //   hr.open("POST", "saveADScore.php");
-  //   // Set content type header information for sending url encoded variables in the request
-  //   hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-  //   // Access the onreadystatechange event for the XMLHttpRequest object
-  //   hr.onreadystatechange = function () {
-  //     if (hr.readyState == 4 && hr.status == 200) {
-  //       var return_data = hr.responseText;
-  //       //alert(return_data);
-  //     }
-  //   };
-  //   // Send the data to PHP now... and wait for response to update the status div
-  //   hr.send(datastring); // Actually execute the re
 }
 function addBmp(bname, tx, ty, isR) {
   var bmp = new createjs.Bitmap(loader.getResult(bname));
@@ -2845,6 +2909,9 @@ $(document).ready(function () {
   $("#TCAS_check").change(function () {
     rectCont.visible = $(this).prop("checked");
   });
+  $("#statements_check").change(function () {
+    orderT.visible = $(this).prop("checked");
+  });
 
   $(".playpause").click(function () {
     if (!trainMode) return;
@@ -2863,6 +2930,29 @@ $(document).ready(function () {
     gamePaused = false;
     $(".playpause").css("background-image", "url(./images/playpause.svg)");
     $("#gamepause").hide();
+  });
+
+  $(".stepper-item-intensity").bind("click", function () {
+    $(".stepper-item-intensity").each((index, el) => {
+      if (index <= $(this).index()) {
+        $(el).removeClass("active").addClass("completed");
+      } else {
+        $(el).removeClass("active").removeClass("completed");
+      }
+    });
+    $(this).addClass("active");
+    intensity = parseFloat($(this).attr("key"));
+  });
+  $(".stepper-item-tolerance").bind("click", function () {
+    $(".stepper-item-tolerance").each((index, el) => {
+      if (index <= $(this).index()) {
+        $(el).removeClass("active").addClass("completed");
+      } else {
+        $(el).removeClass("active").removeClass("completed");
+      }
+    });
+    $(this).addClass("active");
+    tolernace = parseFloat($(this).attr("key"));
   });
 });
 

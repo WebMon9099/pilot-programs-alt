@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Capacity</title>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" media="screen" href="../_common/css/styles.css" />
-<link rel="stylesheet" href="custom.css" />
+<link rel="stylesheet" media="screen" href="./_common/css/styles.css?v=1" />
+<link rel="stylesheet" href="custom.css?v=3" />
 <script src="../_common/js/jquery.min.js"></script>
 <script src="../_common/js/jqueryui.min.js"></script>
 <script src="../_common/js/game.js"></script>
@@ -15,8 +15,8 @@
 <script src="lib/soundjs-NEXT.min.js"></script>
 <script src="lib/preloadjs-NEXT.min.js"></script>
 <!-- <script src="joy.js"></script> -->
-<script src="checklist.js"></script>
-<script src="main.js"></script>
+<script src="checklist.js?v=2"></script>
+<script src="main.js?v=1"></script>
         
 </head>
 
@@ -69,12 +69,56 @@
 					<span class="slider round"></span>
 				</label>
 			</div>
-			<div class="setting_contonller end">
+			<div class="setting_contonller">
 				<label class="switch-title">TCAS Page</label>
 				<label class="switch">
 					<input type="checkbox" id="TCAS_check" checked>
 					<span class="slider round"></span>
 				</label>
+			</div>
+			<div class="setting_contonller end">
+				<label class="switch-title">Statements</label>
+				<label class="switch">
+					<input type="checkbox" id="statements_check" checked>
+					<span class="slider round"></span>
+				</label>
+			</div>
+			<div class="set_content setting_contonller">
+				<p class="set_intensity">Tolerance</p>
+				<div class="stepper-wrapper">
+						<div class="stepper-item completed stepper-item-tolerance completed active" key="-1">
+								<div class="step-name easy-sname top-name">&plusmn;50</div>
+								<div class="step-counter"></div>
+								<div class="step-name easy-sname bottom-name">&plusmn;0.5</div>
+						</div>
+						<div class="stepper-item stepper-item-tolerance left-radius " key="0">
+								<div class="step-name top-name">&plusmn;200</div>
+								<div class="step-counter"></div>
+								<div class="step-name bottom-name">&plusmn;1</div>
+						</div>
+						<div class="stepper-item stepper-item-tolerance right-radius" key="1">
+							<div class="step-name hard-sname top-name">&plusmn;500</div>
+								<div class="step-counter"></div>
+								<div class="step-name hard-sname bottom-name">&plusmn;3</div>
+						</div>
+				</div>
+			</div>
+			<div class="set_content setting_contonller">
+				<p class="set_intensity">Intensity</p>
+				<div class="stepper-wrapper">
+						<div class="stepper-item stepper-item-intensity completed active" key="-1">
+								<div class="step-counter"></div>
+								<div class="step-name easy-sname">Easy</div>
+						</div>
+						<div class="stepper-item stepper-item-intensity left-radius" key="0">
+								<div class="step-counter"></div>
+								<div class="step-name">Challenging</div>
+						</div>
+						<div class="stepper-item stepper-item-intensity right-radius" key="1">
+								<div class="step-counter"></div>
+								<div class="step-name hard-sname">Insane</div>
+						</div>
+				</div>
 			</div>
 			<div id="exit_setting">Exit to Main Menu</div>
 		</div>
@@ -117,6 +161,19 @@
 			User Guide
 		</button></a>
 	</div>
+	<div class="screen off" id="mode-screen">
+		<div class="time-screen-title">Select your mode:</div>
+		<div class="mode-area">
+			<div class="mode-group random_mode">
+				<p class="mode-title">Random</p>
+				<p>Engage with tasks at random and in no set order, useful for improving resilience the complexities of this activity.</p>
+			</div>
+			<div class="mode-group real_mode">
+				<p class="mode-title">Realistic</p>
+				<p>Engage with tasks representative of the management of an aircraft during descent from altitude, emulated within this activity.</p>
+			</div>
+		</div>
+	</div>
 	<div class="screen off" id="time-screen">
 		<div class="time-screen-title">Select your duration:</div>
 		<ul id="time-buttons">
@@ -128,6 +185,15 @@
 			</li>
 			<li>
 				<button class="big time-button" data-time="900">15 Minutes</button>
+			</li>
+			<li>
+				<div class="most-popular-time-btn-area">
+					<button class="big time-button " data-time="1800">30 Minutes</button>
+					<div class="most-popular">
+						<img src="images/icon_timer.svg" />
+						<p>Most Representative</p>
+					</div>
+				</div>
 			</li>
 		</ul>
 	</div>
