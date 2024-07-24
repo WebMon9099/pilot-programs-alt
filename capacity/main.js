@@ -453,7 +453,7 @@ function createInterface() {
   bmp.scaleX = 0.85;
   bmp.scaleY = 0.85;
   rect1.x = 720 - 50 - bmp.image.width * 0.85;
-  rect1.y = 100;
+  rect1.y = 130;
   rect1.addChild(bmp);
   rect1.addChild(rectCont);
   // Waypoint
@@ -590,7 +590,7 @@ function createInterface() {
   bmp.scaleX = 0.85;
   bmp.scaleY = 0.85;
   rect2.x = 720 + 50;
-  rect2.y = 100;
+  rect2.y = 130;
   rect2.addChild(bmp);
 
   // Caution Button

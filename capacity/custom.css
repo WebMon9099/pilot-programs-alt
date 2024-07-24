@@ -257,7 +257,7 @@ a.exit {
 }
 .time-screen-title {
     margin-top: 10rem;
-    /* color: #e2e2e2; */
+    color: #696969;
 }
 #result-title {
     margin-top: 200px;
@@ -555,12 +555,14 @@ input:checked + .slider:before {
 #compatibility_message ._button {background-color: #8e8e8e;font-weight: 600;display: inline-block;margin-top: 30px;padding: 12px 20px;color: white;border-radius: 30px;/* text-align: center; *//* margin: 0 auto; */}
 
 .most-popular-time-btn-area{
-    padding:5px;
+    padding: 10px;
     background-color: #63C3E5;
     text-align: center;
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
+    border-radius: 6px;
+	transition: 0.2s;
 }
 .most-popular{
     display: flex;
@@ -569,11 +571,14 @@ input:checked + .slider:before {
 .most-popular img{
     width:20px;
     margin-right: 15px;
+    bottom: -5px;
+    position: relative;
 }
 .most-popular p{
-    font-size: 13px;
+    font-size: 18px;
     font-weight: 500;
     color: white;
+    margin-bottom: 7px !important;
 }
 .mode-area{
     margin-top: 50px;
@@ -583,21 +588,26 @@ input:checked + .slider:before {
     text-align: left;
     margin-left: auto;
     margin-right: auto;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 5px 30px;
+    font-size: 15px;
     text-align: left;
     font-family: Inter;
     color: #646464;
     cursor: pointer;
     border-radius: 10px!important;
+    background-color: white;
+    border: 1px solid #ddd;
+	transition: 0.2s;
+	line-height: 1.5em;
+	box-shadow: 1px 1px 4px #e8e8e8;
 }
 .mode-group:hover{
     border: 1px Solid #00ACDD;
-    box-shadow: 1px 1px 4px #48A8EF;
+    box-shadow: 0px 0px 10px #48A8EF;
 }
 .mode-group.traing_mode:hover{
     border: 1px Solid #6BDB00;
-    box-shadow: 1px 1px 4px #8DE022;
+    box-shadow: 0px 0px 10px #8DE022;
 }
 .mode-title{
     font-weight: 600;
@@ -605,6 +615,21 @@ input:checked + .slider:before {
     font-size:18px;
 }
 
+#time-screen ul#time-buttons li button {
+	background-color: white !important;
+	padding: 18px 85px !important;
+	font-size: 18px;
+	box-shadow: 0px 0px 4px #e8e8e8;
+}
+
+#time-screen ul#time-buttons li button:hover {
+	border: 1px Solid #00ACDD;
+    box-shadow: 0px 0px 10px #48A8EF;
+}
+
+.most-popular-time-btn-area:hover {
+  opacity: 0.5 !important;
+}
 .set_content {
 	padding: 0 15px;
     border-bottom: 1px solid #d3d3d3;
