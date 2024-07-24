@@ -140,6 +140,7 @@ var selected_real_scenaario_index = 0;
 var real_question_index = 0;
 var real_question_interval = 0;
 var real_question_in_progress = false;
+var question_during_flag = false;
 
 function Main() {
   canvas = document.getElementById("test");
@@ -336,6 +337,7 @@ function handleComplete() {
   stage.update();
 }
 function showStartScreen() {
+  initScore();
   showSetting = false;
   trainMode = false;
   gamePaused = false;
@@ -1698,6 +1700,21 @@ function initScore() {
   };
   totalCount = 0;
   totalScore = 0;
+  sec = 0;
+  timeCounterCurrentTask = 0;
+  tolernace = -1;
+  intensity = 1;
+  timeCounterAir = 0;
+  timeCounterFuel = 0;
+  timeCounterLSPump = 0;
+  timeCounterRSPump = 0;
+  timeCounterRO = 0;
+  timeCounterCurrentTask = 0;
+  selected_real_scenaario_index = 0;
+  real_question_index = 0;
+  real_question_interval = 0;
+  real_question_in_progress = false;
+  question_during_flag = false;
 }
 function makeBlackBox(wd, h, color) {
   var tCont = new createjs.Container();
@@ -2534,6 +2551,7 @@ function audioQuestion(data) {
     newAltitude = null;
   }
   orderT.text = currentQuestion;
+  question_during_flag = true;
   playingAudio = true;
   var instance = createjs.Sound.play(data.file);
   instance.on("complete", createjs.proxy(this.handleCompleteSoundC, this));
@@ -2557,7 +2575,7 @@ function keepTime() {
     if (real_question_index < 15){
       if (sec == real_question_index * real_question_interval){
         real_question_time_trigger = true;
-        if (orderT.text == ""){
+        if (question_during_flag == false){
           score.nav.total++;
           data = real_scenarios[selected_real_scenaario_index][real_question_index];
           real_question_in_progress = true;
@@ -2571,7 +2589,7 @@ function keepTime() {
       }
     }
     if (real_question_time_trigger){
-      if (orderT.text == ""){
+      if (question_during_flag == false){
         score.nav.total++;
         data = real_scenarios[selected_real_scenaario_index][real_question_index];
         real_question_in_progress = true;
@@ -2725,7 +2743,7 @@ function confirmAnswer(b_flag) {
         }
         break;
       case "trk":
-        if (b_flag || random_mode == false){
+        if (b_flag){
           if ( Math.abs(parseFloat(currentTRK) - currentAnswer) < trk_tolerance_range[tolernace + 1]){
             score.nav.correct++;
             totalScore++;
@@ -2740,11 +2758,13 @@ function confirmAnswer(b_flag) {
               altitudeT.text = currentAltitude;
               waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
             }
+            currentTRK = currentAnswer;
+            TRK.text = String(currentTRK);
           }
         }
         break;
       case "ro":
-        if (b_flag || random_mode == false){
+        if (b_flag){
           let a_ro = currentAnswer;
           if (random_mode){
             a_ro = Math.floor(
@@ -2781,6 +2801,8 @@ function confirmAnswer(b_flag) {
                 altitudeT.text = currentAltitude;
                 waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
               }
+              currentRO = a_ro;
+              ROT.text = String(currentRO);
             }
           }
           
@@ -2799,7 +2821,7 @@ function confirmAnswer(b_flag) {
         break;
     }
     if (qType != "ro" && qType != 'trk') orderT.text = "";
-    if (random_mode == false) orderT.text = "";
+    if (random_mode == false) question_during_flag = false;
   }
   real_question_in_progress = false;
   if (b_flag) {
