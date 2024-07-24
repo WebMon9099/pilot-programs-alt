@@ -589,6 +589,7 @@ input:checked + .slider:before {
     font-family: Inter;
     color: #646464;
     cursor: pointer;
+    border-radius: 10px!important;
 }
 .mode-group:hover{
     border: 1px Solid #00ACDD;

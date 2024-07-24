@@ -5,7 +5,7 @@
 <title>Capacity</title>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" media="screen" href="./_common/css/styles.css?v=1" />
-<link rel="stylesheet" href="custom.css?v=3" />
+<link rel="stylesheet" href="custom.css?v=1" />
 <script src="../_common/js/jquery.min.js"></script>
 <script src="../_common/js/jqueryui.min.js"></script>
 <script src="../_common/js/game.js"></script>
@@ -106,15 +106,15 @@
 			<div class="set_content setting_contonller">
 				<p class="set_intensity">Intensity</p>
 				<div class="stepper-wrapper">
-						<div class="stepper-item stepper-item-intensity completed active" key="-1">
+						<div class="stepper-item stepper-item-intensity completed active" key="1">
 								<div class="step-counter"></div>
 								<div class="step-name easy-sname">Easy</div>
 						</div>
-						<div class="stepper-item stepper-item-intensity left-radius" key="0">
+						<div class="stepper-item stepper-item-intensity left-radius" key="0.8">
 								<div class="step-counter"></div>
 								<div class="step-name">Challenging</div>
 						</div>
-						<div class="stepper-item stepper-item-intensity right-radius" key="1">
+						<div class="stepper-item stepper-item-intensity right-radius" key="0.5">
 								<div class="step-counter"></div>
 								<div class="step-name hard-sname">Insane</div>
 						</div>
@@ -164,13 +164,17 @@
 	<div class="screen off" id="mode-screen">
 		<div class="time-screen-title">Select your mode:</div>
 		<div class="mode-area">
-			<div class="mode-group random_mode">
-				<p class="mode-title">Random</p>
-				<p>Engage with tasks at random and in no set order, useful for improving resilience the complexities of this activity.</p>
+			<div style="margin-bottom: 40px;">
+				<button class="mode-group random_mode">
+					<p class="mode-title">Random</p>
+					<p>Engage with tasks at random and in no set order, useful for improving resilience the complexities of this activity.</p>
+				</button>
 			</div>
-			<div class="mode-group real_mode">
-				<p class="mode-title">Realistic</p>
-				<p>Engage with tasks representative of the management of an aircraft during descent from altitude, emulated within this activity.</p>
+			<div>
+				<button class="mode-group real_mode">
+					<p class="mode-title">Realistic</p>
+					<p>Engage with tasks representative of the management of an aircraft during descent from altitude, emulated within this activity.</p>
+				</button>
 			</div>
 		</div>
 	</div>

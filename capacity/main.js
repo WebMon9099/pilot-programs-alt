@@ -25,7 +25,8 @@ var trackTime;
 var tolernace = -1;
 const ro_tolerance_range = [50, 200, 500];
 const trk_tolerance_range = [0.5, 1, 3];
-var intensity = -1;
+var intensity = 1;
+
 // Duration for Per Task
 const timeChecklist = 30,
   timeAir = 25,
@@ -229,6 +230,83 @@ function Main() {
     { src: "audio/snapshot_warning_1.wav", id: "Snapshot0" },
     { src: "audio/snapshot_warning_2.wav", id: "Snapshot1" },
     { src: "audio/snapshot_warning_3.wav", id: "Snapshot2" },
+
+    { src: "audio/real/a1.wav", id: "a1" },
+    { src: "audio/real/a2.wav", id: "a2" },
+    { src: "audio/real/a3.wav", id: "a3" },
+    { src: "audio/real/a4.wav", id: "a4" },
+    { src: "audio/real/a5.wav", id: "a5" },
+    { src: "audio/real/a6.wav", id: "a6" },
+    { src: "audio/real/a7.wav", id: "a7" },
+    { src: "audio/real/a8.wav", id: "a8" },
+    { src: "audio/real/a9.wav", id: "a9" },
+    { src: "audio/real/a10.wav", id: "a10" },
+    { src: "audio/real/a11.wav", id: "a11" },
+    { src: "audio/real/a12.wav", id: "a12" },
+    { src: "audio/real/a13.wav", id: "a13" },
+    { src: "audio/real/a14.wav", id: "a14" },
+    { src: "audio/real/a15.wav", id: "a15" },
+    { src: "audio/real/b1.wav", id: "b1" },
+    { src: "audio/real/b2.wav", id: "b2" },
+    { src: "audio/real/b3.wav", id: "b3" },
+    { src: "audio/real/b4.wav", id: "b4" },
+    { src: "audio/real/b5.wav", id: "b5" },
+    { src: "audio/real/b6.wav", id: "b6" },
+    { src: "audio/real/b7.wav", id: "b7" },
+    { src: "audio/real/b8.wav", id: "b8" },
+    { src: "audio/real/b9.wav", id: "b9" },
+    { src: "audio/real/b10.wav", id: "b10" },
+    { src: "audio/real/b11.wav", id: "b11" },
+    { src: "audio/real/b12.wav", id: "b12" },
+    { src: "audio/real/b13.wav", id: "b13" },
+    { src: "audio/real/b14.wav", id: "b14" },
+    { src: "audio/real/b15.wav", id: "b15" },
+    { src: "audio/real/c1.wav", id: "c1" },
+    { src: "audio/real/c2.wav", id: "c2" },
+    { src: "audio/real/c3.wav", id: "c3" },
+    { src: "audio/real/c4.wav", id: "c4" },
+    { src: "audio/real/c5.wav", id: "c5" },
+    { src: "audio/real/c6.wav", id: "c6" },
+    { src: "audio/real/c7.wav", id: "c7" },
+    { src: "audio/real/c8.wav", id: "c8" },
+    { src: "audio/real/c9.wav", id: "c9" },
+    { src: "audio/real/c10.wav", id: "c10" },
+    { src: "audio/real/c11.wav", id: "c11" },
+    { src: "audio/real/c12.wav", id: "c12" },
+    { src: "audio/real/c13.wav", id: "c13" },
+    { src: "audio/real/c14.wav", id: "c14" },
+    { src: "audio/real/c15.wav", id: "c15" },
+    { src: "audio/real/d1.wav", id: "d1" },
+    { src: "audio/real/d2.wav", id: "d2" },
+    { src: "audio/real/d3.wav", id: "d3" },
+    { src: "audio/real/d4.wav", id: "d4" },
+    { src: "audio/real/d5.wav", id: "d5" },
+    { src: "audio/real/d6.wav", id: "d6" },
+    { src: "audio/real/d7.wav", id: "d7" },
+    { src: "audio/real/d8.wav", id: "d8" },
+    { src: "audio/real/d9.wav", id: "d9" },
+    { src: "audio/real/d10.wav", id: "d10" },
+    { src: "audio/real/d11.wav", id: "d11" },
+    { src: "audio/real/d12.wav", id: "d12" },
+    { src: "audio/real/d13.wav", id: "d13" },
+    { src: "audio/real/d14.wav", id: "d14" },
+    { src: "audio/real/d15.wav", id: "d15" },
+    { src: "audio/real/e1.wav", id: "e1" },
+    { src: "audio/real/e2.wav", id: "e2" },
+    { src: "audio/real/e3.wav", id: "e3" },
+    { src: "audio/real/e4.wav", id: "e4" },
+    { src: "audio/real/e5.wav", id: "e5" },
+    { src: "audio/real/e6.wav", id: "e6" },
+    { src: "audio/real/e7.wav", id: "e7" },
+    { src: "audio/real/e8.wav", id: "e8" },
+    { src: "audio/real/e9.wav", id: "e9" },
+    { src: "audio/real/e10.wav", id: "e10" },
+    { src: "audio/real/e11.wav", id: "e11" },
+    { src: "audio/real/e12.wav", id: "e12" },
+    { src: "audio/real/e13.wav", id: "e13" },
+    { src: "audio/real/e14.wav", id: "e14" },
+    { src: "audio/real/e15.wav", id: "e15" },
+
   ];
   loader = new createjs.LoadQueue(false);
   loader.installPlugin(createjs.Sound);
@@ -1164,10 +1242,10 @@ function getKeyDown(e) {
     activeTrk &&
     ((e.keyCode >= 96 && e.keyCode <= 105) ||
       (e.keyCode >= 48 && e.keyCode <= 57) ||
-      e.keyCode == 8 || e.keyCode == 190)
+      e.keyCode == 8 || e.keyCode == 190 || e.keyCode == 110)
   ) {
     if (e.keyCode == 8) currentTRK = currentTRK.slice(0, -1);
-    if (e.keyCode == 190 && currentTRK.includes('.')) {
+    if ((e.keyCode == 190 || e.keyCode == 110) && currentTRK.includes('.')) {
       return;
     }
     else {
@@ -1320,13 +1398,6 @@ function clickAir(e) {
   if (air_name.includes("actived")) return;
   let cX = e.target.parent.x;
   let cY = e.target.parent.y;
-  // Display the position
-  // bmp = addBmp("Dot", 285, 320, false);
-  // rectCont.addChild(bmp);
-  // bmp = addBmp("Dot", 285, 220, false);
-  // rectCont.addChild(bmp);
-  // bmp = addBmp("Dot", 285, 110, false);
-  // rectCont.addChild(bmp);
 
   let distance = Math.sqrt(Math.pow(cX - 285, 2) + Math.pow(cY - 320, 2));
 
@@ -2374,7 +2445,7 @@ function chooseCorrectItem(q) {
   return correctItem;
 }
 function pickSound() {
-  if (real_question_in_progress) return;
+  if (real_question_in_progress || real_question_time_trigger) return;
   let w = chooseQuestionType();
   let data;
   const f = chooseCorrectItem(w);
@@ -2469,11 +2540,31 @@ function handleCompleteSoundC() {
 function handleCompleteSoundWarning() {
   console.log("warning audio done");
 }
+
+var real_question_time_trigger = false;
+
 function keepTime() {
   if (trainMode && gamePaused) return;
+  //get real question at equal time intervals.
   if (random_mode == false){
     if (real_question_index < 15){
       if (sec == real_question_index * real_question_interval){
+        real_question_time_trigger = true;
+        if (orderT.text == ""){
+          score.nav.total++;
+          data = real_scenarios[selected_real_scenaario_index][real_question_index];
+          real_question_in_progress = true;
+          qType = data.type;
+          targetAudioTime = targetNavTime;
+          audioQuestion(data);
+          real_question_index++;
+          real_question_time_trigger = false;
+          timeCounterCurrentTask = 0;
+        }
+      }
+    }
+    if (real_question_time_trigger){
+      if (orderT.text == ""){
         score.nav.total++;
         data = real_scenarios[selected_real_scenaario_index][real_question_index];
         real_question_in_progress = true;
@@ -2481,9 +2572,12 @@ function keepTime() {
         targetAudioTime = targetNavTime;
         audioQuestion(data);
         real_question_index++;
+        real_question_time_trigger = false;
+        timeCounterCurrentTask = 0;
       }
     }
   }
+  //-----------------------------
   sec++;
   var rsec = totalSec - sec;
   var tStr = String(Math.floor(rsec / 60) + " mins " + (rsec % 60) + " secs");
@@ -2594,7 +2688,7 @@ function keepTime() {
   }
   
   timeCounterCurrentTask++;
-  if (timeCounterCurrentTask > targetAudioTime) {
+  if (timeCounterCurrentTask > targetAudioTime * intensity) {
     confirmAnswer(true);
   }
 }
@@ -2681,9 +2775,6 @@ function confirmAnswer(b_flag) {
     if (random_mode == false) orderT.text = "";
   }
   real_question_in_progress = false;
-  if (random_mode == false){
-    timeCounterCurrentTask = 0;
-  }
   if (b_flag) {
     timeCounterCurrentTask = 0;
     pickSound();
