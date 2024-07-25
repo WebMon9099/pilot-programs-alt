@@ -1743,6 +1743,16 @@ function initScore() {
   activeAltitude = false;
   activeRO = false;
   activeTrk = false;
+  $('#NAV_check').prop('checked', true);
+  $('#ELEC_check').prop('checked', true);
+  $('#FULE_check').prop('checked', true);
+  $('#Radio_check').prop('checked', true);
+  $('#TCAS_check').prop('checked', true);
+  $('#statements_check').prop('checked', true);
+  $(".stepper-item-tolerance").removeClass('active').removeClass('completed');
+  $(".stepper-item-tolerance").first().addClass('active').addClass('completed');
+  $(".stepper-item-intensity").removeClass('active').removeClass('completed');
+  $(".stepper-item-intensity").first().addClass('active').addClass('completed');
 }
 function makeBlackBox(wd, h, color) {
   var tCont = new createjs.Container();
@@ -2417,7 +2427,7 @@ function runRPump() {
   }
 }
 function reduceFuel() {
-  // if (trainMode && !fuelCont.visible) return;
+  if (trainMode && !$("#FULE_check").prop("checked")) return;
   if (r_l > 0) {
     runLPump();
   } else {
@@ -2741,7 +2751,7 @@ function keepTime() {
     }
   }
   // checking checklist
-  if (startChecklist && (!trainMode || (trainMode && elecCont.visible))) {
+  if (startChecklist && (!trainMode || (trainMode && $("#ELEC_check").prop("checked")))) {
     if (timeCounterChecklist == 0) pickChecklist();
     timeCounterChecklist++;
     if (timeCounterChecklist > timeChecklist) {
@@ -2757,7 +2767,7 @@ function keepTime() {
     }
   }
   // checking Fuel
-  if (startPump && (!trainMode || (trainMode && fuelCont.visible))) {
+  if (startPump && (!trainMode || (trainMode && $("#FULE_check").prop("checked")))) {
     if (playedCaution)  timeCounterFuel++;
     console.log("fuel fuel", timeCounterFuel)
     if (timeCounterFuel > targetFuelTime) {
