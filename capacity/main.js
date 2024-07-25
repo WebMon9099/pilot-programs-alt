@@ -1739,6 +1739,10 @@ function initScore() {
   oldRO = "0";
   currentTRK = "0";
   oldTRK="0";
+  activeCaution = false;
+  activeAltitude = false;
+  activeRO = false;
+  activeTrk = false;
 }
 function makeBlackBox(wd, h, color) {
   var tCont = new createjs.Container();
@@ -2413,7 +2417,7 @@ function runRPump() {
   }
 }
 function reduceFuel() {
-  if (trainMode && !fuelCont.visible) return;
+  // if (trainMode && !fuelCont.visible) return;
   if (r_l > 0) {
     runLPump();
   } else {
