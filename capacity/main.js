@@ -308,6 +308,21 @@ function Main() {
     { src: "audio/real/e14.wav", id: "e14" },
     { src: "audio/real/e15.wav", id: "e15" },
 
+    { src: "audio/trk/RanTrk1.wav", id: "RanTrk1" },
+    { src: "audio/trk/RanTrk2.wav", id: "RanTrk2" },
+    { src: "audio/trk/RanTrk3.wav", id: "RanTrk3" },
+    { src: "audio/trk/RanTrk4.wav", id: "RanTrk4" },
+    { src: "audio/trk/RanTrk5.wav", id: "RanTrk5" },
+    { src: "audio/trk/RanTrk6.wav", id: "RanTrk6" },
+    { src: "audio/trk/RanTrk7.wav", id: "RanTrk7" },
+    { src: "audio/trk/RanTrk8.wav", id: "RanTrk8" },
+    { src: "audio/trk/RanTrk9.wav", id: "RanTrk9" },
+    { src: "audio/trk/RanTrk10.wav", id: "RanTrk10" },
+    { src: "audio/trk/RanTrk11.wav", id: "RanTrk11" },
+    { src: "audio/trk/RanTrk12.wav", id: "RanTrk12" },
+    { src: "audio/trk/RanTrk13.wav", id: "RanTrk13" },
+    { src: "audio/trk/RanTrk14.wav", id: "RanTrk14" },
+
   ];
   loader = new createjs.LoadQueue(false);
   loader.installPlugin(createjs.Sound);
@@ -975,7 +990,7 @@ function createInterface() {
   // NAV Content
   navCont = new createjs.Container();
   navCont.x = 50;
-  navCont.y = 195;
+  navCont.y = 165;
   navCont.visible = false;
   rect2.addChild(navCont);
 
@@ -1325,8 +1340,10 @@ function confirmAltROTrk(e) {
   if (tname == 'c_trk'){
     oldTRK = currentTRK;
   }
-  if (tname)
-  confirmAnswer(false);
+  if (tname && qType == tname.replace("c_", "")){
+    confirmAnswer(false);
+  }
+  
 }
 function generateAir() {
   // Add Aircrafts left-top(0, 0). right-bottom(550, 500)
@@ -1585,7 +1602,7 @@ function clickFreqButton(e) {
   if (trainMode && gamePaused) return;
   var tname = String(e.target.name);
 
-  if (tname == "confirm") {
+  if (tname == "confirm" && qType == 'freq') {
     confirmAnswer(false);
   } else {
     let _arr = tname.split("_");
@@ -1715,6 +1732,13 @@ function initScore() {
   real_question_interval = 0;
   real_question_in_progress = false;
   question_during_flag = false;
+  currentWaypoint = "EVY";
+  currentAltitude = "29000";
+  oldAltitude = "29000";
+  currentRO = "0";
+  oldRO = "0";
+  currentTRK = "0";
+  oldTRK="0";
 }
 function makeBlackBox(wd, h, color) {
   var tCont = new createjs.Container();
@@ -2400,7 +2424,7 @@ function chooseQuestionType() {
   let _q = -1;
   let _selecting = true;
   while(_selecting) {
-    _q = Math.floor(Math.random() * 4);
+    _q = Math.floor(Math.random() * 5);
     console.log("new new", _q, qType);
     switch(_q) {
       case 0:
@@ -2418,6 +2442,11 @@ function chooseQuestionType() {
         break;
       case 3:
         if(qType != 'way') _selecting = false;
+        break;
+      case 4:
+        if(random_mode){
+          if(qType != 'trk') _selecting = false;
+        }
         break;
     }
   }
@@ -2458,6 +2487,14 @@ function chooseCorrectItem(q) {
         data = q_waypointList[correctItem];
         if (!oldData.way) _choosing = false;
         else if (oldData.way !== data.val) _choosing = false;
+      } 
+      break;
+    case 4:
+      while (_choosing) {
+        correctItem = Math.floor(Math.random() * q_TRKList.length);
+        data = q_TRKList[correctItem];
+        if (!oldData.trk) _choosing = false;
+        else if (oldData.trk !== data.val) _choosing = false;
       } 
       break;
   }
@@ -2536,6 +2573,23 @@ function pickSound() {
       targetAudioTime = targetWayTime;
       score.nav.total++;
       break;
+    case 4:
+      qType = 'trk';
+      data = q_TRKList[f];
+      if (Number(currentAltitude) > data.val.alt) {
+        if (data.txt.includes("climb")) {
+          data = q_TRKList[f + 1];
+        }
+      } else {
+        if (data.txt.includes("descend")) {
+          data = q_TRKList[f - 1];
+        }
+      }
+      data.val.old = Number(currentAltitude);
+      // targetRO = Math.abs(Number(currentAltitude) - data.val.alt) / data.val.rate;
+      targetAudioTime = targetROTime;
+      score.nav.total++;
+      break;
   }
   console.log(qType, sec);
 
@@ -2560,7 +2614,6 @@ function audioQuestion(data) {
 function handleCompleteSoundC() {
   console.log("audio done");
   playingAudio = false;
-  real_question_in_progress = false;
 }
 function handleCompleteSoundWarning() {
   console.log("warning audio done");
@@ -2741,26 +2794,49 @@ function confirmAnswer(b_flag) {
           altitudeT.text = currentAltitude;
           waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
         }
+        oldAltitude = currentAltitude;
         break;
       case "trk":
         if (b_flag){
-          if ( Math.abs(parseFloat(currentTRK) - currentAnswer) < trk_tolerance_range[tolernace + 1]){
-            score.nav.correct++;
-            totalScore++;
-            if (newAltitude > 0){
-              currentAltitude = newAltitude;
+          if (random_mode){
+            let a_trk = Math.floor(
+              (Math.abs(currentAnswer.old - currentAnswer.alt) * 10 / currentAnswer.rate)
+            )/ 10;
+            if (currentAltitude == String(currentAnswer.alt) && Math.abs(parseFloat(currentTRK) - a_trk) < trk_tolerance_range[tolernace + 1]){
+              score.nav.correct++;
+              totalScore++;
+              currentAltitude = currentAnswer.alt;
               altitudeT.text = currentAltitude;
               waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+              
+            } else {
+              currentAltitude = currentAnswer.alt;
+              altitudeT.text = currentAltitude;
+              waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+              
+              currentTRK = a_trk;
+              TRK.text = String(currentTRK);
             }
           } else {
-            if (newAltitude > 0){
-              currentAltitude = newAltitude;
-              altitudeT.text = currentAltitude;
-              waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+            if (currentAltitude == newAltitude && Math.abs(parseFloat(currentTRK) - currentAnswer) < trk_tolerance_range[tolernace + 1]){
+              score.nav.correct++;
+              totalScore++;
+              if (newAltitude > 0){
+                currentAltitude = newAltitude;
+                altitudeT.text = currentAltitude;
+                waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+              }
+            } else {
+              if (newAltitude > 0){
+                currentAltitude = newAltitude;
+                altitudeT.text = currentAltitude;
+                waypointT.text = "FL" + String(currentAltitude).slice(0, -2);
+              }
+              currentTRK = currentAnswer;
+              TRK.text = String(currentTRK);
             }
-            currentTRK = currentAnswer;
-            TRK.text = String(currentTRK);
           }
+          oldTRK = currentTRK;
         }
         break;
       case "ro":
@@ -2821,11 +2897,12 @@ function confirmAnswer(b_flag) {
         break;
     }
     if (qType != "ro" && qType != 'trk') orderT.text = "";
-    if (random_mode == false) question_during_flag = false;
   }
-  real_question_in_progress = false;
   if (b_flag) {
+    real_question_in_progress = false;
+    question_during_flag = false;
     timeCounterCurrentTask = 0;
+    orderT.text = "";
     pickSound();
   }
 }

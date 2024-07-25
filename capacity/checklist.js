@@ -133,6 +133,23 @@ const q_ROList = [
     {txt: "Express Airways 101, calculate new rate of climb.\nNew altitude is 36,000 feet. Climbing time is 3 minutes 30 seconds.", file: "roc_36000_3m30s", val: {alt: 36000, time: 3.5}},
 ];
 
+const q_TRKList = [
+    {txt: "Express Airways 101, descend to altitude 37,500 ft.\nCalculate miles from top of descent, maintaining descent rate of 600 FPM.", file: "RanTrk1", val: {alt: 37500, rate: 600}},
+    {txt: "Express Airways 101, climb to altitude 37,500 ft.\nCalculate miles from top of descent, maintaining climb rate of 600 FPM.", file: "RanTrk2", val: {alt: 37500, rate: 600}},
+    {txt: "Express Airways 101, descend to altitude 10,000 ft.\nCalculate miles from top of descent, maintaining descent rate of 800 FPM.", file: "RanTrk3", val: {alt: 10000, rate: 800}},
+    {txt: "Express Airways 101, climb to altitude 10,000 ft.\nCalculate miles from top of descent, maintaining climb rate of 800 FPM.", file: "RanTrk4", val: {alt: 10000, rate: 800}},
+    {txt: "Express Airways 101, descend to altitude 30,000 ft.\nCalculate miles from top of descent, maintaining descent rate of 400 FPM.", file: "RanTrk5", val: {alt: 30000, rate: 400}},
+    {txt: "Express Airways 101, climb to altitude 30,000 ft.\nCalculate miles from top of descent, maintaining climb rate of 400 FPM.", file: "RanTrk6", val: {alt: 30000, rate: 400}},
+    {txt: "Express Airways 101, descend to altitude 20,000 ft.\nCalculate miles from top of descent, maintaining descent rate of 700 FPM.", file: "RanTrk7", val: {alt: 20000, rate: 700}},
+    {txt: "Express Airways 101, climb to altitude 20,000 ft.\nCalculate miles from top of descent, maintaining climb rate of 700 FPM.", file: "RanTrk8", val: {alt: 20000, rate: 700}},
+    {txt: "Express Airways 101, descend to altitude 23,500 ft.\nCalculate miles from top of descent, maintaining descent rate of 600 FPM.", file: "RanTrk9", val: {alt: 23500, rate: 600}},
+    {txt: "Express Airways 101, climb to altitude 23,500 ft.\nCalculate miles from top of descent, maintaining climb rate of 600 FPM.", file: "RanTrk10", val: {alt: 23500, rate: 600}},
+    {txt: "Express Airways 101, descend to altitude 15,000 ft.\nCalculate miles from top of descent, maintaining descent rate of 700 FPM.", file: "RanTrk11", val: {alt: 15000, rate: 700}},
+    {txt: "Express Airways 101, climb to altitude 15,000 ft.\nCalculate miles from top of descent, maintaining climb rate of 700 FPM.", file: "RanTrk12", val: {alt: 15000, rate: 700}},
+    {txt: "Express Airways 101, descend to altitude 17,500 ft.\nCalculate miles from top of descent, maintaining descent rate of 400 FPM.", file: "RanTrk11", val: {alt: 17500, rate: 400}},
+    {txt: "Express Airways 101, climb to altitude 17,500 ft.\nCalculate miles from top of descent, maintaining climb rate of 400 FPM.", file: "RanTrk12", val: {alt: 17500, rate: 400}},
+];
+
 const real_scenarios = [
     [
         {type:'alt', txt:"Express Airways 101, descend to 40,000 feet.", val:40000,file:"a1"},
