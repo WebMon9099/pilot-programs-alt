@@ -5,7 +5,7 @@
 <title>Capacity</title>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" media="screen" href="./_common/css/styles.css?v=1" />
-<link rel="stylesheet" href="custom.css?v=1" />
+<link rel="stylesheet" href="custom.css?v=3" />
 <script src="../_common/js/jquery.min.js"></script>
 <script src="../_common/js/jqueryui.min.js"></script>
 <script src="../_common/js/game.js"></script>
@@ -40,7 +40,7 @@
 			Capacity
 		</div>
 		<div id="setting">
-			<h4 class="setting_title">Training Mode Settings:</h4>
+			<h4 class="setting_title">Settings</h4>
 			<div class="setting_contonller">
 				<label class="switch-title">NAV Page</label>
 				<label class="switch">
@@ -83,7 +83,7 @@
 					<span class="slider round"></span>
 				</label>
 			</div>
-			<div class="set_content setting_contonller">
+			<div class="set_content setting_contonller tolerance-section">
 				<p class="set_intensity">Tolerance</p>
 				<div class="stepper-wrapper">
 						<div class="stepper-item completed stepper-item-tolerance completed active" key="-1">
@@ -103,20 +103,20 @@
 						</div>
 				</div>
 			</div>
-			<div class="set_content setting_contonller">
+			<div class="set_content setting_contonller intensity-section">
 				<p class="set_intensity">Intensity</p>
 				<div class="stepper-wrapper">
 						<div class="stepper-item stepper-item-intensity completed active" key="1">
-								<div class="step-counter"></div>
-								<div class="step-name easy-sname">Easy</div>
+							<div class="step-name easy-sname top-name">Easy</div>
+							<div class="step-counter"></div>
 						</div>
 						<div class="stepper-item stepper-item-intensity left-radius" key="0.8">
-								<div class="step-counter"></div>
-								<div class="step-name">Challenging</div>
+							<div class="step-name top-name">Challenging</div>
+							<div class="step-counter"></div>
 						</div>
 						<div class="stepper-item stepper-item-intensity right-radius" key="0.5">
-								<div class="step-counter"></div>
-								<div class="step-name hard-sname">Insane</div>
+							<div class="step-name hard-sname top-name">Insane</div>
+							<div class="step-counter"></div>
 						</div>
 				</div>
 			</div>
