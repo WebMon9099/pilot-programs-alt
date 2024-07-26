@@ -2647,7 +2647,7 @@ function keepTime() {
           data = real_scenarios[selected_real_scenaario_index][real_question_index];
           real_question_in_progress = true;
           qType = data.type;
-          targetAudioTime = targetNavTime;
+          targetAudioTime = data.type == "alt"? targetNavTime:targetROTime;
           audioQuestion(data);
           real_question_index++;
           real_question_time_trigger = false;
@@ -2661,7 +2661,7 @@ function keepTime() {
         data = real_scenarios[selected_real_scenaario_index][real_question_index];
         real_question_in_progress = true;
         qType = data.type;
-        targetAudioTime = targetNavTime;
+        targetAudioTime = data.type == "alt"? targetNavTime:targetROTime;
         audioQuestion(data);
         real_question_index++;
         real_question_time_trigger = false;
