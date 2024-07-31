@@ -146,8 +146,8 @@ const q_TRKList = [
     {txt: "Express Airways 101, climb to altitude 23,500 ft.\nCalculate miles from top of descent, maintaining climb rate of 600 FPM.", file: "RanTrk10", val: {alt: 23500, rate: 600}},
     {txt: "Express Airways 101, descend to altitude 15,000 ft.\nCalculate miles from top of descent, maintaining descent rate of 700 FPM.", file: "RanTrk11", val: {alt: 15000, rate: 700}},
     {txt: "Express Airways 101, climb to altitude 15,000 ft.\nCalculate miles from top of descent, maintaining climb rate of 700 FPM.", file: "RanTrk12", val: {alt: 15000, rate: 700}},
-    {txt: "Express Airways 101, descend to altitude 17,500 ft.\nCalculate miles from top of descent, maintaining descent rate of 400 FPM.", file: "RanTrk11", val: {alt: 17500, rate: 400}},
-    {txt: "Express Airways 101, climb to altitude 17,500 ft.\nCalculate miles from top of descent, maintaining climb rate of 400 FPM.", file: "RanTrk12", val: {alt: 17500, rate: 400}},
+    {txt: "Express Airways 101, descend to altitude 17,500 ft.\nCalculate miles from top of descent, maintaining descent rate of 400 FPM.", file: "RanTrk13", val: {alt: 17500, rate: 400}},
+    {txt: "Express Airways 101, climb to altitude 17,500 ft.\nCalculate miles from top of descent, maintaining climb rate of 400 FPM.", file: "RanTrk14", val: {alt: 17500, rate: 400}},
 ];
 
 const real_scenarios = [
