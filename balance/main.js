@@ -7,16 +7,8 @@ var loader;
 var totalSec = 300;
 var isGame = false;
 var gameCont;
-var score = {
-  nav: { flag: false, total: 0, correct: 0 },
-  fuel: { flag: false, total: 0, correct: 0 },
-  elec: { flag: false, total: 0, correct: 0 },
-  freq: { flag: false, total: 0, correct: 0 },
-  tcas: { flag: false, total: 0, correct: 0 },
-};
-var totalCount = 0,
-  totalScore = 0;
-var trackTime;
+var score = 0;  //time-replicated vertical bar and ball
+var trackTime, calcTime;
 
 var trainMode = false;
 var showSetting = false;
@@ -29,6 +21,7 @@ var seeSaw;
 var ball;
 var verticalBar;
 var manual_move_flag = false;
+var accerlate_flag = false;
 var maxAngle = 14.4;
 var minAngle = -14.4;
 var ballXstep;
@@ -37,6 +30,7 @@ var time_elapsed = 0;
 var ex_rotation = 0;
 
 const gravity = 0.098;
+const forced_accerate = 1.2;
 const rotationSpeed = 0.01;
 const ballRadius = 15;
 const triangle_length = 20;
@@ -48,16 +42,13 @@ function Main() {
   stage = new createjs.Stage(canvas);
   optimizeForTouchAndScreens();
   stage.enableMouseOver(10);
-  manifest = [
-    { src: "audio/trk/RanTrk14.wav", id: "RanTrk14" },
 
-  ];
-  loader = new createjs.LoadQueue(false);
-  loader.installPlugin(createjs.Sound);
-  createjs.Sound.alternateExtensions = ["wav"];
-  loader.addEventListener("progress", handleProgress);
-  loader.addEventListener("complete", handleComplete);
-  loader.loadManifest(manifest, true);
+  isGame = false;
+  var element = document.getElementById("loader");
+  element.parentNode.removeChild(element);
+  showStartScreen();
+
+  stage.update();
 }
 function handleProgress() {
   var progresPrecentage = Math.round(loader.progress * 100);
@@ -86,7 +77,6 @@ function showStartScreen() {
   gamePaused = false;
   $("#gamepause").hide();
   document.querySelector("#title").style = "background-color: #3793d1";
-  document.querySelector("#tsider-train").style = "display: none !important";
 
   document
     .querySelectorAll(".setting_contonller .set_controller")
@@ -102,7 +92,7 @@ function showStartScreen() {
   showScreen("#logo-screen");
   document.querySelector("#tside .logo-title").innerHTML = String("Balance");
   document.getElementById("tsider").innerHTML = String("Start of Exam");
-  document.getElementById("tsiderx").innerHTML = String("- / -");
+  document.getElementById("tsiderx").innerHTML = String("Accuracy : ");
   document.querySelector("#start-button").addEventListener(
     "click",
     function () {
@@ -123,7 +113,6 @@ function showSecondScreen(train) {
   trainMode = train;
   if (trainMode) {
     document.querySelector("#title").style = "background-color: #7ad304";
-    document.querySelector("#tsider-train").style = "display: flex !important";
     $(".setting_title").show();
     $(".setting_contonller").show();
     // playpause button
@@ -151,7 +140,7 @@ function createInterface() {
 
   //create the See-Saw
   seeSaw = new createjs.Shape();
-  seeSaw.graphics.beginFill("#3f474c").drawRect(-canvas.width / 4, -5, canvas.width / 2, 10);
+  seeSaw.graphics.beginFill("#3f474c").drawRoundRect(-canvas.width / 4, -5, canvas.width / 2, 15, 5.5);
   seeSaw.x = canvas.width / 2;
   seeSaw.y = 300;
   seeSaw.rotation = 0;
@@ -159,14 +148,14 @@ function createInterface() {
 
   //create the vertical bar
   verticalBar = new createjs.Shape();
-  verticalBar.graphics.beginFill("#dfeef5").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
+  verticalBar.graphics.beginFill(trainMode?"#f6cdda":"#dfeef5").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
   verticalBar.y = seeSaw.y;
   verticalBar.x = seeSaw.x - 200;
   gameCont.addChild(verticalBar);
   
   // Draw a centerShape
   const centerShape = new createjs.Shape();  
-  centerShape.graphics.beginFill("#dbdbdb").drawCircle(seeSaw.x, seeSaw.y+ballRadius/2, ballRadius);
+  centerShape.graphics.beginFill("#dbdbdb").drawCircle(seeSaw.x, seeSaw.y+ballRadius*3/4, ballRadius);
     // .lineTo(seeSaw.x-triangle_length/2, seeSaw.y+triangle_length*Math.cos(Math.PI/6))
     // .lineTo(seeSaw.x+triangle_length/2, seeSaw.y+triangle_length*Math.cos(Math.PI/6))
     // .closePath();
@@ -183,6 +172,7 @@ function createInterface() {
   stage.update();
   isGame = true;
   trackTime = setInterval(keepTime, 1000);
+  calcTime = setInterval(calcScore, 1);
 
   window.addEventListener("keydown", getKeyDown);
   window.addEventListener("keyup", getKeyUp);
@@ -190,6 +180,21 @@ function createInterface() {
   startMain();
 
   if (trainMode && gamePaused) $("#gamepause").show();
+}
+function calcScore(){
+  if (ball.x > verticalBar.x - 2 * ballRadius && ball.x < verticalBar.x + 2 * ballRadius){
+    if (trainMode){
+      verticalBar.graphics.clear().beginFill("#e4f6cd").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
+    }
+    score += 0.001;
+  } else {
+    if (trainMode){
+      verticalBar.graphics.clear().beginFill("#f6cdda").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
+    }
+  }
+  
+  var acc = Math.round(score/totalSec * 100);
+  document.getElementById("tsiderx").innerHTML = String("Accuracy : " + acc.toString() + '%');
 }
 function moveBallManually(direction = 1){
   if (direction == 1){
@@ -205,21 +210,27 @@ function moveBallManually(direction = 1){
   ballXstep = Math.abs(ball.x - seeSaw.x)*Math.cos(seeSaw.rotation * Math.PI / 180)/ Math.abs(seeSaw.rotation)*rotationStep;
   ball.x += (direction * ballXstep);
   ball.y = Math.abs(ball.x - seeSaw.x)*Math.abs(Math.tan(seeSaw.rotation * Math.PI / 180)) + seeSaw.y - ballRadius;
-  manual_move_flag = true;
+  if (direction * seeSaw.rotation > 0){
+    accerlate_flag = true;
+    manual_move_flag = false;
+  } else {
+    accerlate_flag = false;
+    manual_move_flag = true;
+  }
+  
   stage.update();
 }
 function getKeyUp(e){
   $('#main-screen .btn').removeClass('active');
   manual_move_flag = false;
+  accerlate_flag = false;
 }
 
 function getKeyDown(e) {
   e.preventDefault();
-  console.log('keycode', e.keyCode);
   if (e.keyCode == 87){// w key
     $('.left-up-btn').addClass('active');
     moveBallManually(1);
-    
   }
   if (e.keyCode == 80){// p key
     $('.right-up-btn').addClass('active');
@@ -228,16 +239,12 @@ function getKeyDown(e) {
 }
 
 function initScore() {
-  score = {
-    nav: { flag: false, total: 0, correct: 0 },
-    fuel: { flag: false, total: 0, correct: 0 },
-    elec: { flag: false, total: 0, correct: 0 },
-    freq: { flag: false, total: 0, correct: 0 },
-    tcas: { flag: false, total: 0, correct: 0 },
-  };
-  totalCount = 0;
-  totalScore = 0;
+  score = 0;
   sec = 0;
+  manual_move_flag = false;
+  accerlate_flag = false;
+  time_elapsed = 0;
+  ex_rotation = 0;
 }
 
 function createRandomVerticalBar(){
@@ -281,7 +288,6 @@ function startMain() {
 }
 
 function updateGame(e) {
-  console.log('rotation', seeSaw.rotation);
   var delta_time = createjs.Ticker.getTime() - time_elapsed;
   time_elapsed = createjs.Ticker.getTime();
   if (trainMode && gamePaused) return;
@@ -290,11 +296,12 @@ function updateGame(e) {
 
   var rotation_rad = seeSaw.rotation * Math.PI / 180;
   if (rotation_rad == 0) return;
-  console.log('rotation_rad', rotation_rad, delta_time);
 
   // ball sliding
-  
   ball.dx = gravity * Math.sin(rotation_rad)*Math.cos(rotation_rad) * delta_time * delta_time; // Slide left or right based on tilt
+  if (accerlate_flag){
+    ball.dx = forced_accerate*ball.dx;
+  }
   if (ex_rotation > seeSaw.rotation){
     if (rotation_rad > 0){
       ball.x -= ball.dx;
@@ -309,14 +316,12 @@ function updateGame(e) {
     }
   }
   ex_rotation = seeSaw.rotation;
-  console.log('dxxxxx', ball.dx);
   ball.y = Math.abs(ball.x - seeSaw.x)*Math.abs(Math.tan(rotation_rad)) + seeSaw.y - ballRadius;
 
   
   // Prevent the ball from sliding off the see-saw
   const maxX = seeSaw.x + Math.abs(canvas.width / 4 * Math.cos(rotation_rad));
   const minX = seeSaw.x - Math.abs(canvas.width / 4 * Math.cos(rotation_rad));
-  console.log('ballX', ball.x, maxX, minX);
   if (ball.x >= maxX) {
       ball.x = maxX;
       maxAngle = seeSaw.rotation;
@@ -324,7 +329,6 @@ function updateGame(e) {
       ball.x = minX;
       minAngle = seeSaw.rotation;
   } else {
-    console.log('moving seesaw');
     if (rotation_rad > 0){
       seeSaw.rotation += rotationSpeed*delta_time;
       if (seeSaw.rotation >= maxAngle){
@@ -337,7 +341,6 @@ function updateGame(e) {
       }
     }
   }
-  console.log('final rotation', seeSaw.rotation);
 
   stage.update(e);
 }
@@ -351,27 +354,18 @@ function gameOver() {
 }
 function showEndScreen() {
   document.getElementById("tsider").innerHTML = String("End of Exam");
-  let _totalScore = score.nav.correct + 
-                    score.fuel.correct +
-                    score.elec.correct +
-                    score.freq.correct +
-                    score.tcas.correct;
-  let _totalCount = score.nav.total + 
-                    score.fuel.total +
-                    score.elec.total +
-                    score.freq.total +
-                    score.tcas.total;
-  $("#correct_answer").text(_totalScore);
-  $("#total_question").text(_totalCount);
+  score = Math.round(score);
+  $("#correct_answer").text(score+ 's');
+  $("#total_question").text(totalSec + 's');
   $("#average_accuracy").text(
-    _totalCount == 0
+    totalSec == 0
     ? "( 0% )"
-    : "( " + ((_totalScore / _totalCount) * 100).toFixed(0) + "% )"
+    : "( " + (Math.round(score / totalSec *  100) ) + "% )"
     );
 
   showScreen("#results-screen");
   showSetting = false;
-  let _accu = _totalCount == 0 ? 0 : ((_totalScore / _totalCount) * 100).toFixed(0);
+  let _accu = totalSec == 0 ? 0 : (Math.round(score / totalSec) * 100);
   insertResults(_accu, totalSec);
   stage.update();
 
@@ -421,6 +415,7 @@ $(document).ready(function () {
     $(this).removeClass('active');
     clearInterval(manual_move_interval);
     manual_move_flag = false;
+    accerlate_flag = false;
   })
   $('.right-up-btn').mousedown(function(event){
     $(this).addClass('active');
@@ -432,6 +427,7 @@ $(document).ready(function () {
     $(this).removeClass('active');
     clearInterval(manual_move_interval);
     manual_move_flag = false;
+    accerlate_flag = false;
   })
 
   $("#exit_setting").click(function () {
