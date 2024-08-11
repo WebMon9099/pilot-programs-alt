@@ -22,8 +22,8 @@ var ball;
 var verticalBar;
 var manual_move_flag = false;
 var accerlate_flag = false;
-var maxAngle = 14.4;
-var minAngle = -14.4;
+var maxAngle = 14;
+var minAngle = -14;
 var ballXstep;
 let manual_move_interval;
 var time_elapsed = 0;
@@ -32,14 +32,24 @@ var ex_rotation = 0;
 const gravity = 0.098;
 const forced_accerate = 1.2;
 const rotationSpeed = 0.01;
-const ballRadius = 15;
-const triangle_length = 20;
+const ballRadius = 40;
+// const triangle_length = 20;
 const rotationStep = 0.2;
-const VerticalChangeInterval = 3;
+const VerticalChangeInterval = 15;
+const thickness = 25;
+const centerCircleRadius = 25;
+const barBorderRadius = 3.5;
+var seesawWidth;
+var center_height;
+var random_direction_efficient = 1;
 
 function Main() {
   canvas = document.getElementById("test");
   stage = new createjs.Stage(canvas);
+
+  seesawWidth = canvas.width * 0.8;
+  center_height = canvas.height/2;
+
   optimizeForTouchAndScreens();
   stage.enableMouseOver(10);
 
@@ -92,7 +102,6 @@ function showStartScreen() {
   showScreen("#logo-screen");
   document.querySelector("#tside .logo-title").innerHTML = String("Balance");
   document.getElementById("tsider").innerHTML = String("Start of Exam");
-  document.getElementById("tsiderx").innerHTML = String("Accuracy : ");
   document.querySelector("#start-button").addEventListener(
     "click",
     function () {
@@ -138,28 +147,29 @@ function createInterface() {
   gameCont = new createjs.Container();
   stage.addChild(gameCont);
 
-  //create the See-Saw
-  seeSaw = new createjs.Shape();
-  seeSaw.graphics.beginFill("#3f474c").drawRoundRect(-canvas.width / 4, -5, canvas.width / 2, 15, 5.5);
-  seeSaw.x = canvas.width / 2;
-  seeSaw.y = 300;
-  seeSaw.rotation = 0;
-  gameCont.addChild(seeSaw);
-
-  //create the vertical bar
-  verticalBar = new createjs.Shape();
-  verticalBar.graphics.beginFill(trainMode?"#f6cdda":"#dfeef5").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
-  verticalBar.y = seeSaw.y;
-  verticalBar.x = seeSaw.x - 200;
-  gameCont.addChild(verticalBar);
-  
   // Draw a centerShape
   const centerShape = new createjs.Shape();  
-  centerShape.graphics.beginFill("#dbdbdb").drawCircle(seeSaw.x, seeSaw.y+ballRadius*3/4, ballRadius);
+  centerShape.graphics.beginFill("#dbdbdb").drawCircle(canvas.width / 2, center_height + thickness/2, centerCircleRadius);
     // .lineTo(seeSaw.x-triangle_length/2, seeSaw.y+triangle_length*Math.cos(Math.PI/6))
     // .lineTo(seeSaw.x+triangle_length/2, seeSaw.y+triangle_length*Math.cos(Math.PI/6))
     // .closePath();
   gameCont.addChild(centerShape);
+
+  //create the vertical bar
+  verticalBar = new createjs.Shape();
+  verticalBar.graphics.beginFill(trainMode?"#f6cdda":"#dfeef5").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
+  verticalBar.y = center_height;
+  verticalBar.x = canvas.width / 2; - 600;
+  console.log('initial------');
+  gameCont.addChild(verticalBar);
+
+  //create the See-Saw
+  seeSaw = new createjs.Shape();
+  seeSaw.graphics.beginFill("#3f474c").drawRoundRect(-seesawWidth / 2, 0, seesawWidth, thickness, barBorderRadius);
+  seeSaw.x = canvas.width / 2;
+  seeSaw.y = center_height;
+  seeSaw.rotation = 0;
+  gameCont.addChild(seeSaw);
 
   //create the Ball
   ball = new createjs.Shape();
@@ -168,7 +178,7 @@ function createInterface() {
   ball.y = seeSaw.y - ballRadius;
   ball.dx = 0;
   ball.dy = 0;
-  stage.addChild(ball);
+  gameCont.addChild(ball);
   stage.update();
   isGame = true;
   trackTime = setInterval(keepTime, 1000);
@@ -182,7 +192,9 @@ function createInterface() {
   if (trainMode && gamePaused) $("#gamepause").show();
 }
 function calcScore(){
-  if (ball.x > verticalBar.x - 2 * ballRadius && ball.x < verticalBar.x + 2 * ballRadius){
+  if (trainMode && gamePaused) return;
+  // if (ball.x > verticalBar.x - 2 * ballRadius && ball.x < verticalBar.x + 2 * ballRadius){
+  if (Math.abs(ball.x - verticalBar.x)<10){
     if (trainMode){
       verticalBar.graphics.clear().beginFill("#e4f6cd").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
     }
@@ -192,12 +204,14 @@ function calcScore(){
       verticalBar.graphics.clear().beginFill("#f6cdda").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
     }
   }
-  
-  var acc = Math.round(score/totalSec * 100);
-  document.getElementById("tsiderx").innerHTML = String("Accuracy : " + acc.toString() + '%');
+  stage.update();
+  if (sec > 0){
+    var acc = Math.round(100*score/sec);
+    document.getElementById("acc-num").innerHTML = String(acc.toString());
+  }
 }
 function moveBallManually(direction = 1){
-  if (direction == 1){
+  if (random_direction_efficient * direction == 1){
     if (!(seeSaw.rotation < maxAngle)){
       return;
     }
@@ -206,11 +220,14 @@ function moveBallManually(direction = 1){
       return;
     }
   }
-  seeSaw.rotation += (direction*rotationStep);
-  ballXstep = Math.abs(ball.x - seeSaw.x)*Math.cos(seeSaw.rotation * Math.PI / 180)/ Math.abs(seeSaw.rotation)*rotationStep;
-  ball.x += (direction * ballXstep);
-  ball.y = Math.abs(ball.x - seeSaw.x)*Math.abs(Math.tan(seeSaw.rotation * Math.PI / 180)) + seeSaw.y - ballRadius;
-  if (direction * seeSaw.rotation > 0){
+  seeSaw.rotation += (random_direction_efficient * direction*rotationStep);
+  
+  // ballXstep = Math.abs(ball.x- seeSaw.x)*Math.cos(seeSaw.rotation * Math.PI / 180)/ Math.abs(seeSaw.rotation)*rotationStep;
+  // ball.x += (direction * ballXstep);
+  ball.x = seeSaw.x + seesawWidth*0.5*(seeSaw.rotation/maxAngle);
+  ball.y = Math.abs(ball.x- seeSaw.x)*Math.abs(Math.tan(seeSaw.rotation * Math.PI / 180)) + seeSaw.y - ballRadius;
+  
+  if (random_direction_efficient * direction * seeSaw.rotation > 0){
     accerlate_flag = true;
     manual_move_flag = false;
   } else {
@@ -230,11 +247,11 @@ function getKeyDown(e) {
   e.preventDefault();
   if (e.keyCode == 87){// w key
     $('.left-up-btn').addClass('active');
-    moveBallManually(1);
+    moveBallManually(-1);
   }
   if (e.keyCode == 80){// p key
     $('.right-up-btn').addClass('active');
-    moveBallManually(-1);
+    moveBallManually(1);
   }
 }
 
@@ -251,17 +268,23 @@ function createRandomVerticalBar(){
   var random_num_len = Math.random();
   var random_num_direction = Math.random();
   if (random_num_direction > 0.5){
-    verticalBar.x = seeSaw.x - random_num_len * (canvas.width/5);
+    verticalBar.x = seeSaw.x - random_num_len * (seesawWidth*0.4);
   } else {
-    verticalBar.x = seeSaw.x + random_num_len * (canvas.width/5);
+    verticalBar.x = seeSaw.x + random_num_len * (seesawWidth*0.4);
   }
   stage.update();
 }
 
 function keepTime() {
   if (trainMode && gamePaused) return;
-  if (sec % VerticalChangeInterval == 0 ){
+  var real_vertiacl_interval = Math.floor(VerticalChangeInterval + Math.random() * VerticalChangeInterval);
+  if (sec % real_vertiacl_interval == 0 ){
     createRandomVerticalBar();
+    if (Math.random() > 0.5){
+      random_direction_efficient = 1;
+    } else {
+      random_direction_efficient = -1;
+    }
   }
   sec++;
   var rsec = totalSec - sec;
@@ -276,15 +299,14 @@ function keepTime() {
     }
     
     isGame = false;
-    startPump = false;
     sec = 0;
     gameOver();
   }
 }
 
 function startMain() {
-  createjs.Ticker.setFPS(60);
-  createjs.Ticker.addEventListener("tick", updateGame);
+  // createjs.Ticker.setFPS(60);
+  // createjs.Ticker.addEventListener("tick", updateGame);
 }
 
 function updateGame(e) {
@@ -320,8 +342,8 @@ function updateGame(e) {
 
   
   // Prevent the ball from sliding off the see-saw
-  const maxX = seeSaw.x + Math.abs(canvas.width / 4 * Math.cos(rotation_rad));
-  const minX = seeSaw.x - Math.abs(canvas.width / 4 * Math.cos(rotation_rad));
+  const maxX = seeSaw.x + Math.abs(seesawWidth / 2 * Math.cos(rotation_rad));
+  const minX = seeSaw.x - Math.abs(seesawWidth / 2 * Math.cos(rotation_rad));
   if (ball.x >= maxX) {
       ball.x = maxX;
       maxAngle = seeSaw.rotation;
@@ -407,7 +429,7 @@ $(document).ready(function () {
   $('.left-up-btn').mousedown(function(event){
     $(this).addClass('active');
     manual_move_interval = setInterval(function() {
-      moveBallManually(1);
+      moveBallManually(-1);
     }, 50);
     
   })
@@ -420,7 +442,7 @@ $(document).ready(function () {
   $('.right-up-btn').mousedown(function(event){
     $(this).addClass('active');
     manual_move_interval = setInterval(function() {
-      moveBallManually(-1);
+      moveBallManually(1);
     }, 50);
   })
   $('.right-up-btn').mouseup(function(event){
@@ -443,7 +465,6 @@ $(document).ready(function () {
 
     createjs.Tween.removeAllTweens();
     sec = 0;
-    startPump = false;
     isGame = false;
     createjs.Sound.stop();
     gameCont.removeAllChildren();

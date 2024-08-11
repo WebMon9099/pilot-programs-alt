@@ -27,7 +27,7 @@ html {
     width: 94%;
     max-width: 1200px;
     margin: 0 auto;
-    margin-top: 50px
+    margin-top: 0px
 }
 
 #title {
@@ -228,7 +228,13 @@ a.exit {
     background: #d3d3d3;
     color: #bebebe;
     font-weight: 500;
-    padding: 10px 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    width: 57px;
+    height: 37px;
+    font-size: 25px;
     cursor: pointer;
 }
 #main-screen > .btn.active, #main-screen > .btn:hover{
@@ -237,10 +243,10 @@ a.exit {
     color: #f9d06f;
 }
 .left-up-btn{
-    left: 0;
+    left: -150px;
 }
 .right-up-btn{
-    right: 0;
+    right: -150px;
 }
 #logo-screen {
     background: 0 0;
@@ -735,4 +741,30 @@ input:checked+.slider:before {
 
 .stepper-item:last-child::after {
     content: none
+}
+#progress-container{
+    padding:10px;
+    background-color: white;
+    border-bottom: 1px lightgray solid;
+    position: relative;
+    display: none;
+}
+#bar-container{
+    width:calc(100% - 20px);
+    opacity: 0.5;
+    position: absolute;
+    height: 5px;
+    /* box-shadow:0 0.5px; */
+}
+.progress-bar{
+    width:100%;
+    height: 5px;
+    opacity: 1!important;
+    display: none;
+}
+.main-bar{
+    background-color: rgb(211, 49, 103);
+}
+.sub-bar{
+    background-color: black;
 }

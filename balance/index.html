@@ -16,7 +16,7 @@
 <script src="lib/preloadjs-NEXT.min.js"></script>
 <!-- <script src="joy.js"></script> -->
 <script src="checklist.js?v=1"></script>
-<script src="main.js?v=3"></script>
+<script src="main.js?v=1"></script>
         
 </head>
 
@@ -44,7 +44,7 @@
 			<div id="exit_setting">Exit to Main Menu</div>
 		</div>
 	</div>
-	<div id ="tsiderx"></div>
+	<div id ="tsiderx"><span style="opacity: 0.6;margin-right: 10px;">Accuracy:</span><span id="acc-num">0</span><span style="font-size: 10px;">%</span></div>
 	<div id ="tsider"></div>
 	<div id="tsidery">
 		<a href="javascript: void(0)" class="playpause"></a>
@@ -55,6 +55,12 @@
 		<img src="images/icon_mortarboard.svg" />
 		<span>Training Mode</span>
 	</div>
+</div>
+
+<div id="progress-container">
+	<div id="bar-container"></div>
+	<div id="main-progress-bar" class="main-bar progress-bar"></div>
+	<div id="sub-progress-bar" class="sub-bar progress-bar"></div>
 </div>
 
 <div id ="mainb">
