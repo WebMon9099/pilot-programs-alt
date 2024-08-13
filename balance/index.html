@@ -5,7 +5,7 @@
 <title>Balance</title>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" media="screen" href="./_common/css/styles.css?v=1" />
-<link rel="stylesheet" href="custom.css?v=1" />
+<link rel="stylesheet" href="custom.css?v=5" />
 <script src="../_common/js/jquery.min.js"></script>
 <script src="../_common/js/jqueryui.min.js"></script>
 <script src="../_common/js/game.js"></script>
@@ -16,7 +16,7 @@
 <script src="lib/preloadjs-NEXT.min.js"></script>
 <!-- <script src="joy.js"></script> -->
 <script src="checklist.js?v=1"></script>
-<script src="main.js?v=1"></script>
+<script src="main.js?v=5"></script>
         
 </head>
 
@@ -60,7 +60,6 @@
 <div id="progress-container">
 	<div id="bar-container"></div>
 	<div id="main-progress-bar" class="main-bar progress-bar"></div>
-	<div id="sub-progress-bar" class="sub-bar progress-bar"></div>
 </div>
 
 <div id ="mainb">
@@ -103,7 +102,7 @@
 		</ul>
 	</div>
 	<div class="screen off" id="main-screen">
-		<canvas id="test" width="1200" height="750"></canvas>
+		<canvas id="test" width="1200"></canvas>
 		<div class="left-up-btn btn">W</div>
 		<div class="right-up-btn btn">P</div>
 	</div>
@@ -111,16 +110,36 @@
 		<div id="result-container">
 			<div id="result-type">Your Performance</div>
 			<div id="results-lights-acknowledged">
-				<p>Overall Score</p>
-				<span id="correct_answer">0</span>
-				<span class="outof">out of  </span>
-				<span id="total_question">0</span>
-				<span id="average_accuracy" class="outof">0%</span>
+				<table>
+					<thead>
+						<tr>
+							<th>Overall Score</th>
+							<th>Time-in-Area <span style="opacity: 0.65;">(in seconds)</span></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><span id="average_accuracy">0</span><span class="outof">&nbsp;%</span></td>
+							<td>
+								<div style="display: flex;justify-content: center;">
+									<div id="correct_answer">0</div>
+									<div class="outof">out of</div>
+									<div id="total_question">0</div>
+								</div>
+								
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
 			</div>
 		</div>
 		<div class="bottom">
 			<button id="restart-button" class="big start-button">
-				Back to Main Menu
+				Restart Activity
+			</button>
+			<button id="main-menu-button" class="big return-main-button">
+				Return to Main Menu
 			</button>
 		</div>
 	</div>

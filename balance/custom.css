@@ -219,7 +219,7 @@ a.exit {
     width: 100%;
     margin: 0 auto!important;
     padding: 0;
-    height: auto
+    height: 100%;
 }
 #main-screen > .btn{
     position: absolute;
@@ -243,10 +243,10 @@ a.exit {
     color: #f9d06f;
 }
 .left-up-btn{
-    left: -150px;
+    left: -3%;
 }
 .right-up-btn{
-    right: -150px;
+    right: -3%;
 }
 #logo-screen {
     background: 0 0;
@@ -376,13 +376,28 @@ a.exit {
 }
 
 #results-lights-acknowledged {
-    font-size: 2em;
     position: relative;
     font-family: arial;
-    font-weight: 400;
     color: #494949;
-    padding: 10px 35px;
+    padding:0;
     text-align: left!important
+}
+
+#results-lights-acknowledged table{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#results-lights-acknowledged th{
+    font-size: 1rem;
+    box-shadow: 0 2px 4px #efefef;
+}
+
+#results-lights-acknowledged th, #results-lights-acknowledged td{
+    border: 1px solid #efefef;
+    padding:10px 15px;
+    font-weight: 400;
+    text-align: center;
 }
 
 #results-lights-acknowledged p {
@@ -394,11 +409,14 @@ a.exit {
 
 #results-lights-acknowledged .outof {
     color: #858282;
-    font-size: 24px
+    font-size: 24px;
+    padding-top: 40px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 #average_accuracy {
-    font-size: 34px!important
+    font-size: 66px!important
 }
 
 #tside {
@@ -545,7 +563,7 @@ input:checked+.slider:before {
 #gamepause {
     position: absolute;
     right: 30px;
-    top: 80px;
+    top: 100px;
     width: 35px;
     display: none;
     animation: blink 1s;
@@ -573,15 +591,19 @@ input:checked+.slider:before {
 
 @media(max-height: 768px) {
     #result-container,#result-container-lg {
-        margin-top:85px!important
+        /* margin-top:85px!important */
     }
 
     #overall-detail {
         max-height: 260px!important
     }
-
-    #test {
-        margin-top: -25px
+    .left-up-btn{
+        left:0;
+        bottom: 0%!important;
+    }
+    .right-up-btn{
+        right:0;
+        bottom: 0%!important;
     }
 }
 
@@ -765,6 +787,23 @@ input:checked+.slider:before {
 .main-bar{
     background-color: rgb(211, 49, 103);
 }
-.sub-bar{
-    background-color: black;
+.big{
+    font-size: 18px!important;
+}
+#main-menu-button{
+    color: white;
+    background-color: rgb(55, 147, 209);
+    padding: 20px 30px 20px 30px;
+    letter-spacing: 0.4px;
+    transition: 0.3s;
+    border-radius: 8px;
+    background-size: 30px;
+    font-family: Open Sans;
+    box-shadow: 0px 1px 4px #ddd;
+    margin-bottom: 30px;
+    cursor: pointer;
+    margin-left:40px;
+}
+#main-menu-button:hover{
+    background-color: rgb(49 129 183);
 }

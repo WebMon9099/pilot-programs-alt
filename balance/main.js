@@ -8,7 +8,9 @@ var totalSec = 300;
 var isGame = false;
 var gameCont;
 var score = 0;  //time-replicated vertical bar and ball
-var trackTime, calcTime;
+var correct_count = 0;
+var total_count = 0;
+var trackTime;
 
 var trainMode = false;
 var showSetting = false;
@@ -22,26 +24,29 @@ var ball;
 var verticalBar;
 var manual_move_flag = false;
 var accerlate_flag = false;
-var maxAngle = 14;
-var minAngle = -14;
 var ballXstep;
 let manual_move_interval;
 var time_elapsed = 0;
-var ex_rotation = 0;
 
-const gravity = 0.098;
+const main_interval = 20;
+const gravity = 0.245;
 const forced_accerate = 1.2;
-const rotationSpeed = 0.01;
 const ballRadius = 40;
 // const triangle_length = 20;
-const rotationStep = 0.2;
-const VerticalChangeInterval = 15;
+const rotationStep = 0.4;
 const thickness = 25;
 const centerCircleRadius = 25;
 const barBorderRadius = 3.5;
+const VerticalChangeInterval_seed = 8;
+var verticalChangeInterval = 8;
 var seesawWidth;
 var center_height;
 var random_direction_efficient = 1;
+var verticalBar_elapsed_time = 0;
+var maxX;
+var minX;
+var maxAngle = 25;
+var minAngle = -25;
 
 function Main() {
   canvas = document.getElementById("test");
@@ -49,6 +54,8 @@ function Main() {
 
   seesawWidth = canvas.width * 0.8;
   center_height = canvas.height/2;
+  maxX = canvas.width / 2 + seesawWidth/2;
+  minX = canvas.width / 2 - seesawWidth/2;
 
   optimizeForTouchAndScreens();
   stage.enableMouseOver(10);
@@ -102,6 +109,7 @@ function showStartScreen() {
   showScreen("#logo-screen");
   document.querySelector("#tside .logo-title").innerHTML = String("Balance");
   document.getElementById("tsider").innerHTML = String("Start of Exam");
+  document.getElementById("acc-num").innerHTML = "0";
   document.querySelector("#start-button").addEventListener(
     "click",
     function () {
@@ -137,6 +145,18 @@ function showSecondScreen(train) {
   showScreen("#time-screen");
 }
 
+function initScore() {
+  score = 0;
+  sec = 0;
+  manual_move_flag = false;
+  accerlate_flag = false;
+  time_elapsed = 0;
+  correct_count = 0;
+  total_count = 0;
+  verticalBar_elapsed_time = 0;
+  verticalChangeInterval = 8;
+}
+
 $(document).on("click", "#time-screen #time-buttons .time-button", function () {
   totalSec = Number($(this).attr("data-time"));
   createInterface();
@@ -147,6 +167,13 @@ function createInterface() {
   gameCont = new createjs.Container();
   stage.addChild(gameCont);
 
+  //create the vertical bar
+  verticalBar = new createjs.Shape();
+  verticalBar.graphics.beginFill(trainMode?"#f6cdda":"#dfeef5").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
+  verticalBar.y = center_height;
+  verticalBar.x = canvas.width / 2; - 600;
+  gameCont.addChild(verticalBar);
+
   // Draw a centerShape
   const centerShape = new createjs.Shape();  
   centerShape.graphics.beginFill("#dbdbdb").drawCircle(canvas.width / 2, center_height + thickness/2, centerCircleRadius);
@@ -154,14 +181,6 @@ function createInterface() {
     // .lineTo(seeSaw.x+triangle_length/2, seeSaw.y+triangle_length*Math.cos(Math.PI/6))
     // .closePath();
   gameCont.addChild(centerShape);
-
-  //create the vertical bar
-  verticalBar = new createjs.Shape();
-  verticalBar.graphics.beginFill(trainMode?"#f6cdda":"#dfeef5").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
-  verticalBar.y = center_height;
-  verticalBar.x = canvas.width / 2; - 600;
-  console.log('initial------');
-  gameCont.addChild(verticalBar);
 
   //create the See-Saw
   seeSaw = new createjs.Shape();
@@ -181,8 +200,7 @@ function createInterface() {
   gameCont.addChild(ball);
   stage.update();
   isGame = true;
-  trackTime = setInterval(keepTime, 1000);
-  calcTime = setInterval(calcScore, 1);
+  trackTime = setInterval(keepTime, main_interval);
 
   window.addEventListener("keydown", getKeyDown);
   window.addEventListener("keyup", getKeyUp);
@@ -191,49 +209,106 @@ function createInterface() {
 
   if (trainMode && gamePaused) $("#gamepause").show();
 }
+function startMain() {
+  $('#progress-container').show();
+  $('#main-progress-bar').show();
+  $('#bar-container').css('background', 'rgba(211, 49, 103, 0.5)');
+  $('#main-progress-bar').css('background', 'rgba(211, 49, 103, 1)');
+  if (trainMode){
+    $('#bar-container').css('background', 'rgba(116, 188, 46, 0.5)');
+    $('#main-progress-bar').css('background', 'rgba(116, 188, 46, 1)');
+  }
+  createjs.Ticker.setFPS(60);
+  createjs.Ticker.addEventListener("tick", updateGame);
+}
+function createRandomVerticalBar(){
+  verticalChangeInterval = Math.floor(VerticalChangeInterval_seed + Math.random() * VerticalChangeInterval_seed);
+  verticalBar_elapsed_time =  0;
+  var random_num_len = Math.random();
+  var random_num_direction = Math.random();
+  if (random_num_direction > 0.5){
+    verticalBar.x = seeSaw.x - random_num_len * (seesawWidth*0.4);
+  } else {
+    verticalBar.x = seeSaw.x + random_num_len * (seesawWidth*0.4);
+  }
+  stage.update();
+}
+
+function keepTime() {
+  if (trainMode && gamePaused) return;
+  total_count++;
+  if (total_count == 1 ||  Math.abs(verticalChangeInterval - verticalBar_elapsed_time) < 0.01 ){
+    if (Math.random() > 0.5){
+      random_direction_efficient = 1;
+    } else {
+      random_direction_efficient = -1;
+    }
+    createRandomVerticalBar();
+  }
+  calcScore();
+  if (total_count % (1000/main_interval) == 0){
+    sec++;
+  }
+  var rsec = totalSec - sec;
+  var tStr = String(Math.floor(rsec / 60) + " mins " + (rsec % 60) + " secs");
+  document.getElementById("tsider").innerHTML = String(tStr);
+  
+  // checking game over
+  if (sec > totalSec) {
+    clearInterval(trackTime);
+    if (manual_move_interval){
+      clearInterval(manual_move_interval);
+    }
+    
+    isGame = false;
+    sec = 0;
+    gameOver();
+  }
+}
 function calcScore(){
   if (trainMode && gamePaused) return;
+  verticalBar_elapsed_time += main_interval/1000;
   // if (ball.x > verticalBar.x - 2 * ballRadius && ball.x < verticalBar.x + 2 * ballRadius){
   if (Math.abs(ball.x - verticalBar.x)<10){
     if (trainMode){
       verticalBar.graphics.clear().beginFill("#e4f6cd").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
     }
-    score += 0.001;
+    score += main_interval/1000;
+    correct_count++;
   } else {
     if (trainMode){
       verticalBar.graphics.clear().beginFill("#f6cdda").drawRect(-ballRadius, -canvas.height/2, ballRadius * 2, canvas.height);
     }
   }
   stage.update();
-  if (sec > 0){
-    var acc = Math.round(100*score/sec);
+  if (total_count > 0){
+    var acc = Math.round(100*correct_count/total_count);
     document.getElementById("acc-num").innerHTML = String(acc.toString());
   }
-}
-function moveBallManually(direction = 1){
-  if (random_direction_efficient * direction == 1){
-    if (!(seeSaw.rotation < maxAngle)){
-      return;
-    }
-  } else {
-    if (!(seeSaw.rotation > minAngle)){
-      return;
-    }
-  }
-  seeSaw.rotation += (random_direction_efficient * direction*rotationStep);
   
-  // ballXstep = Math.abs(ball.x- seeSaw.x)*Math.cos(seeSaw.rotation * Math.PI / 180)/ Math.abs(seeSaw.rotation)*rotationStep;
-  // ball.x += (direction * ballXstep);
-  ball.x = seeSaw.x + seesawWidth*0.5*(seeSaw.rotation/maxAngle);
-  ball.y = Math.abs(ball.x- seeSaw.x)*Math.abs(Math.tan(seeSaw.rotation * Math.PI / 180)) + seeSaw.y - ballRadius;
+  var progress = 100 - (verticalBar_elapsed_time/verticalChangeInterval) * 100;
+  updateProgressBar(progress);
+}
+
+function moveBallManually(direction = 1){
+  if (seeSaw.rotation >= maxAngle || seeSaw.rotation <= minAngle) return;
+  if (random_direction_efficient * direction > 0 ){
+    if (ball.x >= maxX) return
+  } else {
+    if (ball.x <= minX) return
+  }
+  
+  seeSaw.rotation += (random_direction_efficient * direction*rotationStep);
+
+  maxX = seeSaw.x + Math.abs((seesawWidth / 2) * Math.cos(seeSaw.rotation * Math.PI / 180));
+  minX = seeSaw.x - Math.abs((seesawWidth / 2) * Math.cos(seeSaw.rotation * Math.PI / 180));
   
   if (random_direction_efficient * direction * seeSaw.rotation > 0){
     accerlate_flag = true;
-    manual_move_flag = false;
   } else {
     accerlate_flag = false;
-    manual_move_flag = true;
   }
+  manual_move_flag = true;
   
   stage.update();
 }
@@ -255,114 +330,42 @@ function getKeyDown(e) {
   }
 }
 
-function initScore() {
-  score = 0;
-  sec = 0;
-  manual_move_flag = false;
-  accerlate_flag = false;
-  time_elapsed = 0;
-  ex_rotation = 0;
-}
-
-function createRandomVerticalBar(){
-  var random_num_len = Math.random();
-  var random_num_direction = Math.random();
-  if (random_num_direction > 0.5){
-    verticalBar.x = seeSaw.x - random_num_len * (seesawWidth*0.4);
-  } else {
-    verticalBar.x = seeSaw.x + random_num_len * (seesawWidth*0.4);
-  }
-  stage.update();
-}
-
-function keepTime() {
-  if (trainMode && gamePaused) return;
-  var real_vertiacl_interval = Math.floor(VerticalChangeInterval + Math.random() * VerticalChangeInterval);
-  if (sec % real_vertiacl_interval == 0 ){
-    createRandomVerticalBar();
-    if (Math.random() > 0.5){
-      random_direction_efficient = 1;
-    } else {
-      random_direction_efficient = -1;
-    }
-  }
-  sec++;
-  var rsec = totalSec - sec;
-  var tStr = String(Math.floor(rsec / 60) + " mins " + (rsec % 60) + " secs");
-  document.getElementById("tsider").innerHTML = String(tStr);
-  
-  // checking game over
-  if (sec > totalSec) {
-    clearInterval(trackTime);
-    if (manual_move_interval){
-      clearInterval(manual_move_interval);
-    }
-    
-    isGame = false;
-    sec = 0;
-    gameOver();
-  }
-}
-
-function startMain() {
-  // createjs.Ticker.setFPS(60);
-  // createjs.Ticker.addEventListener("tick", updateGame);
+function updateProgressBar(progress){
+  var progressBar = document.getElementById('main-progress-bar');
+  progressBar.style.width = progress + '%';
 }
 
 function updateGame(e) {
   var delta_time = createjs.Ticker.getTime() - time_elapsed;
   time_elapsed = createjs.Ticker.getTime();
   if (trainMode && gamePaused) return;
-  if (manual_move_flag) return;
+  // if (manual_move_flag && !accerlate_flag) return;
   if (!(seeSaw.rotation < maxAngle && seeSaw.rotation > minAngle)) return;
-
+  
   var rotation_rad = seeSaw.rotation * Math.PI / 180;
-  if (rotation_rad == 0) return;
 
   // ball sliding
   ball.dx = gravity * Math.sin(rotation_rad)*Math.cos(rotation_rad) * delta_time * delta_time; // Slide left or right based on tilt
   if (accerlate_flag){
-    ball.dx = forced_accerate*ball.dx;
-  }
-  if (ex_rotation > seeSaw.rotation){
-    if (rotation_rad > 0){
-      ball.x -= ball.dx;
-    } else {
-      ball.x += ball.dx;
-    }
+    ball.dx = forced_accerate + ball.dx;
   } else {
-    if (rotation_rad > 0){
-      ball.x += ball.dx;
-    } else {
-      ball.x -= ball.dx;
+    if (manual_move_flag){
+      ball.dx = 0.5*ball.dx;
     }
   }
-  ex_rotation = seeSaw.rotation;
-  ball.y = Math.abs(ball.x - seeSaw.x)*Math.abs(Math.tan(rotation_rad)) + seeSaw.y - ballRadius;
-
   
-  // Prevent the ball from sliding off the see-saw
-  const maxX = seeSaw.x + Math.abs(seesawWidth / 2 * Math.cos(rotation_rad));
-  const minX = seeSaw.x - Math.abs(seesawWidth / 2 * Math.cos(rotation_rad));
-  if (ball.x >= maxX) {
-      ball.x = maxX;
-      maxAngle = seeSaw.rotation;
-  } else if (ball.x <= minX) {
+  if (!(ball.x + ball.dx > minX && ball.x + ball.dx < maxX)) {// prevent ball sliding at the edge
+    if (ball.x + ball.dx <= minX){
       ball.x = minX;
-      minAngle = seeSaw.rotation;
-  } else {
-    if (rotation_rad > 0){
-      seeSaw.rotation += rotationSpeed*delta_time;
-      if (seeSaw.rotation >= maxAngle){
-        maxAngle = seeSaw.rotation + 0.001;
-      }
-    } else {
-      seeSaw.rotation -= rotationSpeed*delta_time;
-      if (seeSaw.rotation <= minAngle){
-        minAngle = seeSaw.rotation - 0.001;
-      }
     }
+    if (ball.x + ball.dx >= minX){
+      ball.x = maxX;
+    }
+  } else {
+    ball.x += ball.dx;
   }
+  
+  ball.y = seeSaw.y - ballRadius + (ball.x - seeSaw.x)*Math.tan(rotation_rad);
 
   stage.update(e);
 }
@@ -372,17 +375,19 @@ function gameOver() {
   createjs.Sound.stop();
   gameCont.removeAllChildren();
   stage.removeChild(gameCont);
+  $('#progress-container').hide();
+  $('#main-progress-bar').hide();
   showEndScreen();
 }
 function showEndScreen() {
   document.getElementById("tsider").innerHTML = String("End of Exam");
   score = Math.round(score);
-  $("#correct_answer").text(score+ 's');
-  $("#total_question").text(totalSec + 's');
+  $("#correct_answer").text(score);
+  $("#total_question").text(totalSec);
   $("#average_accuracy").text(
     totalSec == 0
-    ? "( 0% )"
-    : "( " + (Math.round(score / totalSec *  100) ) + "% )"
+    ? " 0 "
+    : (Math.round(score / totalSec *  100) )
     );
 
   showScreen("#results-screen");
@@ -392,24 +397,25 @@ function showEndScreen() {
   stage.update();
 
   document
-    .querySelector("#restart-button")
+    .querySelector("#main-menu-button")
     .addEventListener("click", startAgain);
+  document
+    .querySelector("#restart-button")
+    .addEventListener("click", restartAgain);
 }
 function startAgain() {
   showStartScreen();
 }
-
-function addBmp(bname, tx, ty, isR) {
-  var bmp = new createjs.Bitmap(loader.getResult(bname));
-  if (isR) {
-    bmp.regX = bmp.image.width / 2;
-    bmp.regY = bmp.image.height / 2;
-  }
-  bmp.y = ty;
-  bmp.x = tx;
-  return bmp;
+function restartAgain(){
+  initScore();
+  createInterface();
 }
+
 $(document).ready(function () {
+  $('canvas').attr('height', $('#main-screen').height() * 0.86);
+  if ($('body').width() < 1200){
+    $('canvas').attr('height', $('#main-screen').height());
+  }
   $("#logo").click(function () {
     if (!showSetting) return;
     $("#setting").slideDown();
@@ -431,26 +437,50 @@ $(document).ready(function () {
     manual_move_interval = setInterval(function() {
       moveBallManually(-1);
     }, 50);
-    
-  })
+  });
+  $('.left-up-btn').on("touchstart", function(event){
+    $(this).addClass('active');
+    manual_move_interval = setInterval(function() {
+      moveBallManually(-1);
+    }, 50);
+  });
+  
   $('.left-up-btn').mouseup(function(event){
     $(this).removeClass('active');
     clearInterval(manual_move_interval);
     manual_move_flag = false;
     accerlate_flag = false;
-  })
+  });
+  $('.left-up-btn').on("touchend", function(event){
+    $(this).removeClass('active');
+    clearInterval(manual_move_interval);
+    manual_move_flag = false;
+    accerlate_flag = false;
+  });
   $('.right-up-btn').mousedown(function(event){
     $(this).addClass('active');
     manual_move_interval = setInterval(function() {
       moveBallManually(1);
     }, 50);
-  })
+  });
+  $('.right-up-btn').on('touchstart',function(event){
+    $(this).addClass('active');
+    manual_move_interval = setInterval(function() {
+      moveBallManually(1);
+    }, 50);
+  });
   $('.right-up-btn').mouseup(function(event){
     $(this).removeClass('active');
     clearInterval(manual_move_interval);
     manual_move_flag = false;
     accerlate_flag = false;
-  })
+  });
+  $('.right-up-btn').on('touchend', function(event){
+    $(this).removeClass('active');
+    clearInterval(manual_move_interval);
+    manual_move_flag = false;
+    accerlate_flag = false;
+  });
 
   $("#exit_setting").click(function () {
     $("#setting").slideUp();
@@ -469,6 +499,8 @@ $(document).ready(function () {
     createjs.Sound.stop();
     gameCont.removeAllChildren();
     stage.removeChild(gameCont);
+    $('#progress-container').hide();
+    $('#main-progress-bar').hide();
 
     showStartScreen();
   });
