@@ -37,8 +37,8 @@ const rotationStep = 0.4;
 const thickness = 25;
 const centerCircleRadius = 25;
 const barBorderRadius = 3.5;
-const VerticalChangeInterval_seed = 8;
-var verticalChangeInterval = 8;
+const VerticalChangeInterval_seed = 5;
+var verticalChangeInterval = 5;
 var seesawWidth;
 var center_height;
 var random_direction_efficient = 1;
@@ -392,7 +392,7 @@ function showEndScreen() {
 
   showScreen("#results-screen");
   showSetting = false;
-  let _accu = totalSec == 0 ? 0 : (Math.round(score / totalSec) * 100);
+  let _accu = totalSec == 0 ? 0 : (Math.round(score / totalSec * 100) );
   insertResults(_accu, totalSec);
   stage.update();
 
