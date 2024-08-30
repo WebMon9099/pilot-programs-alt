@@ -11,8 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
     <!-- <link rel="stylesheet" media="screen" href="additional-styles.css" /> -->
-    <link rel="stylesheet" media="screen" href="../_common/css/styles.css" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" media="screen" href="../_common/css/styles.css?v=1" />
+    <link rel="stylesheet" href="styles.css?v=1" />
     <script src="../_common/js/jquery.min.js"></script>
     <script src="../_common/js/jqueryui.min.js"></script>
     <script src="../_common/js/game.js"></script>
@@ -21,7 +21,7 @@
     <script src="lib/soundjs-NEXT.min.js"></script>
     <script src="lib/preloadjs-NEXT.min.js"></script>
     <script src="joy.js"></script>
-    <script src="main.js"></script>
+    <script src="main.js?v=2"></script>
 
 </head>
 
@@ -44,29 +44,83 @@
                 PFD
             </div>
             <div id="setting">
-                <h4 class="setting_title">Controller Settings</h4>
-                <div class="setting_contonller">
-                    <p class="controller_name">Left Controller <span class="controller_target">for Speed:</span></p>
+                <div class="setting_title">Settings</div>
+                <div class="setting_contonller speed_yaw_controller">
+                    <p class="controller_name">Left Controller <span class="controller_target">for Speed and Yaw:</span></p>
                     <div class="controller_content" id="speed_controller">
                         <button class="left_controller"></button>
                         <p class="set_controller">Saitek ST90 USB Joystick</p>
                         <button class="right_controller"></button>
                     </div>
+                    <div class="axis-setting">
+                        <div style="display:flex;justify-content:space-between;">
+                            <div style="display:flex;">
+                                <div class="arrow-icon-container">
+                                    <img src="images/up-down-icon.svg" />
+                                </div>
+                                <label class="switch-title">Speed Axis:</label>
+                            </div>
+                            <select class="speed-axis axis-select">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="axis-setting">
+                        <div style="display:flex;justify-content:space-between;">
+                            <div style="display:flex;">
+                                <div class="arrow-icon-container">
+                                    <img src="images/left-right-icon.svg" />
+                                </div>
+                                <label class="switch-title">Yaw Axis:</label>
+                            </div>
+                            <select class="yaw-axis axis-select">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="switch-container">
+                        <label class="switch-title">Turbulence</label>
+                        <label class="switch">
+                            <input type="checkbox" id="left_trubulence_check" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                 </div>
-                <div class="setting_contonller">
+                <div class="setting_contonller alt_head_controller">
                     <p class="controller_name">Right Controller <span class="controller_target">for Altitude and Heading:</span></p>
                     <div class="controller_content" id="alt_head_controller">
                         <button class="left_controller"></button>
                         <p class="set_controller">Saitek ST90 USB Joystick</p>
                         <button class="right_controller"></button>
                     </div>
-                </div>
-                <div class="setting_contonller end">
-                    <p class="controller_name">Rudder Controller <span class="controller_target">for Yaw Control:</span></p>
-                    <div class="controller_content" id="yaw_controller">
-                        <button class="left_controller"></button>
-                        <p class="set_controller">No Controller</p>
-                        <button class="right_controller"></button>
+                    <div class="axis-setting">
+                        <div style="display:flex;justify-content:space-between;">
+                            <div style="display:flex;">
+                                <div class="arrow-icon-container">
+                                    <img src="images/up-down-icon.svg" />
+                                </div>
+                                <label class="switch-title">Alt Axis:</label>
+                            </div>
+                            <select class="alt-axis axis-select">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="axis-setting">
+                        <div style="display:flex;justify-content:space-between;">
+                            <div style="display:flex;">
+                                <div class="arrow-icon-container">
+                                    <img src="images/left-right-icon.svg" />
+                                </div>
+                                <label class="switch-title">Head Axis:</label>
+                            </div>
+                            <select class="heading-axis axis-select">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="switch-container">
+                        <label class="switch-title">Turbulence</label>
+                        <label class="switch">
+                            <input type="checkbox" id="right_trubulence_check" checked>
+                            <span class="slider round"></span>
+                        </label>
                     </div>
                 </div>
                 <div class="set_content">
@@ -85,6 +139,15 @@
                             <div class="step-name hard-sname">Hard</div>
                         </div>
                     </div>
+                </div>
+                <div class="setting_contonller realism-container">
+                    <p class="controller_name">Realism</p>
+                    <label class="realism">
+                        <input type="checkbox" id="realism_check" checked>
+                        <span class="big-slider slider round"></span>
+                        <div id="left-letter-big-slide" class="big-slide-letter">Enabled</div>
+                        <div id="right-letter-big-slide" class="big-slide-letter">Realism</div>
+                    </label>
                 </div>
                 <div id="exit_setting">Exit to Main Menu</div>
             </div>
@@ -120,11 +183,102 @@
             <button id="train-button" class="big train-button">
                 Training Mode
             </button>
+            <button id="setting-button" class="big setting-button">
+                Settings
+            </button>
             <a href="#" onclick="window.open( '/user-guide/pfd', 'name', 'location=no,scrollbars=yes,status=no,toolbar=no,resizable=yes' )" target="”_blank”" rel="noopener">
 <button id="userguide-button" class="big userguide-button">
 			User Guide
 		</button></a>
         </div>
+        <!-- The Modal for Setting -->
+        <div id="settiingModal" class="modal">
+            
+            <div class="modal-content">
+                <div class="setting_title modal-title">Joystick Settings</div>
+                <div class="contents-area">
+                    <div class="setting-parameter-container">
+                        <div class="setting_contonller speed_yaw_controller">
+                            <p class="controller_name">Left Controller <span class="controller_target">for Speed and Yaw:</span></p>
+                            <div class="controller_content" id="speed_controller">
+                                <button class="left_controller"></button>
+                                <p class="set_controller">Saitek ST90 USB Joystick</p>
+                                <button class="right_controller"></button>
+                            </div>
+                            <div class="axis-setting">
+                                <div style="display:flex;justify-content:space-between;">
+                                    <div style="display:flex;">
+                                        <div class="arrow-icon-container">
+                                            <img src="images/up-down-icon.svg" />
+                                        </div>
+                                        <label class="switch-title">Speed Axis:</label>
+                                    </div>
+                                    <select class="speed-axis axis-select">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="axis-setting">
+                                <div style="display:flex;justify-content:space-between;">
+                                    <div style="display:flex;">
+                                        <div class="arrow-icon-container">
+                                            <img src="images/left-right-icon.svg" />
+                                        </div>
+                                        <label class="switch-title">Yaw Axis:</label>
+                                    </div>
+                                    <select class="yaw-axis axis-select">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setting_contonller alt_head_controller">
+                            <p class="controller_name">Right Controller <span class="controller_target">for Altitude and Heading:</span></p>
+                            <div class="controller_content" id="alt_head_controller">
+                                <button class="left_controller"></button>
+                                <p class="set_controller">Saitek ST90 USB Joystick</p>
+                                <button class="right_controller"></button>
+                            </div>
+                            <div class="axis-setting">
+                                <div style="display:flex;justify-content:space-between;">
+                                    <div style="display:flex;">
+                                        <div class="arrow-icon-container">
+                                            <img src="images/up-down-icon.svg" />
+                                        </div>
+                                        <label class="switch-title">Alt Axis:</label>
+                                    </div>
+                                    <select class="alt-axis axis-select">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="axis-setting">
+                                <div style="display:flex;justify-content:space-between;">
+                                    <div style="display:flex;">
+                                        <div class="arrow-icon-container">
+                                            <img src="images/left-right-icon.svg" />
+                                        </div>
+                                        <label class="switch-title">Head Axis:</label>
+                                    </div>
+                                    <select class="heading-axis axis-select">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="joystick-test-area">
+                        <div class="joystick-tester">
+                            <div class="coords-container">Current Joystick Pos:</div>
+                            <div class="dot"></div>
+                            <div class="x-axis-line"></div>
+                            <div class="y-axis-line"></div>
+                            <!-- <div class="coords-values-area">
+                                <span class="x-coord">X: 0</span>&nbsp;&nbsp;
+                                <span class="y-coord">Y: 0</span>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end modal -->
         <div class="screen off" id="time-screen">
             <div class="time-screen-title">Select your duration:</div>
             <ul id="time-buttons">

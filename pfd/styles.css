@@ -364,18 +364,37 @@ a.exit {
 	font-size: 15px;
 	color: #767676;
 	display: none;
-    width: 280px;
+    width: 320px;
 }
 
 .setting_title {
     text-align: left;
     padding: 0 15px;
+    font-family: 'Inter';
+    font-weight: 700;
+    color: #565656;
+    background-color: #DDDDDD;
+    border-bottom:1px solid #D0D0D0;
+    margin: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 20px;
+    background-image: url(./images/bottom-right-logo.svg);
+    background-repeat: no-repeat;
+    background-position: right;
+}
+.modal-title{
+    background-color:white;
+    border-bottom: none;
 }
 
 .setting_contonller {
     text-align: left;
-    padding: 0 15px 15px;
     font-size: 12px;
+    border-bottom: 1px solid #D0D0D0;
+    margin: 0 10px 0 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 #setting .setting_contonller.end {
@@ -386,7 +405,7 @@ a.exit {
 .controller_target {
     color: #ababab !important;
     font-family: "Open Sans";
-    font-size: 12px !important;
+    font-size: 14px !important;
     margin: 0 !important;
 }
 
@@ -400,7 +419,7 @@ a.exit {
 
 .controller_content > button {
     color: white;
-    background-color: #00acdd;
+    background-color: #34424c;
     border: 2px solid white;
     cursor: pointer;
     background-image: url(./images/triangle.svg);
@@ -446,7 +465,8 @@ a.exit {
 
 .set_intensity {
 	text-align: left;
-	font-weight: 600;
+	font-weight: 500;
+    color: #565656;
 }
 
 .stepper-wrapper {
@@ -616,4 +636,323 @@ button#train-button:hover {
   #PAT_exam_logo {padding-bottom: 3rem !important;}
   #PAT_exam_logo img {height: 60px}
   .bottom {margin-top: 0.5rem !important;}
+}
+
+#time-screen ul#time-buttons {
+    margin-top: 3em;
+    list-style-type: none;
+    padding: 0 !important;
+  }
+  #time-screen ul#time-buttons li {
+    margin-bottom: 2em;
+    text-align: -webkit-center;
+    text-align: center;
+  }
+  #time-screen ul#time-buttons li button {
+    padding: 13px 70px;
+    font-size: 16px;
+    text-align: center;
+    margin: 0 auto;
+    
+    font-family: 'Inter';
+    font-weight: 500;
+    color: #646464;
+    border-radius: 6px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 1px 1px 4px #e8e8e8;
+    transition: 0.2s;
+  }
+  #time-screen ul#time-buttons li button:hover {
+    background-color: #ececec;
+    cursor: pointer;
+    border:1px solid #00ACDD;
+    box-shadow: 0px 1px 6px #48A8EF;
+  }
+  #time-screen ul#time-buttons li button.traing_mode:hover {
+    border:1px solid #6BDB00;
+    box-shadow: 0px 1px 6px #8DE022;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 63px;
+    height: 25px;
+    float: right
+}
+
+.switch-title {
+    color: #767676;
+    font-size: 14px;
+    margin-top: 4px;
+    display: inline-block
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #dd1948;
+    box-shadow: inset 0 0 10px #8f8f8f61;
+    -webkit-transition: .4s;
+    transition: .4s
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 24px;
+    left: 4px;
+    bottom: 3.5px;
+    background-color: #fff;
+    -webkit-transition: .4s;
+    transition: .4s
+}
+
+input:checked+.slider {
+    background-color: #7dcc21;
+    box-shadow: inset 0 0 10px #8f8f8f61
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196f3
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px)
+}
+
+.slider.round {
+    border-radius: 34px
+}
+
+.slider.round:before {
+    border-radius: 16px
+}
+.switch-container{
+    width:100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+.controller_name{
+    font-family: 'Inter';
+    font-weight: 500;
+    color: #565656;
+    font-size: 15px;
+    margin-top:0px;
+}
+.controller_name span{
+    color:#919191;
+}
+.axis-setting{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: none;
+}
+.axis-select{
+    min-width: 120px;
+    height: 25px;
+    color: #919191;
+}
+
+.big-slider:before {
+    content: "";
+    height: 23px;
+    width: 92px;
+    left: 10px;
+    bottom: 3.5px;
+    background-color: #fff;
+    -webkit-transition: .4s;
+    transition: .4s;
+    color:black;
+}
+
+input:checked+.big-slider:before {
+    -webkit-transform: translateX(90px);
+    -ms-transform: translateX(90px);
+    transform: translateX(90px)
+}
+
+.big-slider.round {
+    border-radius: 34px
+}
+
+.big-slider.round:before {
+    border-radius: 16px
+}
+.realism{
+    width: 200px;
+    height: 28px;
+    margin-left:30px;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+.realism input{
+    opacity: 0;
+    width: 0;
+    height: 0
+}
+.big-slide-letter{
+    position: absolute;
+    top:4px;
+    font-size: 14px;
+}
+#left-letter-big-slide{
+    left:27px;
+    color:white;
+}
+#right-letter-big-slide{
+    left:119px;
+    color:black;
+}
+.realism-container{
+    display: none;
+}
+
+option:disabled{
+    color:lightgray;
+    opacity:0.1;
+}
+.arrow-icon-container{
+    padding-top: 2px;
+}
+.arrow-icon-container img{
+    width:30px;
+    height:23px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 700px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+.contents-area{
+    display: flex;
+    height: 100%;
+    padding: 14px;
+    min-height: 470px;
+}
+.setting-parameter-container{
+    width:45%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.joystick-test-area {
+    position: relative;
+    overflow: hidden;
+    width:53%;
+    margin-left: 2%;
+}
+.joystick-tester {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    box-shadow: inset;
+    background-color: #f7f7f7;
+    border: 1px solid #e4e4e4;
+    border-radius: 3px;
+    box-shadow: inset 0px 0px 10px 1px rgba(0, 0, 0, 0.05);
+}
+.joystick-tester > .coords-container {
+    position: relative;
+    color: #afafaf;
+    font-size: 14px;
+    font-weight: 600;
+    top: 1rem;
+    left: 1rem;
+    text-align: left;
+}
+.joystick-tester > .coords-container > span > :not(:last-child){
+    margin-right: 1rem;
+}
+
+.joystick-tester > .dot {
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    background-color: #666;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    border-radius: 50%;
+    top:50%;
+    left:50%;
+}
+
+.joystick-tester > .x-axis-line {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background-color: #dfdfdf;
+    opacity: 0.5;
+}
+
+.joystick-tester > .y-axis-line {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background-color: #dfdfdf;
+    opacity: 0.5;
+}
+.joystick-tester > .coords-values-area{
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 12px;
+    color:#bfbfbf;
 }

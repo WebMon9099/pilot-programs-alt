@@ -534,6 +534,29 @@ button#train-button {
   background-position: 50% 20%;
   box-shadow: 0px 1px 4px #eee;
 }
+button#setting-button {
+  color: #646464;
+  border: 1px solid #dfdfdf;
+  background-color: #fff;
+  padding: 110px 0px 40px 0px;
+  letter-spacing: 1px;
+  transition: 0.3s;
+  border-radius: 6px;
+  font-size: 28px;
+  width: 300px;
+  background-image: url(../images/icon_settings.svg);
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 50% 25%;
+  margin-left: 15px;
+  box-shadow: 0px 1px 4px #ddd;
+  cursor: pointer;
+}
+button#setting-button:hover {
+  box-shadow: rgba(50, 50, 50, 0.15) 0px 0px 12px 1px;
+  cursor: pointer;
+  border: 1px solid #00acdd;
+}
 button#userguide-button {
   color: #646464;
   border: 1px solid #dfdfdf;
@@ -622,9 +645,9 @@ button#restart-button:hover {
   #logo-screen {background-position: 18px 87%; background-size: 200px}
   #logo-screen #subtitle {font-size: 2.2em;margin-bottom: 0px;}
 
-  button#start-button, button#train-button, button#userguide-button {font-size: 1.2rem;font-weight: 500;border-radius: 5px;width: 220px;padding: 86px 0px 32px 0px;background-size: 45px;background-position: 50% 26%;box-shadow: 0px 1px 4px #eee;}
+  button#start-button, button#train-button,button#setting-button,  button#userguide-button {font-size: 1.2rem;font-weight: 500;border-radius: 5px;width: 220px;padding: 86px 0px 32px 0px;background-size: 45px;background-position: 50% 26%;box-shadow: 0px 1px 4px #eee;}
   button#start-button {margin-right: 5px;}
-  button#userguide-button {margin-left: 5px;}
+  button#userguide-button,button#setting-button  {margin-left: 5px;}
   button#restart-button {font-size: 14px; font-weight: 600;}
 }
 
