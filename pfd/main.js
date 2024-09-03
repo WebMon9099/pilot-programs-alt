@@ -280,20 +280,28 @@ function pollGamepads() {
           var x_axis_value = connected_gamepads[i].axes[0];
           var origin_x = parseInt($('.dot').css('left'));
           if (x_axis_value < -0.05){
-            $('.dot').css('left', (origin_x - 1).toString() + 'px');
+            if (origin_x > 10){
+              $('.dot').css('left', (origin_x - 1).toString() + 'px');
+            }
             
           }
           if (x_axis_value > 0.05){
-            $('.dot').css('left', (origin_x + 1).toString() + 'px');
+            if(origin_x < $('.joystick-tester').width() - 10){
+              $('.dot').css('left', (origin_x + 1).toString() + 'px');
+            }
           }
           //check Y move
           var y_axis_value = connected_gamepads[i].axes[1];
           var origin_y = parseInt($('.dot').css('top'));
           if (y_axis_value < -0.05){
-            $('.dot').css('top', (origin_y - 1).toString() + 'px');
+            if (origin_y > 10){
+              $('.dot').css('top', (origin_y - 1).toString() + 'px');
+            }
           }
           if (y_axis_value > 0.05){
-            $('.dot').css('top', (origin_y + 1).toString() + 'px');
+            if (origin_y < $('.joystick-tester').height() - 10){
+              $('.dot').css('top', (origin_y + 1).toString() + 'px');
+            }
           }
       }
     }
