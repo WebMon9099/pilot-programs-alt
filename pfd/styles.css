@@ -357,14 +357,14 @@ a.exit {
 
 #setting {
 	position: absolute;
-    top: 55px;
-    left: 1px;
-    z-index: 9;
-    background: #eaeaea;
+	top: 55px;
+	left: 0px;
+	z-index: 9;
+	background: #ffffff;
 	font-size: 15px;
 	color: #767676;
 	display: none;
-    width: 320px;
+	width: 320px;
 }
 
 .setting_title {
@@ -373,7 +373,7 @@ a.exit {
     font-family: 'Inter';
     font-weight: 700;
     color: #565656;
-    background-color: #DDDDDD;
+    background-color: #ffffff;
     border-bottom:1px solid #D0D0D0;
     margin: 0;
     padding-top: 15px;
@@ -384,17 +384,24 @@ a.exit {
     background-position: right;
 }
 .modal-title{
-    background-color:white;
-    border-bottom: none;
+    background-color: transparent;
+    border-bottom: 1px solid #dfdfdf;
 }
 
 .setting_contonller {
     text-align: left;
     font-size: 12px;
-    border-bottom: 1px solid #D0D0D0;
-    margin: 0 10px 0 10px;
+    border-bottom: 1px solid #e3e3e3e0;
+    /* margin: 0 10px 0 10px; */
     padding-top: 10px;
     padding-bottom: 10px;
+    padding: 13px;
+}
+
+.modal-content .setting_contonller {
+	/* border: 1px solid #e8e8e8; */
+	padding: 15px;
+	margin: 0 !important;
 }
 
 #setting .setting_contonller.end {
@@ -405,12 +412,14 @@ a.exit {
 .controller_target {
     color: #ababab !important;
     font-family: "Open Sans";
-    font-size: 14px !important;
+    font-size: 15px !important;
     margin: 0 !important;
+	font-weight: 600;
+	
 }
 
 .controller_content {
-    background-color: #e2e2e2;
+    background-color: #e1e9ee;
     border-radius: 50px;
     text-align: center;
     display: table;
@@ -444,14 +453,17 @@ a.exit {
 }
 
 .set_controller {
-    color: #515151 !important;
+    color: #676767 !important;
     line-height: 33px;
-    font-size: 12px !important;
+    font-size: 13px !important;
+    font-weight: 600;
     margin: 0 !important;
     display: inline-block;
     width: 180px;
     white-space: nowrap;
     overflow: hidden;
+    top: 2px;
+    position: relative;
 }
 
 .set_controller.no_controll {
@@ -460,13 +472,15 @@ a.exit {
 
 .set_content {
 	padding: 0 15px;
-    border-bottom: 1px solid #d3d3d3;
+	border-bottom: 1px solid #e6e6e6;
 }
 
 .set_intensity {
 	text-align: left;
-	font-weight: 500;
-    color: #565656;
+	font-weight: 700;
+	color: #565656;
+	letter-spacing: normal;
+	margin-bottom: 8px;
 }
 
 .stepper-wrapper {
@@ -536,11 +550,11 @@ a.exit {
 	border: 2px solid white;
 	box-shadow: 0px 0px 3px 1px #c5c5c5;
 	border-radius: 50%;
-	background: #00acdd;
+	background: #34424C;
 }
 
 .stepper-item.completed::before {
-	border-color: #00acdd;
+	border-color: #34424C;
 }
 
 .stepper-item:first-child::before {
@@ -551,7 +565,7 @@ a.exit {
 }
 
 #exit_setting {
-	background: #e0e0e0;
+	background: #f4f4f4;
 	padding: 15px 0px;
 	cursor: pointer;
 	text-align: center;
@@ -559,11 +573,12 @@ a.exit {
 	float: left;
 	/* margin: 10px; */
 	width: 100%;
+	transition: 0.2s;
+	font-weight: 700;
 }
 
 #exit_setting:hover {
-	background: #00acdd;
-	color: #fff;
+	background: #ededed;
 }
 
 button#train-button {
@@ -653,17 +668,17 @@ button#train-button:hover {
     font-size: 16px;
     text-align: center;
     margin: 0 auto;
-    
+    background-color: white;
     font-family: 'Inter';
     font-weight: 500;
     color: #646464;
     border-radius: 6px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid #d8d8d8;
     box-shadow: 1px 1px 4px #e8e8e8;
     transition: 0.2s;
   }
   #time-screen ul#time-buttons li button:hover {
-    background-color: #ececec;
+    background-color: #fff;
     cursor: pointer;
     border:1px solid #00ACDD;
     box-shadow: 0px 1px 6px #48A8EF;
@@ -678,12 +693,13 @@ button#train-button:hover {
     display: inline-block;
     width: 63px;
     height: 25px;
-    float: right
+    float: right;
 }
 
 .switch-title {
     color: #767676;
     font-size: 14px;
+    font-weight: 600;
     margin-top: 4px;
     display: inline-block
 }
@@ -742,18 +758,36 @@ input:checked+.slider:before {
     border-radius: 16px
 }
 .switch-container{
-    width:100%;
+    /* width:100%; */
     display: flex;
     justify-content: space-between;
     margin-top: 8px;
-    margin-bottom: 8px;
+    /* margin-bottom: 8px; */
+    /* border-top: 1px solid #ddd; */
+    padding: 6px 6px 6px 6px;
+    background-color: #eeeeee;
+    border-radius: 30px;
+    /* padding: 0 20px; */
+    align-items: center;
+    align-content: center;
 }
+
+.switch-container .switch-title {
+	margin-top: 0px !important;
+	color: #67676f;
+	font-weight: 600;
+	margin-left: 10px;
+	font-size: 1.1em
+}
+
 .controller_name{
     font-family: 'Inter';
-    font-weight: 500;
-    color: #565656;
+    font-weight: 700;
+    color: #747474;
     font-size: 15px;
     margin-top:0px;
+    line-height: 1.8em;
+    letter-spacing: normal;
 }
 .controller_name span{
     color:#919191;
@@ -770,14 +804,15 @@ input:checked+.slider:before {
     min-width: 120px;
     height: 25px;
     color: #919191;
+    border-color: #ccc;
 }
 
 .big-slider:before {
     content: "";
-    height: 23px;
-    width: 92px;
-    left: 10px;
-    bottom: 3.5px;
+    height: 29px;
+    width: 141px;
+    left: 5px;
+    bottom: 5px;
     background-color: #fff;
     -webkit-transition: .4s;
     transition: .4s;
@@ -785,9 +820,9 @@ input:checked+.slider:before {
 }
 
 input:checked+.big-slider:before {
-    -webkit-transform: translateX(90px);
-    -ms-transform: translateX(90px);
-    transform: translateX(90px)
+    -webkit-transform: translateX(138px);
+    -ms-transform: translateX(138px);
+    transform: translateX(138px)
 }
 
 .big-slider.round {
@@ -798,9 +833,9 @@ input:checked+.big-slider:before {
     border-radius: 16px
 }
 .realism{
-    width: 200px;
-    height: 28px;
-    margin-left:30px;
+    width: 100%;
+    height: 38px;
+    /* margin-left:30px; */
     position: relative;
     display: inline-block;
     cursor: pointer;
@@ -812,19 +847,23 @@ input:checked+.big-slider:before {
 }
 .big-slide-letter{
     position: absolute;
-    top:4px;
+    top: 9px;
     font-size: 14px;
 }
 #left-letter-big-slide{
-    left:27px;
+    left: 49px;
     color:white;
 }
 #right-letter-big-slide{
-    left:119px;
+    left: 191px;
     color:black;
 }
 .realism-container{
     display: none;
+}
+
+.realism-container .controller_name {
+	margin-bottom: 5px;
 }
 
 option:disabled{
@@ -855,8 +894,8 @@ option:disabled{
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
+    margin: 10.5% auto; /* 15% from the top and centered */
+    /* padding: 20px; */
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
     max-width: 700px;
@@ -866,11 +905,46 @@ option:disabled{
 .contents-area{
     display: flex;
     height: 100%;
-    padding: 14px;
+    /* padding: 14px; */
     min-height: 470px;
 }
 .setting-parameter-container{
     width:45%;
+    border-right: 1px solid #dfdfdf;
+}
+
+.setting-parameter-container .controller_name {
+	font-size: 1.4em;
+	line-height: 1.6em;
+	padding-bottom: 10px;
+	font-weight: 700;
+	padding-top: 7.5px;
+}
+
+.setting-parameter-container .controller_target {
+	font-size: 1em !important;
+	font-weight: 500;
+}
+
+.setting-parameter-container .controller_content {
+	margin-bottom: 20px;
+}
+
+.setting-parameter-container .alt_head_controller {
+	border-bottom: none
+}
+
+.setting-parameter-container .switch-title {
+	font-weight: 600;
+}
+
+.setting-parameter-container .axis-select {
+	border: 1px solid #e9e9e9;
+}
+
+.setting-parameter-container .axis-select:focus {
+	outline: none !important;
+	box-shadow: 0 0 6px 1px #64b2f0
 }
 
 /* The Close Button */
@@ -892,7 +966,7 @@ option:disabled{
     position: relative;
     overflow: hidden;
     width:53%;
-    margin-left: 2%;
+    margin: 20px;
 }
 .joystick-tester {
     position: absolute;
@@ -900,7 +974,6 @@ option:disabled{
     right: 0;
     bottom: 0;
     left: 0;
-    box-shadow: inset;
     background-color: #f7f7f7;
     border: 1px solid #e4e4e4;
     border-radius: 3px;
@@ -914,6 +987,8 @@ option:disabled{
     top: 1rem;
     left: 1rem;
     text-align: left;
+	width: 90%;
+	line-height: 1.75em;
 }
 .joystick-tester > .coords-container > span > :not(:last-child){
     margin-right: 1rem;

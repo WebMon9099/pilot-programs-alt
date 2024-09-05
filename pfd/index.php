@@ -12,7 +12,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
     <!-- <link rel="stylesheet" media="screen" href="additional-styles.css" /> -->
     <link rel="stylesheet" media="screen" href="../_common/css/styles.css?v=1" />
-    <link rel="stylesheet" href="styles.css?v=1" />
+    <link rel="stylesheet" href="styles.css?v=2" />
     <script src="../_common/js/jquery.min.js"></script>
     <script src="../_common/js/jqueryui.min.js"></script>
     <script src="../_common/js/game.js"></script>
