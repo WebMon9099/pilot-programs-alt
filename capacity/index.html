@@ -4,8 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Capacity</title>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" media="screen" href="./_common/css/styles.css?v=2" />
-<link rel="stylesheet" href="custom.css?v=1" />
+<link rel="stylesheet" media="screen" href="./_common/css/styles.css?v=1" />
+<link rel="stylesheet" href="custom.css?v=22" />
 <script src="../_common/js/jquery.min.js"></script>
 <script src="../_common/js/jqueryui.min.js"></script>
 <script src="../_common/js/game.js"></script>
@@ -16,7 +16,7 @@
 <script src="lib/preloadjs-NEXT.min.js"></script>
 <!-- <script src="joy.js"></script> -->
 <script src="checklist.js?v=1"></script>
-<script src="main.js?v=12"></script>
+<script src="main.js?v=14"></script>
         
 </head>
 
@@ -120,6 +120,13 @@
 						</div>
 				</div>
 			</div>
+			<div class="keyboard-controller">
+				<label class="switch-title" id="keyboard_check" style="margin-bottom: 10px; cursor:pointer">Enable On-Screen Keyboard</label>
+				<!-- <label class="switch">
+					<input type="checkbox" id="keyboard_check">
+					<span class="slider round"></span>
+				</label> -->
+			</div>
 			<div id="exit_setting">Exit to Main Menu</div>
 		</div>
 	</div>
@@ -135,6 +142,30 @@
 		<span>Training Mode</span>
 	</div>
 </div>
+<!-- The Modal for Setting -->
+<div id="keyboardModal" class="modal">
+            
+	<div class="modal-content">
+		<div class="calculator-keys">
+			<button type="button" class="key">1</button>
+			<button type="button" class="key">2</button>
+			<button type="button" class="key">3</button>
+
+			<button type="button" class="key">4</button>
+			<button type="button" class="key">5</button>
+			<button type="button" class="key">6</button>
+
+			<button type="button" class="key">7</button>
+			<button type="button" class="key">8</button>
+			<button type="button" class="key">9</button>
+			
+			<button type="button" class="key">.</button>
+			<button type="button" class="key">0</button>
+			<button type="button" class="key" id="clear-btn"><img style="width: 25px;" src="./images/backspace.svg"/></button>
+	</div>
+	</div>
+</div>
+<!-- end modal -->
 
 <div id ="mainb">
 	<img src="./images/paused_indicator.png" alt="Pause" id="gamepause"/>

@@ -21,7 +21,7 @@
     <script src="lib/soundjs-NEXT.min.js"></script>
     <script src="lib/preloadjs-NEXT.min.js"></script>
     <script src="joy.js"></script>
-    <script src="main.js?v=1"></script>
+    <script src="main.js?v=2"></script>
 
 </head>
 

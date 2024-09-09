@@ -141,6 +141,7 @@ var real_question_index = 0;
 var real_question_interval = 0;
 var real_question_in_progress = false;
 var question_during_flag = false;
+var keyboard_flag = false;
 
 function Main() {
   canvas = document.getElementById("test");
@@ -1228,6 +1229,9 @@ function createInterface() {
   if (trainMode && gamePaused) $("#gamepause").show();
 }
 function getKeyDown(e) {
+  if (keyboard_flag){
+    return;
+  }
   e.preventDefault();
   if (
     activeAltitude &&
@@ -1276,7 +1280,6 @@ function getKeyDown(e) {
 }
 function clickAltROTrk(e) {
   let tname = e.target.name;
-  console.log('tname', tname);
   altCont.getChildByName("alt").image = loader.getResult("Bblack");
   ROCont.getChildByName("ro").image = loader.getResult("Bblack");
   TRKcont.getChildByName("trk").image = loader.getResult("Bblack");
@@ -1311,6 +1314,9 @@ function clickAltROTrk(e) {
   altitudeT.text = String(currentAltitude);
   ROT.text = String(currentRO);
   TRK.text = String(currentTRK);
+  if (keyboard_flag){
+    $('#keyboardModal').fadeIn();
+  }
 }
 function confirmAltROTrk(e) {
   let tname = e.target.name;
@@ -1732,6 +1738,7 @@ function initScore() {
   real_question_interval = 0;
   real_question_in_progress = false;
   question_during_flag = false;
+  keyboard_flag = false;
   currentWaypoint = "EVY";
   currentAltitude = "29000";
   oldAltitude = "29000";
@@ -1749,6 +1756,7 @@ function initScore() {
   $('#Radio_check').prop('checked', true);
   $('#TCAS_check').prop('checked', true);
   $('#statements_check').prop('checked', true);
+  $('#keyboard_check').prop('checked', false);
   $(".stepper-item-tolerance").removeClass('active').removeClass('completed');
   $(".stepper-item-tolerance").first().addClass('active').addClass('completed');
   $(".stepper-item-intensity").removeClass('active').removeClass('completed');
@@ -3055,6 +3063,14 @@ $(document).ready(function () {
     $("#setting").slideDown();
     $("#opaque").show();
   });
+  
+  $('#keyboardModal').draggable();
+  $(window).click(function(event) {
+    if ($(event.target).is("#keyboardModal")) {
+        $("#keyboardModal").fadeOut();
+    }
+  });
+  
 
   $("body").click(function (event) {
     if (
@@ -3136,6 +3152,14 @@ $(document).ready(function () {
   $("#Radio_check").change(function () {
     freqCont.visible = $(this).prop("checked");
   });
+  $("#keyboard_check").click(function () {
+    keyboard_flag = !keyboard_flag;
+    if (keyboard_flag){
+      $("#keyboard_check").text('Disable On-Screen Keyboard')
+    } else {
+      $("#keyboard_check").text('Enable On-Screen Keyboard')
+    }
+  });
 
   $("#TCAS_check").change(function () {
     rectCont.visible = $(this).prop("checked");
@@ -3185,6 +3209,48 @@ $(document).ready(function () {
     $(this).addClass("active");
     tolernace = parseFloat($(this).attr("key"));
   });
+
+  $('.key').bind('click', function(){
+    var val = $(this).text();
+    if (activeAltitude ) {
+      if ($(this).attr('id') == 'clear-btn') currentAltitude = currentAltitude.slice(0, -1);
+      else {
+        if (val == '.' && currentAltitude.includes('.')) {
+          return;
+        }
+        if (currentAltitude.length > 6) return;
+        currentAltitude = currentAltitude + String(val);
+      }
+      altitudeT.text = String(currentAltitude);
+    }
+  
+    if (activeRO) {
+      if ($(this).attr('id') == 'clear-btn') currentRO = currentRO.slice(0, -1);
+      else {
+        if (val == '.' && currentRO.includes('.')) {
+          return;
+        }
+        if (currentRO.length > 3) return;
+        currentRO = currentRO + String(val);
+      }
+      ROT.text = String(currentRO);
+    }
+  
+    if (activeTrk) {
+      if ($(this).attr('id') == 'clear-btn') {
+        currentTRK = currentTRK.slice(0, -1);
+      } else {
+        if (val == '.' && currentTRK.includes('.')) {
+          return;
+        }
+        else {
+          if (currentTRK.length > 3) return;
+          currentTRK = currentTRK + String(val);
+        }
+      }
+      TRK.text = String(currentTRK);
+    }
+  })
 });
 
 function insertResults(score, duration) {

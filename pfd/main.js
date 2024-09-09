@@ -329,6 +329,8 @@ function showSecondScreen(train) {
     document.querySelector("#title").style = "background-color: #7ad304";
     document.querySelector("#tsider-train").style = "display: flex !important";
     $('.realism-container').show();
+  } else {
+    $('.realism-container').hide();
   }
   if (trainMode){
     $('#time-screen ul#time-buttons li button').addClass('traing_mode');
