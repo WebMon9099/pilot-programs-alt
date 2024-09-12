@@ -402,6 +402,9 @@ function showSecondScreen(train) {
     // playpause button
     $(".playpause").css("background-image", "url(./images/playpause.svg)");
     gamePaused = false;
+  } else {
+    $(".setting_title").hide();
+    $(".setting_contonller").hide();
   }
   showScreen('#mode-screen');
   
@@ -1750,6 +1753,7 @@ function initScore() {
   activeAltitude = false;
   activeRO = false;
   activeTrk = false;
+  $("#keyboard_check").text('Enable On-Screen Keyboard')
   $('#NAV_check').prop('checked', true);
   $('#ELEC_check').prop('checked', true);
   $('#FULE_check').prop('checked', true);
@@ -3208,6 +3212,17 @@ $(document).ready(function () {
     });
     $(this).addClass("active");
     tolernace = parseFloat($(this).attr("key"));
+  });
+
+  $(".key").on("touchstart mousedown", function() {
+    $(this).css("transform", "scale(0.9)");
+    $(this).css('background-color', '#555');
+  });
+
+  // Revert scale effect on touchend or mouseup
+  $(".key").on("touchend mouseup", function() {
+    $(this).css("transform", "scale(1)");
+    $(this).css('background-color', '#232323');
   });
 
   $('.key').bind('click', function(){
