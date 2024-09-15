@@ -12,7 +12,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
     <!-- <link rel="stylesheet" media="screen" href="additional-styles.css" /> -->
     <link rel="stylesheet" media="screen" href="../_common/css/styles.css?v=1" />
-    <link rel="stylesheet" href="styles.css?v=2" />
+    <link rel="stylesheet" href="styles.css?v=3" />
     <script src="../_common/js/jquery.min.js"></script>
     <script src="../_common/js/jqueryui.min.js"></script>
     <script src="../_common/js/game.js"></script>
@@ -21,7 +21,7 @@
     <script src="lib/soundjs-NEXT.min.js"></script>
     <script src="lib/preloadjs-NEXT.min.js"></script>
     <script src="joy.js"></script>
-    <script src="main.js?v=2"></script>
+    <script src="main.js?v=4"></script>
 
 </head>
 
@@ -63,6 +63,10 @@
                             <select class="speed-axis axis-select">
                             </select>
                         </div>
+                        <div  style="display:flex;justify-content:space-between;">
+                            <div class="invert-label">Invert the Speed Axis:</div>
+                            <div><input type="checkbox" class="speed-invert invert"/></div>
+                        </div>
                     </div>
                     <div class="axis-setting">
                         <div style="display:flex;justify-content:space-between;">
@@ -74,6 +78,10 @@
                             </div>
                             <select class="yaw-axis axis-select">
                             </select>
+                        </div>
+                        <div  style="display:flex;justify-content:space-between;">
+                            <div class="invert-label">Invert the Yaw Axis:</div>
+                            <div><input type="checkbox" class="yaw-invert invert"/></div>
                         </div>
                     </div>
                     <div class="switch-container">
@@ -97,10 +105,14 @@
                                 <div class="arrow-icon-container">
                                     <img src="images/up-down-icon.svg" />
                                 </div>
-                                <label class="switch-title">Alt Axis:</label>
+                                <label class="switch-title">Altitude Axis:</label>
                             </div>
                             <select class="alt-axis axis-select">
                             </select>
+                        </div>
+                        <div  style="display:flex;justify-content:space-between;">
+                            <div class="invert-label">Invert the Altitude Axis:</div>
+                            <div><input type="checkbox" class="alt-invert invert"/></div>
                         </div>
                     </div>
                     <div class="axis-setting">
@@ -109,10 +121,14 @@
                                 <div class="arrow-icon-container">
                                     <img src="images/left-right-icon.svg" />
                                 </div>
-                                <label class="switch-title">Head Axis:</label>
+                                <label class="switch-title">Heading Axis:</label>
                             </div>
                             <select class="heading-axis axis-select">
                             </select>
+                        </div>
+                        <div  style="display:flex;justify-content:space-between;">
+                            <div class="invert-label">Invert the Heading Axis:</div>
+                            <div><input type="checkbox" class="head-invert invert"/></div>
                         </div>
                     </div>
                     <div class="switch-container">
@@ -216,6 +232,10 @@
                                     <select class="speed-axis axis-select">
                                     </select>
                                 </div>
+                                <div  style="display:flex;justify-content:space-between;">
+                                    <div class="invert-label">Invert the Speed Axis:</div>
+                                    <div><input type="checkbox" class="speed-invert invert"/></div>
+                                </div>
                             </div>
                             <div class="axis-setting">
                                 <div style="display:flex;justify-content:space-between;">
@@ -227,6 +247,10 @@
                                     </div>
                                     <select class="yaw-axis axis-select">
                                     </select>
+                                </div>
+                                <div  style="display:flex;justify-content:space-between;">
+                                    <div class="invert-label">Invert the Yaw Axis:</div>
+                                    <div><input type="checkbox" class="yaw-invert invert"/></div>
                                 </div>
                             </div>
                         </div>
@@ -243,10 +267,14 @@
                                         <div class="arrow-icon-container">
                                             <img src="images/up-down-icon.svg" />
                                         </div>
-                                        <label class="switch-title">Alt Axis:</label>
+                                        <label class="switch-title">Altitude Axis:</label>
                                     </div>
                                     <select class="alt-axis axis-select">
                                     </select>
+                                </div>
+                                <div  style="display:flex;justify-content:space-between;">
+                                    <div class="invert-label">Invert the Altitude Axis:</div>
+                                    <div><input type="checkbox" class="alt-invert invert"/></div>
                                 </div>
                             </div>
                             <div class="axis-setting">
@@ -255,10 +283,14 @@
                                         <div class="arrow-icon-container">
                                             <img src="images/left-right-icon.svg" />
                                         </div>
-                                        <label class="switch-title">Head Axis:</label>
+                                        <label class="switch-title">Heading Axis:</label>
                                     </div>
                                     <select class="heading-axis axis-select">
                                     </select>
+                                </div>
+                                <div  style="display:flex;justify-content:space-between;">
+                                    <div class="invert-label">Invert the Heading Axis:</div>
+                                    <div><input type="checkbox" class="head-invert invert"/></div>
                                 </div>
                             </div>
                         </div>

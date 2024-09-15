@@ -365,6 +365,8 @@ a.exit {
 	color: #767676;
 	display: none;
 	width: 320px;
+    overflow-y: auto;
+    max-height: 90vh;
 }
 
 .setting_title {
@@ -635,6 +637,9 @@ button#train-button:hover {
   button#start-button {margin-right: 5px;}
   button#userguide-button {margin-left: 5px;}
   button#restart-button {font-size: 14px;font-weight: 600;font-family: 'Open Sans';}
+  .modal-content {
+    margin:0.5% auto!important;
+  }
 }
 
 @media all and (max-height:768px) {
@@ -820,9 +825,9 @@ input:checked+.slider:before {
 }
 
 input:checked+.big-slider:before {
-    -webkit-transform: translateX(138px);
-    -ms-transform: translateX(138px);
-    transform: translateX(138px)
+    -webkit-transform: translateX(118px);
+    -ms-transform: translateX(118px);
+    transform: translateX(118px)
 }
 
 .big-slider.round {
@@ -833,7 +838,7 @@ input:checked+.big-slider:before {
     border-radius: 16px
 }
 .realism{
-    width: 100%;
+    width: 280px;
     height: 38px;
     /* margin-left:30px; */
     position: relative;
@@ -855,7 +860,7 @@ input:checked+.big-slider:before {
     color:white;
 }
 #right-letter-big-slide{
-    left: 191px;
+    left: 172px;
     color:black;
 }
 .realism-container{
@@ -886,9 +891,9 @@ option:disabled{
     left: 0;
     top: 0;
     width: 100%; /* Full width */
-    overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    height:100vh;
 }
 
 /* Modal Content/Box */
@@ -898,7 +903,7 @@ option:disabled{
     /* padding: 20px; */
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
-    max-width: 700px;
+    max-width: 900px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
 }
@@ -1030,4 +1035,15 @@ option:disabled{
     right: 1rem;
     font-size: 12px;
     color:#bfbfbf;
+}
+.invert-label{
+    padding-left: 30px;
+    color:#9fa0a1;
+}
+#settiingModal .axis-setting{
+    background: #e1e9ee94;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 10px 10px 10px 10px;
+    width:95%;
 }
