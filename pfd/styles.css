@@ -775,6 +775,7 @@ input:checked+.slider:before {
     /* padding: 0 20px; */
     align-items: center;
     align-content: center;
+    margin-left: 15px;
 }
 
 .switch-container .switch-title {
@@ -899,13 +900,15 @@ option:disabled{
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
-    margin: 10.5% auto; /* 15% from the top and centered */
+    margin: 7.5% auto; /* 15% from the top and centered */
     /* padding: 20px; */
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
     max-width: 900px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
+    overflow-y: auto;
+    max-height: 700px;
 }
 .contents-area{
     display: flex;

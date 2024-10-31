@@ -74,8 +74,9 @@ var JoyRightDiv, JoyLeftDiv;
 
 var relationSpeed = 0.888;
 
-var left_turbulence = true;
-var right_turbulence = true;
+var speed_turbulence_flag = true;
+var alt_turbulence_flag = true;
+var heading_turbulence_flag = true;
 var realism_flag = true;
 
 var speed_turbulence = 0;
@@ -102,10 +103,10 @@ const gamepads = {
   // 3: { index: 3, id: "USB-4" },
 };
 var gamepad_conneted = {
-  speedYaw: -1,
-  // speed: -1,
-  althead: -1,
-  // yaw: -1,
+  speed: 9,
+  yaw: 9,
+  alt:9,
+  head:9
 };
 
 var joystick_axis_index = {
@@ -190,43 +191,218 @@ function showStartScreen(restart = false) {
   document.querySelector("#title").style = "background-color: #3793d1";
   document.querySelector("#tsider-train").style = "display: none !important";
   if (restart == false){
-    var joystick_setting = localStorage.getItem('joystick_setting');
-    if (joystick_setting){
+    var saved_joystick_axis_index = localStorage.getItem('joystick_axis_index');
+    if (saved_joystick_axis_index){
+      joystick_axis_index = JSON.parse(saved_joystick_axis_index);
     } else {
-      $('.speed_yaw_controller > .axis-setting').hide();
-      $('.alt_head_controller > .axis-setting').hide();
-      $('.axis-select').val('');
-      $('.axis-setting option').prop('disabled', false);
-      $('#realism_check').prop('checked', true);
-      $('#right_trubulence_check').prop('checked', true);
-      $('#left_trubulence_check').prop('checked', true);
-      if ($('#realism_check').attr('checked')){
-        $('#left-letter-big-slide').html('Enabled');
-        $('#left-letter-big-slide').css('color', 'white');
-        $('#right-letter-big-slide').html('Realism');
-        $('#right-letter-big-slide').css('color', 'black');
-      } else {
-        $('#left-letter-big-slide').html('Realism');
-        $('#left-letter-big-slide').css('color', 'black');
-        $('#right-letter-big-slide').html('Disabled');
-        $('#right-letter-big-slide').css('color', 'white');
-      }
-
-      gamepad_conneted.althead = gamepads[9].index;
-      gamepad_conneted.speedYaw = gamepads[9].index;
-
       joystick_axis_index = {
         speed:-1,
         yaw:-1,
         alt:-1,
         heading:-1
       }
+    }
+    var saved_joystick_axis_invert = localStorage.getItem('joystick_axis_invert');
+    if (saved_joystick_axis_invert){
+      joystick_axis_invert = JSON.parse(saved_joystick_axis_invert);
+    } else {
       joystick_axis_invert = {
         speed:false,
         yaw:false,
         alt:false,
         heading:false
       }
+    }
+
+    var saved_gamepad_connected = localStorage.getItem('gamepad_conneted');
+    var gps = navigator.getGamepads();
+    if (saved_gamepad_connected){
+      gamepad_conneted = JSON.parse(saved_gamepad_connected);
+      if (gamepad_conneted.alt != 9 && gps[gamepad_conneted.alt]){
+        $('.alt_controller .set_controller').html(gps[gamepad_conneted.alt].id);
+        $('.alt_controller .set_controller').removeClass("no_controll");
+        $('.alt_controller .axis-setting').show();
+        $('.alt_controller .axis-select').empty();
+        $('.alt_controller .axis-select').append('<option value="" selected></option>');
+        for (var i = 0; i < gps[gamepad_conneted.alt].axes.length; i++){
+          var disabled_index_flag = false;
+          if (i == joystick_axis_index.alt){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.heading && gamepad_conneted.head == gamepad_conneted.alt){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.yaw && gamepad_conneted.yaw == gamepad_conneted.alt){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.speed && gamepad_conneted.speed == gamepad_conneted.alt){
+            disabled_index_flag = true;
+          }
+          if (disabled_index_flag){
+            $('.alt_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+          } else {
+            $('.alt_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+          }
+        }
+        if (joystick_axis_index.alt > -1){
+          $('.alt_controller .axis-select').val(joystick_axis_index.alt);
+        }
+        if (joystick_axis_invert.alt){
+          $('.alt-invert').prop('checked', true);
+        } else {
+          $('.alt-invert').prop('checked', false);
+        }
+      } else {
+        $('.alt_controller .set_controller').html(gamepads[9].id);
+        $('.alt_controller .set_controller').addClass("no_controll");
+        $('.alt_controller .axis-setting').hide();
+        $('.alt_controller .axis-select').empty();
+        $('.alt_controller .axis-select').val('');
+        joystick_axis_index.alt = -1;
+        joystick_axis_invert.alt = false;
+      }
+
+      if (gamepad_conneted.speed != 9 && gps[gamepad_conneted.speed]){
+        $('.speed_controller .set_controller').html(gps[gamepad_conneted.speed].id);
+        $('.speed_controller .set_controller').removeClass("no_controll");
+        $('.speed_controller .axis-setting').show();
+        $('.speed_controller .axis-select').empty();
+        $('.speed_controller .axis-select').append('<option value="" selected></option>');
+        for (var i = 0; i < gps[gamepad_conneted.speed].axes.length; i++){
+          var disabled_index_flag = false;
+          if (i == joystick_axis_index.speed){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.heading && gamepad_conneted.head == gamepad_conneted.speed){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.yaw && gamepad_conneted.yaw == gamepad_conneted.speed){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.alt && gamepad_conneted.alt == gamepad_conneted.speed){
+            disabled_index_flag = true;
+          }
+          if (disabled_index_flag){
+            $('.speed_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+          } else {
+            $('.speed_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+          }
+        }
+        if (joystick_axis_index.speed > -1){
+          $('.speed_controller .axis-select').val(joystick_axis_index.speed);
+        }
+        if (joystick_axis_invert.speed){
+          $('.speed-invert').prop('checked', true);
+        } else {
+          $('.speed-invert').prop('checked', false);
+        }
+      } else {
+        $('.speed_controller .set_controller').html(gamepads[9].id);
+        $('.speed_controller .set_controller').addClass("no_controll");
+        $('.speed_controller .axis-setting').hide();
+        $('.speed_controller .axis-select').empty();
+        $('.speed_controller .axis-select').val('');
+        joystick_axis_index.speed = -1;
+        joystick_axis_invert.speed = false;
+      }
+
+      if (gamepad_conneted.yaw != 9 && gps[gamepad_conneted.yaw]){
+        $('.yaw_controller .set_controller').html(gps[gamepad_conneted.yaw].id);
+        $('.yaw_controller .set_controller').removeClass("no_controll");
+        $('.yaw_controller .axis-setting').show();
+        $('.yaw_controller .axis-select').empty();
+        $('.yaw_controller .axis-select').append('<option value="" selected></option>');
+        for (var i = 0; i < gps[gamepad_conneted.yaw].axes.length; i++){
+          var disabled_index_flag = false;
+          if (i == joystick_axis_index.yaw){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.heading && gamepad_conneted.head == gamepad_conneted.yaw){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.speed && gamepad_conneted.speed == gamepad_conneted.yaw){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.alt && gamepad_conneted.alt == gamepad_conneted.yaw){
+            disabled_index_flag = true;
+          }
+          if (disabled_index_flag){
+            $('.yaw_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+          } else {
+            $('.yaw_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+          }
+        }
+        if (joystick_axis_index.yaw > -1){
+          $('.yaw_controller .axis-select').val(joystick_axis_index.yaw);
+        }
+        if (joystick_axis_invert.yaw){
+          $('.yaw-invert').prop('checked', true);
+        } else {
+          $('.yaw-invert').prop('checked', false);
+        }
+      } else {
+        $('.yaw_controller .set_controller').html(gamepads[9].id);
+        $('.yaw_controller .set_controller').addClass("no_controll");
+        $('.yaw_controller .axis-setting').hide();
+        $('.yaw_controller .axis-select').empty();
+        $('.yaw_controller .axis-select').val('');
+        joystick_axis_index.yaw = -1;
+        joystick_axis_invert.yaw = false;
+      }
+
+      if (gamepad_conneted.head != 9 && gps[gamepad_conneted.head]){
+        $('.head_controller .set_controller').html(gps[gamepad_conneted.head].id);
+        $('.head_controller .set_controller').removeClass("no_controll");
+        $('.head_controller .axis-setting').show();
+        $('.head_controller .axis-select').empty();
+        $('.head_controller .axis-select').append('<option value="" selected></option>');
+        for (var i = 0; i < gps[gamepad_conneted.head].axes.length; i++){
+          var disabled_index_flag = false;
+          if (i == joystick_axis_index.heading){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.yaw && gamepad_conneted.yaw == gamepad_conneted.head){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.speed && gamepad_conneted.speed == gamepad_conneted.head){
+            disabled_index_flag = true;
+          }
+          if (i == joystick_axis_index.alt && gamepad_conneted.alt == gamepad_conneted.head){
+            disabled_index_flag = true;
+          }
+          if (disabled_index_flag){
+            $('.head_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+          } else {
+            $('.head_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+          }
+        }
+        if (joystick_axis_index.heading > -1){
+          $('.head_controller .axis-select').val(joystick_axis_index.heading);
+        }
+        if (joystick_axis_invert.heading){
+          $('.head-invert').prop('checked', true);
+        } else {
+          $('.head-invert').prop('checked', false);
+        }
+      } else {
+        $('.head_controller .set_controller').html(gamepads[9].id);
+        $('.head_controller .set_controller').addClass("no_controll");
+        $('.head_controller .axis-setting').hide();
+        $('.head_controller .axis-select').empty();
+        $('.head_controller .axis-select').val('');
+        joystick_axis_index.heading = -1;
+        joystick_axis_invert.heading = false;
+      }
+    } else {
+      gamepad_conneted.alt = gamepads[9].index;
+      gamepad_conneted.speed = gamepads[9].index;
+      gamepad_conneted.yaw = gamepads[9].index;
+      gamepad_conneted.head = gamepads[9].index;
+
+      $('.axis-setting').hide();
+      $('.axis-select').val('');
+      $('.axis-select').empty();
+      $('.axis-setting option').prop('disabled', false);
 
       document
         .querySelectorAll(".setting_contonller .set_controller")
@@ -241,8 +417,26 @@ function showStartScreen(restart = false) {
     }
   }
 
-  left_turbulence = true;
-  right_turbulence = true;
+  $('#realism_check').prop('checked', true);
+  $('#head_trubulence_check').prop('checked', true);
+  $('#speed_trubulence_check').prop('checked', true);
+  $('#alt_trubulence_check').prop('checked', true);
+  if ($('#realism_check').attr('checked')){
+    $('#left-letter-big-slide').html('Enabled');
+    $('#left-letter-big-slide').css('color', 'white');
+    $('#right-letter-big-slide').html('Realism');
+    $('#right-letter-big-slide').css('color', 'black');
+  } else {
+    $('#left-letter-big-slide').html('Realism');
+    $('#left-letter-big-slide').css('color', 'black');
+    $('#right-letter-big-slide').html('Disabled');
+    $('#right-letter-big-slide').css('color', 'white');
+  }
+
+  speed_turbulence_flag = true;
+  alt_turbulence_flag = true;
+  heading_turbulence_flag = true;
+  
   realism_flag = true;
   $('.x-coord').html('X:0');
   $('.y-coord').html('Y:0');
@@ -463,8 +657,9 @@ function createInterface() {
   sec = 0;
   totalCount = 0;
   totalScore = 0;
-  left_turbulence = true;
-  right_turbulence = true;
+  speed_turbulence_flag = true;
+  alt_turbulence_flag = true;
+  heading_turbulence_flag = true;
   realism_flag = true;
   initScore();
 
@@ -824,15 +1019,18 @@ function rotateMidScreen() {
     }
   }
 
-  if (right_turbulence){
-    var temp_rotation = screenm.rotation + heading_turbulence/turblence_steps;
-    if (temp_rotation < 45 && temp_rotation > -45) {
-      screenm.rotation = temp_rotation;
-    }
+  if (alt_turbulence_flag){
     var temp_alt = altR.y + alt_turbulence/turblence_steps * 10.43/20;
     if (temp_alt > -5544 && temp_alt < -335){
       alt += alt_turbulence/turblence_steps;
       altR.y = temp_alt;
+    }
+  }
+
+  if (heading_turbulence_flag){
+    var temp_rotation = screenm.rotation + heading_turbulence/turblence_steps;
+    if (temp_rotation < 45 && temp_rotation > -45) {
+      screenm.rotation = temp_rotation;
     }
   }
 
@@ -933,10 +1131,10 @@ function updateGame(e) {
     changeYaw();
     moveRightJoystick();
     moveLeftJoystick();
-    if (gamepad_conneted.althead != 9) gamepadCheck("althead");
-    if (gamepad_conneted.speedYaw != 9) gamepadCheck('speedYaw');
-    // if (gamepad_conneted.speed != 9) gamepadCheck("speed");
-    // if (gamepad_conneted.yaw != 9) gamepadCheck("yaw");
+    if (gamepad_conneted.alt != 9) gamepadCheck("alt");
+    if (gamepad_conneted.head != 9) gamepadCheck('head');
+    if (gamepad_conneted.speed != 9) gamepadCheck("speed");
+    if (gamepad_conneted.yaw != 9) gamepadCheck("yaw");
   }
   stage.update();
 }
@@ -1044,7 +1242,7 @@ function gamepadCheck(key) {
 
   const offsetLeft = gp.axes[0];
   const offsetTop = gp.axes[1];
-  if (key == "althead") {
+  if (key == "alt" || key=="head") {
     initUDLRGamepadPressed();
     if (joystick_axis_index.alt > -1){
       if (gp.axes[joystick_axis_index.alt] < -0.05) {
@@ -1079,7 +1277,7 @@ function gamepadCheck(key) {
       }
     }
   }
-  if (key == "speedYaw") {
+  if (key == "speed" || key=="yaw") {
     initASDWGamepadPressed();
     if (joystick_axis_index.speed > -1){
       if (gp.axes[joystick_axis_index.speed] < -0.05) {
@@ -1136,7 +1334,7 @@ function calculatePrevious() {
 }
 
 function makeTurbulence(){
-  if (left_turbulence){
+  if (speed_turbulence_flag){
     speed_turbulence = 5 + 10 * Math.random();
     if (Math.random() < 0.5){
       speed_turbulence = -speed_turbulence;
@@ -1144,21 +1342,27 @@ function makeTurbulence(){
   } else {
     speed_turbulence = 0;
   }
-  
-  if (right_turbulence){
+
+  if (alt_turbulence_flag){
     alt_turbulence = 50 + 200 * Math.random();
-    heading_turbulence = 2 + 6 * Math.random();
     if (Math.random() < 0.5){
       alt_turbulence = -alt_turbulence;
-      heading_turbulence = -heading_turbulence;
     }
   } else {
     alt_turbulence = 0;
+  }
+  
+  if (heading_turbulence_flag){
+    heading_turbulence = 2 + 6 * Math.random();
+    if (Math.random() < 0.5){
+      heading_turbulence = -heading_turbulence;
+    }
+  } else {
     heading_turbulence = 0;
   }
 }
 function changeSpeed() {
-  if (left_turbulence){
+  if (speed_turbulence_flag){
     var temp_speed = speedR.y + (speed_turbulence/turblence_steps)* 0.9375/0.25;
     if (temp_speed < 0 && temp_speed > -970) {
       speed += speed_turbulence/turblence_steps;
@@ -1601,13 +1805,14 @@ $(document).ready(function () {
     showStartScreen(true);
   });
 
-  $(".alt_head_controller button").click(function () {
+  $(".alt_controller button").click(function () {
     if (Object.keys(gamepads).length <= 1) return;
 
     let right = $(this).attr("class").includes("right");
     let _keys = Object.keys(gamepads);
+    var prev_alt_connected_gamepad = gamepad_conneted.alt;
     const isFindKeyIndex = (element) =>
-      Number(element) == gamepad_conneted.althead;
+      Number(element) == gamepad_conneted.alt;
     let _next = _keys.findIndex(isFindKeyIndex);
     if (right) {
         _next++;
@@ -1620,48 +1825,129 @@ $(document).ready(function () {
           _next = _keys.length - 1;
         }
     }
-    gamepad_conneted.althead = Number(_keys[_next]);
-    $(".alt_head_controller .set_controller").text(
-      gamepads[gamepad_conneted.althead].id
+    gamepad_conneted.alt = Number(_keys[_next]);
+    $(".alt_controller .set_controller").text(
+      gamepads[gamepad_conneted.alt].id
     );
-    if (gamepad_conneted.althead == 9) {
-      $(".alt_head_controller .set_controller").addClass("no_controll");
-      $('.alt_head_controller > .axis-setting').hide();
-      $('.alt_head_controller .axis-select').empty();
-      if (joystick_axis_index.alt > -1){
+    if (gamepad_conneted.alt == 9) {
+      $(".alt_controller .set_controller").addClass("no_controll");
+      $('.alt_controller > .axis-setting').hide();
+      $('.alt_controller .axis-select').empty();
+      if (joystick_axis_index.alt > -1 && prev_alt_connected_gamepad != 9){
         $('.axis-select').each((index, el) => {
-          $('option[value="' + (joystick_axis_index.alt).toString() + '"]', $(el)).prop('disabled', false);
-        })
-      }
-      if (joystick_axis_index.head > -1){
-        $('.axis-select').each((index, el) => {
-          $('option[value="' + (joystick_axis_index.head).toString() + '"]', $(el)).prop('disabled', false);
+          if ($(el).attr("class").includes('speed') && gamepad_conneted.speed == prev_alt_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.alt).toString() + '"]', $(el)).prop('disabled', false);
+          }
+          if ($(el).attr("class").includes('yaw') && gamepad_conneted.yaw == prev_alt_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.alt).toString() + '"]', $(el)).prop('disabled', false);
+          }
+          if ($(el).attr("class").includes('head') && gamepad_conneted.head == prev_alt_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.alt).toString() + '"]', $(el)).prop('disabled', false);
+          }
         })
       }
       joystick_axis_index.alt = -1;
-      joystick_axis_index.head = -1;
     } else {
-      $(".alt_head_controller .set_controller").removeClass("no_controll");
-      $('.alt_head_controller > .axis-setting').show();
-      $('.alt_head_controller .axis-select').append('<option value="" selected></option>');
-      for (var i = 0; i < gamepads[gamepad_conneted.althead].axes.length; i++){
-        if (i == joystick_axis_index.speed || i == joystick_axis_index.yaw){
-          $('.alt_head_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
-        } else {
-          $('.alt_head_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+      $(".alt_controller .set_controller").removeClass("no_controll");
+      $('.alt_controller > .axis-setting').show();
+      $('.alt_controller .axis-select').append('<option value="" selected></option>');
+      for (var i = 0; i < gamepads[gamepad_conneted.alt].axes.length; i++){
+        var disabled_index_flag = false;
+        if (i == joystick_axis_index.heading && gamepad_conneted.head == gamepad_conneted.alt){
+          disabled_index_flag = true;
         }
-        
+        if (i == joystick_axis_index.yaw && gamepad_conneted.yaw == gamepad_conneted.alt){
+          disabled_index_flag = true;
+        }
+        if (i == joystick_axis_index.speed && gamepad_conneted.speed == gamepad_conneted.alt){
+          disabled_index_flag = true;
+        }
+        if (disabled_index_flag){
+          $('.alt_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+        } else {
+          $('.alt_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+        }
       }
     }
+    localStorage.setItem("gamepad_conneted", JSON.stringify(gamepad_conneted));
   });
 
-  $(".speed_yaw_controller button").click(function () {
+  $(".speed_controller button").click(function () {
     if (Object.keys(gamepads).length <= 1) return;
 
     let right = $(this).attr("class").includes("right");
     let _keys = Object.keys(gamepads);
+    var prev_speed_connected_gamepad = gamepad_conneted.speed;
     const isFindKeyIndex = (element) =>
-      Number(element) == gamepad_conneted.speedYaw;
+      Number(element) == gamepad_conneted.speed;
+    let _next = _keys.findIndex(isFindKeyIndex);
+    if (right) {
+        _next++;
+        if (_next == _keys.length) {
+          _next = 0;
+        }
+    } else {
+        _next--;
+        if (_next == -1) {
+          _next = _keys.length - 1;
+        }
+    }
+    
+    gamepad_conneted.speed = Number(_keys[_next]);
+    $(".speed_controller .set_controller").text(
+      gamepads[gamepad_conneted.speed].id
+    );
+    if (gamepad_conneted.speed == 9 && prev_speed_connected_gamepad != 9) {
+      $(".speed_controller .set_controller").addClass("no_controll");
+      $('.speed_controller > .axis-setting').hide();
+      $('.speed_controller .axis-select').empty();
+      if (joystick_axis_index.speed > -1){
+        $('.axis-select').each((index, el) => {
+          if ($(el).attr("class").includes('alt') && gamepad_conneted.alt == prev_speed_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.speed).toString() + '"]', $(el)).prop('disabled', false);
+          }
+          if ($(el).attr("class").includes('yaw') && gamepad_conneted.yaw == prev_speed_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.speed).toString() + '"]', $(el)).prop('disabled', false);
+          }
+          if ($(el).attr("class").includes('head') && gamepad_conneted.head == prev_speed_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.speed).toString() + '"]', $(el)).prop('disabled', false);
+          }
+        })
+      }
+      joystick_axis_index.speed = -1;
+    } else {
+      $(".speed_controller .set_controller").removeClass("no_controll");
+      $('.speed_controller > .axis-setting').show();
+      $('.speed_controller .axis-select').append('<option value="" selected></option>');
+      for (var i = 0; i < gamepads[gamepad_conneted.speed].axes.length; i++){
+        var disabled_index_flag = false;
+        if (i == joystick_axis_index.alt && gamepad_conneted.alt == gamepad_conneted.speed){
+          disabled_index_flag = true;
+        }
+        if (i == joystick_axis_index.yaw && gamepad_conneted.yaw == gamepad_conneted.speed){
+          disabled_index_flag = true;
+        }
+        if (i == joystick_axis_index.heading && gamepad_conneted.head == gamepad_conneted.speed){
+          disabled_index_flag = true;
+        }
+        if (disabled_index_flag){
+          $('.speed_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+        } else {
+          $('.speed_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+        }
+      }
+    }
+    localStorage.setItem("gamepad_conneted", JSON.stringify(gamepad_conneted));
+  });
+
+  $(".head_controller button").click(function () {
+    if (Object.keys(gamepads).length <= 1) return;
+
+    let right = $(this).attr("class").includes("right");
+    let _keys = Object.keys(gamepads);
+    var prev_head_connected_gamepad = gamepad_conneted.head;
+    const isFindKeyIndex = (element) =>
+      Number(element) == gamepad_conneted.head;
     let _next = _keys.findIndex(isFindKeyIndex);
     if (right) {
         _next++;
@@ -1675,38 +1961,119 @@ $(document).ready(function () {
         }
     }
 
-    gamepad_conneted.speedYaw = Number(_keys[_next]);
-    $(".speed_yaw_controller .set_controller").text(
-      gamepads[gamepad_conneted.speedYaw].id
+    gamepad_conneted.head = Number(_keys[_next]);
+    $(".head_controller .set_controller").text(
+      gamepads[gamepad_conneted.head].id
     );
-    if (gamepad_conneted.speedYaw == 9) {
-      $(".speed_yaw_controller .set_controller").addClass("no_controll");
-      $('.speed_yaw_controller > .axis-setting').hide();
-      $('.speed_yaw_controller .axis-select').empty();
-      if (joystick_axis_index.speed > -1){
+    if (gamepad_conneted.head == 9) {
+      $(".head_controller .set_controller").addClass("no_controll");
+      $('.head_controller > .axis-setting').hide();
+      $('.head_controller .axis-select').empty();
+      if (joystick_axis_index.heading > -1 && prev_head_connected_gamepad != 9){
         $('.axis-select').each((index, el) => {
-          $('option[value="' + (joystick_axis_index.speed).toString() + '"]', $(el)).prop('disabled', false);
+          if ($(el).attr("class").includes('alt') && gamepad_conneted.alt == prev_head_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.heading).toString() + '"]', $(el)).prop('disabled', false);
+          }
+          if ($(el).attr("class").includes('yaw') && gamepad_conneted.yaw == prev_head_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.heading).toString() + '"]', $(el)).prop('disabled', false);
+          }
+          if ($(el).attr("class").includes('speed') && gamepad_conneted.speed == prev_head_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.heading).toString() + '"]', $(el)).prop('disabled', false);
+          }
         })
       }
-      if (joystick_axis_index.yaw > -1){
-        $('.axis-select').each((index, el) => {
-          $('option[value="' + (joystick_axis_index.yaw).toString() + '"]', $(el)).prop('disabled', false);
-        })
-      }
-      joystick_axis_index.speed = -1;
-      joystick_axis_index.yaw = -1;
+      joystick_axis_index.heading = -1;
     } else {
-      $(".speed_yaw_controller .set_controller").removeClass("no_controll");
-      $('.speed_yaw_controller > .axis-setting').show();
-      $('.speed_yaw_controller .axis-select').append('<option value="" selected></option>');
-      for (var i = 0; i < gamepads[gamepad_conneted.speedYaw].axes.length; i++){
-        if (i == joystick_axis_index.head || i == joystick_axis_index.alt){
-          $('.speed_yaw_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+      $(".head_controller .set_controller").removeClass("no_controll");
+      $('.head_controller > .axis-setting').show();
+      $('.head_controller .axis-select').append('<option value="" selected></option>');
+      for (var i = 0; i < gamepads[gamepad_conneted.head].axes.length; i++){
+        var disabled_index_flag = false;
+        if (i == joystick_axis_index.alt && gamepad_conneted.alt == gamepad_conneted.head){
+          disabled_index_flag = true;
+        }
+        if (i == joystick_axis_index.yaw && gamepad_conneted.yaw == gamepad_conneted.head){
+          disabled_index_flag = true;
+        }
+        if (i == joystick_axis_index.speed && gamepad_conneted.speed == gamepad_conneted.head){
+          disabled_index_flag = true;
+        }
+        if (disabled_index_flag){
+          $('.head_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
         } else {
-          $('.speed_yaw_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+          $('.head_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
         }
       }
     }
+    localStorage.setItem("gamepad_conneted", JSON.stringify(gamepad_conneted));
+  });
+
+  $(".yaw_controller button").click(function () {
+    if (Object.keys(gamepads).length <= 1) return;
+
+    let right = $(this).attr("class").includes("right");
+    var prev_yaw_connected_gamepad = gamepad_conneted.yaw;
+    let _keys = Object.keys(gamepads);
+    const isFindKeyIndex = (element) =>
+      Number(element) == gamepad_conneted.yaw;
+    let _next = _keys.findIndex(isFindKeyIndex);
+    if (right) {
+        _next++;
+        if (_next == _keys.length) {
+          _next = 0;
+        }
+    } else {
+        _next--;
+        if (_next == -1) {
+          _next = _keys.length - 1;
+        }
+    }
+
+    gamepad_conneted.yaw = Number(_keys[_next]);
+    $(".yaw_controller .set_controller").text(
+      gamepads[gamepad_conneted.yaw].id
+    );
+    if (gamepad_conneted.yaw == 9) {
+      $(".yaw_controller .set_controller").addClass("no_controll");
+      $('.yaw_controller > .axis-setting').hide();
+      $('.yaw_controller .axis-select').empty();
+      if (joystick_axis_index.yaw > -1 && prev_yaw_connected_gamepad != 9){
+        $('.axis-select').each((index, el) => {
+          if ($(el).attr("class").includes('alt') && gamepad_conneted.alt == prev_yaw_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.yaw).toString() + '"]', $(el)).prop('disabled', false);
+          }
+          if ($(el).attr("class").includes('head') && gamepad_conneted.head == prev_yaw_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.yaw).toString() + '"]', $(el)).prop('disabled', false);
+          }
+          if ($(el).attr("class").includes('speed') && gamepad_conneted.speed == prev_yaw_connected_gamepad){
+            $('option[value="' + (joystick_axis_index.yaw).toString() + '"]', $(el)).prop('disabled', false);
+          }
+        })
+      }
+      joystick_axis_index.yaw = -1;
+    } else {
+      $(".yaw_controller .set_controller").removeClass("no_controll");
+      $('.yaw_controller > .axis-setting').show();
+      $('.yaw_controller .axis-select').append('<option value="" selected></option>');
+      for (var i = 0; i < gamepads[gamepad_conneted.yaw].axes.length; i++){
+        var disabled_index_flag = false;
+        if (i == joystick_axis_index.alt && gamepad_conneted.alt == gamepad_conneted.yaw){
+          disabled_index_flag = true;
+        }
+        if (i == joystick_axis_index.heading && gamepad_conneted.head == gamepad_conneted.yaw){
+          disabled_index_flag = true;
+        }
+        if (i == joystick_axis_index.speed && gamepad_conneted.speed == gamepad_conneted.yaw){
+          disabled_index_flag = true;
+        }
+        if (disabled_index_flag){
+          $('.yaw_controller .axis-select').append('<option disabled value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+        } else {
+          $('.yaw_controller .axis-select').append('<option value="'+ i.toString() +'">Axis ' + i.toString() + '</option>');
+        }
+      }
+    }
+    localStorage.setItem("gamepad_conneted", JSON.stringify(gamepad_conneted));
   });
 
   $(".stepper-item").click(function () {
@@ -1721,11 +2088,14 @@ $(document).ready(function () {
     targetS = parseFloat($(this).attr("key"));
   });
 
-  $("#left_trubulence_check").change(function () {
-    left_turbulence = $(this).prop("checked");
+  $("#alt_trubulence_check").change(function () {
+    alt_turbulence_flag = $(this).prop("checked");
   });
-  $("#right_trubulence_check").change(function () {
-    right_turbulence = $(this).prop("checked");
+  $("#head_trubulence_check").change(function () {
+    heading_turbulence_flag = $(this).prop("checked");
+  });
+  $("#speed_trubulence_check").change(function () {
+    speed_turbulence_flag = $(this).prop("checked");
   });
 
   $('#realism_check').click(function() {
@@ -1780,6 +2150,7 @@ $(document).ready(function () {
         $(el).val(selcted_axis_value);
       }
     })
+    localStorage.setItem("joystick_axis_index", JSON.stringify(joystick_axis_index));
   })
 
   $('.invert').change(function(){
@@ -1797,9 +2168,10 @@ $(document).ready(function () {
       $('.alt-invert').prop('checked', $(this).prop('checked'));
     }
     if (selected_class.includes("head")){
-      joystick_axis_invert.head = $(this).prop('checked');
+      joystick_axis_invert.heading = $(this).prop('checked');
       $('.head-invert').prop('checked', $(this).prop('checked'));
     }
+    localStorage.setItem("joystick_axis_invert", JSON.stringify(joystick_axis_invert));
   })
 
   $('#setting-button').click(function(){
