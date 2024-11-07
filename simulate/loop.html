@@ -1,0 +1,169 @@
+<html>
+<head>
+  <title>MultiTasker (Legacy)</title>	
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+  
+  <script src="lib/easeljs-NEXT.combined.js"></script>
+  <script src="lib/tweenjs-NEXT.min.js"></script>
+  <script src="lib/soundjs-NEXT.min.js"></script>
+  <script src="lib/preloadjs-NEXT.min.js"></script>
+</head>
+
+<div id="mainb">
+  <canvas id="pie" width="1325" height="715" style="background-color: gray;"></canvas>
+</div>  	
+<script>
+	var stage = new createjs.Stage("pie");
+	optimizeForTouchAndScreens();
+	stage.enableMouseOver(10);
+	var manifest = [
+		{ src: "images/mask.png", id: "Fmask" },
+		{ src: "images/PAT_exam_logo.png", id: "Tlogo" },
+		{ src: "images/terrain.png", id: "Bterrain" },
+		{ src: "images/mainDisplay.png", id: "Bdisplay" },
+		{ src: "images/arrow.png", id: "Barrow" },
+		{ src: "images/headingArrow.png", id: "Bharrow" },
+		{ src: "images/air2.png", id: "Ascreen" },
+		{ src: "images/elec2.png", id: "Escreen" },
+		{ src: "images/fuel2.png", id: "Fscreen" },
+		{ src: "images/hyd2.png", id: "Hscreen" },
+		{ src: "images/speed.png", id: "ISpeed" },
+		{ src: "images/vermask.png", id: "Vmask" },
+		{ src: "images/altitude.png", id: "IAltitu" },
+		{ src: "images/hormask.png", id: "Hmask" },
+		{ src: "images/heading.png", id: "IHead" },
+		{ src: "images/grey.png", id: "Bgrey" },
+		{ src: "images/grey_hover.png", id: "BHgrey" },
+		{ src: "images/blue.png", id: "Bblue" },
+		{ src: "images/blue_hover.png", id: "BHblue" }
+	];
+	var loader = new createjs.LoadQueue(false);
+	loader.installPlugin(createjs.Sound);
+
+	// loader.addEventListener("progress", handleProgress);
+	loader.addEventListener("complete", handleComplete);
+	loader.loadManifest(manifest, true);
+ 
+    function optimizeForTouchAndScreens() {
+        if (createjs.Touch.isSupported()) {
+            createjs.Touch.enable(stage);
+        }
+    }
+    function handleComplete() {
+        loader.removeEventListener("complete", handleComplete);
+        createInterface();
+        stage.update();
+        startMain();
+    }
+
+function addBmp(bname, tx, ty, isR) {
+	var bmp = new createjs.Bitmap(loader.getResult(bname));
+	if (isR) {
+		bmp.regX = bmp.image.width / 2;
+		bmp.regY = bmp.image.height / 2;
+	}
+	bmp.y = ty;
+	bmp.x = tx;
+	return bmp;
+
+}
+
+var gameCont, readCont3, headR, headT;
+var heading;
+var theading;
+var headingIn;
+var rotD = "left";
+var isGame = false;
+
+function startMain() {
+	createjs.Ticker.setFPS(60);
+	createjs.Ticker.addEventListener("tick", updateGame);
+}
+
+function createInterface() {
+
+	gameCont = new createjs.Container();
+
+	//head
+	readCont3 = new createjs.Container();
+	var maskd = addBmp("Hmask", 0, 0, false);
+	maskd.alpha = .5;
+	readCont3.addChild(maskd);
+
+	var maskFillter4 = new createjs.AlphaMaskFilter(maskd.image);
+	readCont3.filters = [maskFillter4];
+	readCont3.x = 560;
+	readCont3.y = 217;
+	// readCont3.cache(0, 0, 1400, 790);
+	gameCont.addChild(readCont3);
+
+	headR = addBmp("IHead", 0, 20, false);
+	readCont3.addChild(headR);
+	headR.x = -374;
+
+	headingIn = new createjs.Container();
+	var bmp = addBmp("Bharrow", 0, 0, false);
+	bmp.scaleX = .7;
+	bmp.scaleY = .6;
+	headingIn.addChild(bmp);
+	gameCont.addChild(headingIn);
+	
+    headT = new createjs.Text("180", "16px Open Sans", "#fff");
+	headT.x = 19;
+	headT.y = 10;
+	headingIn.addChild(headT);
+	headingIn.x = 662;
+	headingIn.y = 186;
+
+    stage.addChild(gameCont);
+
+    isGame = true;
+}
+
+function updateGame(e) {
+    if (isGame) {
+		if (gameCont != null) {
+			gameCont.updateCache();
+		}
+		if (readCont3 != null) {
+			readCont3.updateCache();
+		}
+		changeHeading();
+	}
+	stage.update();
+}
+
+function changeHeading() {
+	if (leftk) {
+		rotD = "left";
+		if (headR.x < 0) {
+			//headR2.x += 2;
+			headR.x += 2;
+			heading -= .8;
+			// if (heading < 300) {
+			// 	//	headingIn.x += 1;
+			// 	if (fieldSky.rotation < 10) {
+			// 		fieldSky.rotation += .095;
+			// 	}
+			// }
+		}
+	}
+	if (rightk) {
+		rotD = "right";
+		if (headR.x > -660) {
+			headR.x -= 2;
+			heading += .8;
+			// if (heading > 60) {
+			// 	//headingIn.x -= 1;
+			// 	if (fieldSky.rotation > -10) {
+			// 		fieldSky.rotation -= .095;
+			// 	}
+			// }
+		}
+	}
+	headT.text = String(Math.floor(heading));
+}
+</script>
+</body>
+</html>
