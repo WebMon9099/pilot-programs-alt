@@ -534,14 +534,6 @@ a.exit {
 	cursor: pointer;
 }
 
-.stepper-item .easy-sname {
-	margin-left: 25px;
-}
-
-.stepper-item .hard-sname {
-	margin-right: 25px;
-}
-
 .stepper-item.active{
 	font-weight: 600;
 }
@@ -1049,4 +1041,63 @@ option:disabled{
     margin-bottom: 15px;
     padding: 10px 10px 10px 10px;
     width:95%;
+}
+#left-control-div{
+    position: fixed;
+    left: 60px;
+    display: flex;
+    bottom: 20px;
+}
+.power-setting-area .parameter-bar {
+    align-items: center;
+}
+  
+.power-setting-area button {
+    width: 30px;
+    height: 30px;
+    font-size: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: #ccc;
+    color:#aaa;
+    border-radius: 0;
+}
+
+.power-setting-area .bar {
+    position: relative;
+    width: 30px;
+    height: 192px;
+    background-color: #ddd;
+    overflow: hidden;
+    opacity: 0.4;
+}
+
+.power-setting-area .square {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 26px;
+    height: 24px;
+    background-color: #fff;
+    border: 2px solid #bbb;
+}
+.audio-btn-area{
+    display: flex;
+    margin-left: 60px;
+    padding-top: 75%;
+}
+.audio-btn{
+    width:50px;
+    height: 50px;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-right: 20px;
+}
+.red-btn{
+    background-color: #E02D2D;
+}
+.green-btn{
+    background-color: #7ad304;
 }
