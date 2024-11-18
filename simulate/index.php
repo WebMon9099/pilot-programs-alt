@@ -12,7 +12,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
     <!-- <link rel="stylesheet" media="screen" href="additional-styles.css" /> -->
     <link rel="stylesheet" media="screen" href="../_common/css/styles.css?v=1" />
-    <link rel="stylesheet" href="styles.css?v=2" />
+    <link rel="stylesheet" href="styles.css?v=3" />
     <script src="../_common/js/jquery.min.js"></script>
     <script src="../_common/js/jqueryui.min.js"></script>
     <script src="../_common/js/game.js"></script>
@@ -21,7 +21,7 @@
     <script src="lib/soundjs-NEXT.min.js"></script>
     <script src="lib/preloadjs-NEXT.min.js"></script>
     <script src="joy.js"></script>
-    <script src="main.js?v=3"></script>
+    <script src="main.js?v=4"></script>
 
 </head>
 
@@ -107,6 +107,37 @@
                         </label>
                     </div>
                 </div>
+                <div class="setting_contonller speed_controller">
+                    <p class="controller_name">Power <span class="controller_target">Controller</span></p>
+                    <div class="controller_content">
+                        <button class="left_controller"></button>
+                        <p class="set_controller">Saitek ST90 USB Joystick</p>
+                        <button class="right_controller"></button>
+                    </div>
+                    <div class="axis-setting">
+                        <div style="display:flex;justify-content:space-between;">
+                            <div style="display:flex;">
+                                <div class="arrow-icon-container">
+                                    <img src="images/up-down-icon.svg" />
+                                </div>
+                                <label class="switch-title">Power Axis:</label>
+                            </div>
+                            <select class="speed-axis axis-select">
+                            </select>
+                        </div>
+                        <div  style="display:flex;justify-content:space-between;">
+                            <div class="invert-label">Invert the Power Axis:</div>
+                            <div><input type="checkbox" class="speed-invert invert"/></div>
+                        </div>
+                    </div>
+                    <div class="switch-container">
+                        <label class="switch-title">Turbulence</label>
+                        <label class="switch">
+                            <input type="checkbox" id="speed_trubulence_check" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
                 <div class="set_content">
                     <p class="set_intensity">Intensity</p>
                     <div class="stepper-wrapper">
@@ -156,6 +187,16 @@
                         <div id="left-letter-big-slide" class="big-slide-letter">Enabled</div>
                         <div id="right-letter-big-slide" class="big-slide-letter">Realism</div>
                     </label>
+                </div>
+                <div class="set_content">
+                    <p class="set_intensity">Artificial Horizon Aid</p>
+                    <div class="" style="margin-bottom:30px;">
+                        <label class="" style="font-size:12px;">Display the Artificial Horizon</label>
+                        <label class="switch">
+                            <input type="checkbox" id="artificial_horizon_check">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
                 </div>
                 <div id="exit_setting">Exit to Main Menu</div>
             </div>
@@ -254,8 +295,8 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="setting_contonller speed_controller">
-                            <p class="controller_name">Speed <span class="controller_target">Controller</span></p>
+                        <div class="setting_contonller speed_controller">
+                            <p class="controller_name">Power <span class="controller_target">Controller</span></p>
                             <div class="controller_content">
                                 <button class="left_controller"></button>
                                 <p class="set_controller">Saitek ST90 USB Joystick</p>
@@ -267,41 +308,17 @@
                                         <div class="arrow-icon-container">
                                             <img src="images/up-down-icon.svg" />
                                         </div>
-                                        <label class="switch-title">Speed Axis:</label>
+                                        <label class="switch-title">Power Axis:</label>
                                     </div>
                                     <select class="speed-axis axis-select">
                                     </select>
                                 </div>
                                 <div  style="display:flex;justify-content:space-between;">
-                                    <div class="invert-label">Invert the Speed Axis:</div>
+                                    <div class="invert-label">Invert the Power Axis:</div>
                                     <div><input type="checkbox" class="speed-invert invert"/></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="setting_contonller yaw_controller">
-                            <p class="controller_name">Yaw <span class="controller_target">Controller</span></p>
-                            <div class="controller_content">
-                                <button class="left_controller"></button>
-                                <p class="set_controller">Saitek ST90 USB Joystick</p>
-                                <button class="right_controller"></button>
-                            </div>
-                            <div class="axis-setting">
-                                <div style="display:flex;justify-content:space-between;">
-                                    <div style="display:flex;">
-                                        <div class="arrow-icon-container">
-                                            <img src="images/left-right-icon.svg" />
-                                        </div>
-                                        <label class="switch-title">Yaw Axis:</label>
-                                    </div>
-                                    <select class="yaw-axis axis-select">
-                                    </select>
-                                </div>
-                                <div  style="display:flex;justify-content:space-between;">
-                                    <div class="invert-label">Invert the Yaw Axis:</div>
-                                    <div><input type="checkbox" class="yaw-invert invert"/></div>
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
                     <div class="joystick-test-area">
                         <div class="joystick-tester">
@@ -352,6 +369,7 @@
                 </div>
             </div>
             <div id="joystick_panel">
+                <div id="joystick-left-div"></div>
                 <div id="joystick-right-div"></div>
             </div>
         </div>

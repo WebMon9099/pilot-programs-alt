@@ -327,6 +327,7 @@ a.exit {
 
 #joystick-left-div {
     left: 60px;
+    display: none!important;
 }
 
 #joystick-right-div {
@@ -1076,7 +1077,7 @@ option:disabled{
 
 .power-setting-area .square {
     position: absolute;
-    top: 0;
+    top: 90px;
     left: 0;
     width: 26px;
     height: 24px;

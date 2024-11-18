@@ -19,22 +19,14 @@ var jl_upk,
   jl_leftk = false;
 var gamepad_leftk, gamepad_rightk, gamepad_upk, gamepad_downk;
 var gamepad_skey, gamepad_wkey, gamepad_akey, gamepad_dkey;
-var randomM = 0;
-var rSpeed = 0.2,
-  rUser = 0.5,
-  mSpeed = 0.5,
-  upSpeed = 1.2;
 var speed, alt, heading;
-var jType;
 var tspeed, talt, theading;
-var altT, headT, tspT, taltT, theadT, timeT;
-var altT1, altT2, altT3, altT4;
+var altT, tspT, taltT, theadT, timeT;
 var isGame = false;
 var gameCont;
-var screenm, screenf;
+var screenm;
 var isDone = false;
 var speedR, altR, headR;
-var speedTarget, altTarget, headTarget;
 var score = {
   speed: { flag: false, total: 0, correct: 0 },
   alt: { flag: false, total: 0, correct: 0 },
@@ -43,28 +35,14 @@ var score = {
 };
 var totalCount,
   totalScore = 0;
-var errors = 0;
-var findex = -1;
 var trackTime;
 var crossCont, crossX, crossY;
 
-var flightScore = 0,
-  flightError = 0;
-var headRCont = new createjs.Container();
-var headIndex = 0;
-
 var trainMode = false;
-
-var centerCross = {
-  x: 720,
-  y: 325,
-  w: 300,
-  h: 6,
-};
 
 var showSetting = false;
 var joyRTimer, joyLTimer;
-var JoyRightDiv;
+var JoyRightDiv, JoyLeftDiv;
 
 var relationSpeed = 0.888;
 
@@ -72,13 +50,14 @@ var speed_turbulence_flag = true;
 var alt_turbulence_flag = true;
 var heading_turbulence_flag = true;
 var realism_flag = true;
+var artificial_horizon_flag = false;
 
 var speed_turbulence = 0;
 var alt_turbulence = 0;
 var heading_turbulence = 0;
 
 const turblence_steps = 150;
-const speec_change_rate_by_alt = 0.003;
+const speec_change_rate_by_alt = 0.00003;
 
 const gamepads = {
   9: { index: 9, id: "No Controller" },
@@ -113,9 +92,19 @@ const max_speed_on_meter = 170;
 var speedArrow, compassArrow, altArrow, speedBug, compassBug, altBug, speedMeter, compassMeter, altimeter;
 var audio_numbers = [];
 var soundInstance;
+var throttle = 0.5;
+var bankAngle = 0;
+var centerCross = {
+  x: 1200,
+  y: 750,
+  w: 150,
+  h: 4,
+};
 //-----------------------------------
 
 function Main() {
+  var joyLeftParam = { title: "joystick-left" };
+  JoyLeftDiv = new JoyStick("joystick-left-div", joyLeftParam);
   var joyRightParam = { title: "joystick-right" };
   JoyRightDiv = new JoyStick("joystick-right-div", joyRightParam);
 
@@ -126,7 +115,6 @@ function Main() {
   manifest = [
     { src: "images/mask.png", id: "Fmask" },
     { src: "images/screen_mid.png", id: "ScreenM" },
-    { src: "images/screen_front.png", id: "ScreenF" },
     { src: "images/on.png", id: "On" },
     { src: "images/off.png", id: "Off" },
 
@@ -406,6 +394,7 @@ function showStartScreen(restart = false) {
   $('#head_trubulence_check').prop('checked', true);
   $('#speed_trubulence_check').prop('checked', true);
   $('#alt_trubulence_check').prop('checked', true);
+  $('#artificial_horizon_check').prop('checked', false);
   if ($('#realism_check').attr('checked')){
     $('#left-letter-big-slide').html('Enabled');
     $('#left-letter-big-slide').css('color', 'white');
@@ -423,6 +412,7 @@ function showStartScreen(restart = false) {
   heading_turbulence_flag = true;
   
   realism_flag = true;
+  artificial_horizon_flag = false;
   $('.x-coord').html('X:0');
   $('.y-coord').html('Y:0');
   $('.dot').css({'top':'50%', 'left':'50%'});
@@ -545,8 +535,8 @@ function createInterface() {
   showScreen("#main-screen");
   showSetting = true;
 
-  speed = 160;
-  tspeed = 100;
+  speed = 100;
+  tspeed = 70;
   alt = 6500;
   talt = 3500;
   heading = 100;
@@ -729,9 +719,51 @@ function createInterface() {
   timer_container.y = canvas.height*3/4 - 60 / 2;
 
   gameCont.addChild(timer_container);
+
+
+  screenm = new createjs.Bitmap(loader.getResult("ScreenM"));
+  screenm.regX = screenm.image.width / 2;
+  screenm.regY = screenm.image.height / 2;
+  screenm.scaleX = 0.5;
+  screenm.scaleY = 0.5;
+  screenm.x = 1200;
+  screenm.y = 750 ;
+  var circle = new createjs.Shape(
+    new createjs.Graphics().drawCircle(0, 0, 120)
+  );
+  circle.x = 1200;
+  circle.y = 750 - 10;
+
+  screenm.mask = circle;
+  gameCont.addChild(screenm);
+
+  crossCont = new createjs.Container();
+  crossX = new createjs.Shape();
+  crossX.graphics.beginFill("#e022b3");
+  crossX.graphics.drawRect(
+    centerCross.x - centerCross.w / 2,
+    centerCross.y - centerCross.h / 2,
+    centerCross.w,
+    centerCross.h
+  );
+  crossX.graphics.endFill();
+  crossCont.addChild(crossX);
+
+  crossY = new createjs.Shape();
+  crossY.graphics.beginFill("#e022b3");
+  crossY.graphics.drawRect(
+    centerCross.x - centerCross.h / 2,
+    centerCross.y - centerCross.w / 2,
+    centerCross.h,
+    centerCross.w
+  );
+  crossY.graphics.endFill();
+  crossCont.addChild(crossY);
+
+  crossCont.mask = circle;
+  gameCont.addChild(crossCont);
   //------------------------------
 
-  errors = 0;
   currentS = 0;
   msec = 0;
   sec = 0;
@@ -741,9 +773,10 @@ function createInterface() {
   alt_turbulence_flag = true;
   heading_turbulence_flag = true;
   realism_flag = true;
+  artificial_horizon_flag = false;
+  audio_numbers = [];
   initScore();
-
-  length = 0;
+  
   isDone = false;
   relationSpeed = 0.888;
 
@@ -832,18 +865,7 @@ function clickInstrument(e) {
     gameCont.getChildByName(tname).name = type + "_on";
   }
 }
-function setAltText(val) {
-  var str = String(val);
 
-  var a4 = str.slice(-2);
-  var a2 = str.slice(-3, -2);
-  var a1 = str.slice(0, -3);
-  altT1.text = a1;
-  altT2.text = a2;
-  var _m = Math.floor(Number(a4) / 20);
-  altT3.text = String((_m + 1) * 20).slice(-2);
-  altT4.text = _m == 0 ? "00" : String(_m * 20);
-}
 function keepTime() {
   sec++;
   var rsec = totalSec - sec;
@@ -863,8 +885,6 @@ function keepTime() {
     sec = 0;
     gameOver();
   }
-
-  randomM = Math.floor(Math.random() * 2);
 }
 
 function manageTest() {
@@ -881,144 +901,124 @@ function manageTest() {
 
   document.getElementById("tsiderx").innerHTML = String("Score: " + totalScore);
 }
-function rotateMidScreen() {
-  // if (screenm.rotation < -1 * rSpeed || screenm.rotation > rSpeed) {
-  //   headRCont.x += ((9.175 * relationSpeed) / 60) * screenm.rotation * 0.5;
+function updateAirCraft() {
+  //chnage speed------------------------------
+  const SQUARE_STEP = 1;
+  const BAR_HEIGHT = $('.power-setting-area .bar').height();
+  const THROTTLE_STEP = 1/(BAR_HEIGHT - $('.square').height());
+  const DRAG = Math.pow(speed, 2)/100000;
 
-  //   heading -= (relationSpeed / 60) * screenm.rotation * 0.5;
-  //   if (heading <= 0) heading += 360;
-  //   if (heading >= 360) heading -= 360;
-
-  //   if (headRCont.x > -25 - headIndex * 3326) {
-  //     headIndex--;
-  //     if (!headRCont.getChildByName("headIndex" + headIndex)) {
-  //       var headR2 = headR.clone();
-  //       headR2.x = headIndex * 3326;
-  //       headR2.name = "headIndex" + headIndex;
-  //       headRCont.addChild(headR2);
-  //     }
-  //   }
-  //   if (headRCont.x < -665 - headIndex * 3326) {
-  //     headIndex++;
-  //     if (!headRCont.getChildByName("headIndex" + headIndex)) {
-  //       var headR2 = headR.clone();
-  //       headR2.x = headIndex * 3326;
-  //       headR2.name = "headIndex" + headIndex;
-  //       headRCont.addChild(headR2);
-  //     }
-  //   }
-  // }
-
-  if (alt_turbulence_flag){
-    var temp_alt = alt + alt_turbulence/turblence_steps
-    if (temp_alt > 500 && temp_alt < 9500){
-      alt = temp_alt;
-      altArrow.rotation = alt/10000 * 360 - 180;
+  if (wkey || jl_upk || gamepad_wkey) {
+    if (throttle < 1){
+      $('.square').css('top', Math.max($('.square').position().top - SQUARE_STEP, 0));
+      throttle = Math.min(1, throttle + THROTTLE_STEP);
     }
   }
 
-  if (heading_turbulence_flag){
-    // var temp_rotation = screenm.rotation + heading_turbulence/turblence_steps;
-    // if (temp_rotation < 45 && temp_rotation > -45) {
-    //   screenm.rotation = temp_rotation;
-    // }
-    var temp_heading = heading + heading_turbulence/turblence_steps;
-    if (temp_heading > 0 && temp_heading < 360){
-      heading = temp_heading;
-      compassMeter.rotation = heading;
-      compassBug.rotation = (theading + heading) - 180;
-      updateCompassBugPosition();
+  if (skey || jl_downk || gamepad_skey) {
+    if (throttle > 0){
+      $('.square').css('top',  Math.min($('.square').position().top + SQUARE_STEP, BAR_HEIGHT - $('.square').height()));
+      throttle = Math.max(0, throttle - THROTTLE_STEP);
     }
   }
+
+  var temp_speed = speed + (throttle - DRAG);
+
+  if (temp_speed < 170 && temp_speed > 40){
+    speed = temp_speed;
+    speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
+  }
+
+  if (speed_turbulence_flag){
+    var temp_speed = speed + speed_turbulence/turblence_steps;
+    if (temp_speed > 40 && temp_speed < 170) {
+      speed = temp_speed;
+      speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
+    }
+  }
+  //------------------------------------------
 
   if (rightk || gamepad_rightk || jr_rightk) {
-    // if (screenm.rotation > -45) {
-    //   screenm.rotation -= rUser * 0.5;
-    // }
+    if (bankAngle > -45) {
+      bankAngle -= 0.2;
+    }
   }
   if (leftk || gamepad_leftk || jr_leftk) {
-    // if (screenm.rotation < 45) {
-    //   screenm.rotation += rUser * 0.5;
-    // }
+    if (bankAngle < 45) {
+      bankAngle += 0.2;
+    }
+  }
+  if (heading_turbulence_flag){
+    var temp_bank = bankAngle + heading_turbulence/turblence_steps;
+    if (temp_bank > -45 && temp_bank < 45){
+      bank = temp_bank;
+    }
   }
 
-  // const rot = (screenm.rotation * Math.PI) / 180;
-  // if (Math.abs(length) > 1.5 && altR.y > -5544 && altR.y < -335) {
-  //   altR.y -= (((length / 33) * 500) / 60) * relationSpeed * 0.3;
-  //   alt -= (((length / 33) * 500) / 60 / 10.43) * 20 * relationSpeed * 0.3;
-
-  //   if (realism_flag){
-  //     if (length > 0){
-  //       var temp = speedR.y + speec_change_rate_by_alt * length * 0.9375/0.25;
-  //       if (temp < 0) {
-  //         speed += speec_change_rate_by_alt * length;
-  //         speedR.y = temp;
-  //       }
-  //     }
-  //     if (length < 0){
-  //       temp = speedR.y + speec_change_rate_by_alt * length * 0.9375/0.25;
-  //       if (temp > -970) {
-  //         speed += speec_change_rate_by_alt * length;
-  //         speedR.y = temp;
-  //       }
-  //     }
-  //   }
-  // }
+  heading += bankAngle/30 * speed/50;
+  if (heading < 0) heading += 360;
+  if (heading > 360) heading -= 360;
+  compassMeter.rotation = heading;
+  compassBug.rotation = (theading + heading) - 180;
+  updateCompassBugPosition();
 
   if (upk || gamepad_upk || jr_upk) {
-    if (alt < 9500){
-      
-    }
-    if (altR.y > -5544) {
-      if (length < 261) {
-        length += upSpeed * 0.3;
+    if (alt < 9900){
+      alt += 10;
+      if (realism_flag){
+        temp_speed = speed - speec_change_rate_by_alt * alt;
+        if (temp_speed < 170 && temp_speed > 40){
+          speed = temp_speed;
+          speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
+        }
       }
-    } else {
-      altR.y = -5543;
-      alt = 2000;
-    }
-    if (altR.y > -335 && length > 0) {
-      altR.y = -336;
-      alt = 12000;
     }
   }
   if (downk || gamepad_downk || jr_downk) {
-    if (altR.y < -334) {
-      if (length > -261) {
-        length -= upSpeed * 0.3;
+    if (alt > 20){
+      alt -= 10;
+      if (realism_flag){
+        temp_speed = speed + speec_change_rate_by_alt * alt;
+        if (temp_speed < 170 && temp_speed > 40){
+          speed = temp_speed;
+          speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
+        }
       }
-    } else {
-      altR.y = -336;
-      alt = 12000;
-    }
-    if (altR.y < -5544 && length < 0) {
-      altR.y = -5543;
-      alt = 2000;
     }
   }
 
-  // screenm.y = 250 * 1.3 - length * Math.cos(rot) * 0.95;
-  // screenm.x = 720 + length * Math.sin(rot);
+  if (alt_turbulence_flag){
+    var temp_alt = alt + alt_turbulence/turblence_steps
+    if (temp_alt > 20 && temp_alt < 9900){
+      alt = temp_alt;
+    }
+  }
+  altArrow.rotation = alt/10000 * 360 - 180;
 
-  // crossX.y = length * -Math.cos(rot);
-  // crossY.x = length * Math.sin(rot);
+
+  const rot = (bankAngle * Math.PI) / 180;
+  screenm.rotation = bankAngle;
+  screenm.y = 750 - (alt-5000) * 0.01 * Math.cos(rot) * 0.95;
+  screenm.x = 1200 + (alt-5000) * 0.01 * Math.sin(rot);
+
+  crossX.y = (alt-5000) * 0.01 * -Math.cos(rot);
+  crossY.x = (alt-5000) * 0.01 * Math.sin(rot);
+  screenm.visible = artificial_horizon_flag;
+  crossX.visible = artificial_horizon_flag;
+  crossY.visible = artificial_horizon_flag;
 }
-let cT = null;
 function startMain() {
-  randomM = 0;
 
   createjs.Ticker.setFPS(60);
   createjs.Ticker.addEventListener("tick", updateGame);
 }
 function updateGame(e) {
-  const nT = Date.now();
-  cT = nT;
   if (isGame) {
     if (gameCont != null) {
       gameCont.updateCache();
     }
-    changeSpeed();
-    rotateMidScreen();
+    updateAirCraft();
+    moveLeftJoystick();
     moveRightJoystick();
     if (gamepad_conneted.alt != 9) gamepadCheck("alt");
     if (gamepad_conneted.head != 9) gamepadCheck('head');
@@ -1026,6 +1026,50 @@ function updateGame(e) {
   }
   stage.update();
 }
+
+function moveLeftJoystick() {
+  if (!joyLTimer) {
+    joyLTimer = setInterval(function () {
+      var dic = JoyLeftDiv.GetDir();
+      initJoyLeftKeyPressed();
+      if (dic != "C") {
+        switch (dic) {
+          case "N":
+            jl_upk = true;
+            break;
+          case "NE":
+            jl_upk = true;
+            jl_rightk = true;
+            break;
+          case "E":
+            jl_rightk = true;
+            break;
+          case "SE":
+            jl_rightk = true;
+            jl_downk = true;
+            break;
+          case "S":
+            jl_downk = true;
+            break;
+          case "SW":
+            jl_downk = true;
+            jl_leftk = true;
+            break;
+          case "W":
+            jl_leftk = true;
+            break;
+          case "NW":
+            jl_leftk = true;
+            jl_upk = true;
+            break;
+          default:
+            break;
+        }
+      }
+    }, 50);
+  }
+}
+
 function moveRightJoystick() {
   if (!joyRTimer) {
     joyRTimer = setInterval(function () {
@@ -1181,7 +1225,7 @@ function makeTurbulence(){
   }
   
   if (heading_turbulence_flag){
-    heading_turbulence = 2 + 6 * Math.random();
+    heading_turbulence = Math.random();
     if (Math.random() < 0.5){
       heading_turbulence = -heading_turbulence;
     }
@@ -1189,37 +1233,15 @@ function makeTurbulence(){
     heading_turbulence = 0;
   }
 }
-function changeSpeed() {
-  if (speed_turbulence_flag){
-    var temp_speed = speed + speed_turbulence/turblence_steps;
-    if (temp_speed > 40 && temp_speed < 170) {
-      speed = temp_speed;
-      speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
-    }
-  }
-  if (wkey || jl_upk || gamepad_wkey) {
-    if (speed < 170){
-      speed += 0.25;
-      speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
-    }
-  }
-  if (skey || jl_downk || gamepad_skey) {
-    if (speed >  40){
-      speed -= 0.25;
-      speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
-    }
-  }
-  relationSpeed = ((speed - 90) * 0.375) / 100 + 0.5;
-}
 
 function gameOver() {
   createjs.Tween.removeAllTweens();
-  sec = 0;
   createjs.Sound.stop();
   gameCont.removeAllChildren();
   stage.removeChild(gameCont);
   window.removeEventListener("keydown", getKeyDown);
   window.removeEventListener("keyup", getKeyUp);
+  sec = 0;
   showEndScreen();
 }
 function showEndScreen() {
@@ -1248,7 +1270,6 @@ function showEndScreen() {
   clearInterval(joyLTimer);
   showScreen("#results-screen");
   showSetting = false;
-  // saveLoaded();
   insertResults(_total, totalSec);
   stage.update();
 
@@ -1260,11 +1281,6 @@ function startAgain() {
   showStartScreen(restart = true);
 }
 
-//save the score
-function saveLoaded() {
-  var accu = totalCount == 0 ? 0 : ((totalScore / totalCount) * 100).toFixed(0);
-  insertResults(accu, totalSec);
-}
 function addBmp(bname, tx, ty, isR) {
   var bmp = new createjs.Bitmap(loader.getResult(bname));
   if (isR) {
@@ -1274,15 +1290,6 @@ function addBmp(bname, tx, ty, isR) {
   bmp.y = ty;
   bmp.x = tx;
   return bmp;
-}
-
-function clearGameWindow() {
-  for (var i = 0; i < gameCont.numChildren; i++) {
-    if (gameCont.getChildAt(i).hasEventListener("click")) {
-      gameCont.getChildAt(i).removeEventListener("click", selectPlane);
-    }
-  }
-  //gameCont.removeAllChildren();
 }
 
 function getKeyUp(e) {
@@ -1403,6 +1410,9 @@ function generateIndex(){ //for avoiding duplicated random index
 }
 
 function playAudio(){
+  if (totalSec <= sec || sec == 0){
+    return;
+  }
   var index = generateIndex();
   soundInstance = createjs.Sound.play("audio_number_" + index);
   soundInstance.volume = 1;
@@ -1731,6 +1741,9 @@ $(document).ready(function () {
       $('#right-letter-big-slide').css('color', 'white');
     }
   })
+  $('#artificial_horizon_check').click(function() {
+    artificial_horizon_flag = $(this).prop('checked');
+  })
   $('.axis-select').change(function(){
     let prev_value = "";
     let selcted_axis_value = $(this).val();
@@ -1792,13 +1805,16 @@ $(document).ready(function () {
         $("#settiingModal").fadeOut();
     }
   });
-  const SQUARE_HEIGHT = $('.square').height();
+  const SQUARE_STEP = 1;
   const BAR_HEIGHT = $('.power-setting-area .bar').height();
+  const THROTTLE_STEP = 1/(BAR_HEIGHT - $('.square').height());
   $('.decrease').click(function(){
-    $('.square').css('top',  Math.min($('.square').position().top + SQUARE_HEIGHT, BAR_HEIGHT - SQUARE_HEIGHT));
+    $('.square').css('top',  Math.min($('.square').position().top + SQUARE_STEP, BAR_HEIGHT - $('.square').height()));
+    throttle = Math.max(0, throttle - THROTTLE_STEP);
   })
   $('.increase').click(function(){
-    $('.square').css('top', Math.max($('.square').position().top - SQUARE_HEIGHT, 0));
+    $('.square').css('top', Math.max($('.square').position().top - SQUARE_STEP, 0));
+    throttle = Math.min(1, throttle + THROTTLE_STEP);
   })
 
   $('#red-btn').click(function(){
