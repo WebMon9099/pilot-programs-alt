@@ -4,7 +4,7 @@ var stage;
 var sec = 0;
 var loader;
 var currentS = 0,
-  targetS = 5; //30 headinAltSpeed Normal version
+  targetS = 30; //30 headinAltSpeed Normal version
 
 var totalSec = 300;
 var leftk, rightk, upk, downk;
@@ -24,7 +24,7 @@ var tspeed, talt, theading;
 var altT, tspT, taltT, theadT, timeT;
 var isGame = false;
 var gameCont;
-var screenm;
+var screenm, screenf;
 var isDone = false;
 var speedR, altR, headR;
 var score = {
@@ -43,8 +43,6 @@ var trainMode = false;
 var showSetting = false;
 var joyRTimer, joyLTimer;
 var JoyRightDiv, JoyLeftDiv;
-
-var relationSpeed = 0.888;
 
 var speed_turbulence_flag = true;
 var alt_turbulence_flag = true;
@@ -79,7 +77,7 @@ var joystick_axis_invert = {
   heading:false
 }
 
-const meter_width = 300;
+const meter_width = 350;
 const pointer_width = 10;
 const bug_width  = 40;
 const arrow_length = meter_width/2 - 50;
@@ -94,12 +92,16 @@ var audio_numbers = [];
 var soundInstance;
 var throttle = 0.5;
 var bankAngle = 0;
+const speedMeter_Y = 200;
+const horizon_x = 1250;
 var centerCross = {
-  x: 1200,
-  y: 750,
+  x: horizon_x,
+  y: 150,
   w: 150,
   h: 4,
 };
+var pitch = 0;
+var upSpeed = 0.5;
 //-----------------------------------
 
 function Main() {
@@ -115,12 +117,14 @@ function Main() {
   manifest = [
     { src: "images/mask.png", id: "Fmask" },
     { src: "images/screen_mid.png", id: "ScreenM" },
+    { src: "images/screen_front.png", id: "ScreenF" },
     { src: "images/on.png", id: "On" },
     { src: "images/off.png", id: "Off" },
 
-    { src: "images/Airspeed.png", id: "Airspeed" },
+    { src: "images/Airspeed_nobackground.png", id: "Airspeed" },
     { src: "images/AltimeterForegroundAndBackground.png", id: "AltimeterForegroundAndBackground" },
-    { src: "images/AltimeterForeground.png", id: "AltimeterForeground" },
+    { src: "images/Altimeter_nobackground.png", id: "AltimeterForeground" },
+    { src: "images/circle-background.png", id: "CircleBackground" },
     { src: "images/Background.png", id: "Background" },
     { src: "images/Bug.png", id: "Bug" },
     { src: "images/CompassArrow.png", id: "CompassArrow" },
@@ -514,8 +518,10 @@ function showSecondScreen(train) {
     document.querySelector("#title").style = "background-color: #7ad304";
     document.querySelector("#tsider-train").style = "display: flex !important";
     $('.realism-container').show();
+    $('.horizontal-container').show();
   } else {
     $('.realism-container').hide();
+    $('.horizontal-container').hide();
   }
   if (trainMode){
     $('#time-screen ul#time-buttons li button').addClass('traing_mode');
@@ -536,7 +542,7 @@ function createInterface() {
   showSetting = true;
 
   speed = 100;
-  tspeed = 70;
+  tspeed = 90;
   alt = 6500;
   talt = 3500;
   heading = 100;
@@ -556,8 +562,8 @@ function createInterface() {
   speedMeter = new createjs.Bitmap(loader.getResult("Airspeed"));
   speedMeter.scaleX = meter_width/speedMeter.image.naturalWidth;
   speedMeter.scaleY = meter_width/speedMeter.image.naturalWidth;
-  speedMeter.x = 5;
-  speedMeter.y = 150 * 1.5;
+  speedMeter.x = 105;
+  speedMeter.y = speedMeter_Y * 1.5;
   gameCont.addChild(speedMeter);
 
   speedArrow = new createjs.Bitmap(loader.getResult("Pointer"));
@@ -590,21 +596,30 @@ function createInterface() {
   gameCont.addChild(spInst);
 
   tspT = new createjs.Text("Maintain " + tspeed + "kt", "20px Open Sans", "#222c33");
-  tspT.x = speedArrow.x - 70;
-  tspT.y = speedMeter.y - 50;
+  tspT.x = speedArrow.x - 55;
+  tspT.y = speedMeter.y - 30;
   tspT.textAlign = "left";
   if (!trainMode) tspT.visible = false;
   gameCont.addChild(tspT);
   //-------------------------
 
   //add compass meter-------------
+  var CircleBackground = new createjs.Bitmap(loader.getResult("CircleBackground"));
+  CircleBackground.regX = CircleBackground.image.width/2;
+  CircleBackground.regY = CircleBackground.image.height/2;
+  CircleBackground.scaleX = (meter_width+30)/CircleBackground.image.width;
+  CircleBackground.scaleY = (meter_width+30)/CircleBackground.image.width;
+  CircleBackground.x = 500 + meter_width/2;
+  CircleBackground.y = speedMeter_Y + meter_width/2;
+  gameCont.addChild(CircleBackground);
+
   compassMeter = new createjs.Bitmap(loader.getResult("CompassForeground"));
   compassMeter.regX = compassMeter.image.width/2;
   compassMeter.regY = compassMeter.image.height/2;
   compassMeter.scaleX = meter_width/compassMeter.image.width;
   compassMeter.scaleY = meter_width/compassMeter.image.width;
   compassMeter.x = 500 + meter_width/2;
-  compassMeter.y = 150 + meter_width/2;
+  compassMeter.y = speedMeter_Y + meter_width/2;
   compassMeter.rotation = heading;
   gameCont.addChild(compassMeter);
 
@@ -637,19 +652,19 @@ function createInterface() {
   gameCont.addChild(headInst);
 
   theadT = new createjs.Text("Adjust heading to " + (theading/10>0?"0"+theading/10:"00"+theading/10), "20px Open Sans", "#222c33");
-  theadT.x = compassArrow.x - 70;
-  theadT.y = compassMeter.y - 50 - meter_width/2;
+  theadT.x = compassArrow.x - 90;
+  theadT.y = compassMeter.y - 35 - meter_width/2;
   theadT.textAlign = "left";
   if (!trainMode) theadT.visible = false;
   gameCont.addChild(theadT);
   //-------------------------
 
   //add altimeter-------------
-  altimeter = new createjs.Bitmap(loader.getResult("AltimeterForegroundAndBackground"));
+  altimeter = new createjs.Bitmap(loader.getResult("AltimeterForeground"));
   altimeter.scaleX = meter_width/altimeter.image.width;
   altimeter.scaleY = meter_width/altimeter.image.width;
-  altimeter.x = 1000;
-  altimeter.y = 150 * 1.5;
+  altimeter.x = 900;
+  altimeter.y = speedMeter_Y * 1.5;
   gameCont.addChild(altimeter);
 
   altArrow = new createjs.Bitmap(loader.getResult("Pointer"));
@@ -657,7 +672,7 @@ function createInterface() {
   altArrow.regY = 0;
   altArrow.scaleX = arrow_length/altArrow.image.height;
   altArrow.scaleY = arrow_length/altArrow.image.height;
-  altArrow.x = altimeter.x + meter_width/2;
+  altArrow.x = altimeter.x + meter_width/2 + 10;
   altArrow.y = altimeter.y + meter_width/2;
   altArrow.rotation = alt/10000 * 360 - 180;
   gameCont.addChild(altArrow);
@@ -682,14 +697,14 @@ function createInterface() {
   gameCont.addChild(altInst);
 
   taltT = new createjs.Text("Maintain " + talt + "m", "20px Open Sans", "#222c33");
-  taltT.x = altArrow.x - 70;
-  taltT.y = altimeter.y - 50;
+  taltT.x = altArrow.x - 80;
+  taltT.y = altimeter.y - 30;
   taltT.textAlign = "left";
   if (!trainMode) taltT.visible = false;
   gameCont.addChild(taltT);
 
   altT = new createjs.Text(alt, "22px Open Sans", "#fff");
-  altT.x = altArrow.x;
+  altT.x = altArrow.x - 10;
   altT.y = altimeter.y + meter_width/3 - 10;
   altT.textAlign = "center";
   gameCont.addChild(altT);
@@ -697,26 +712,38 @@ function createInterface() {
   //-------------------------
 
   //timer part
+  const shadowRect = new createjs.Shape();
+  shadowRect.graphics
+  .setStrokeStyle(1)
+  .beginStroke('#0c0c0c')
+  .beginFill('#0c0c0c')
+  .drawRoundRect(-4, -4, 188, 68, 4);
+
+  shadowRect.x = compassArrow.x - 200/2;
+  shadowRect.y = canvas.height - 200;
+  gameCont.addChild(shadowRect);
+
   var timer_container = new createjs.Container();
   var timerBox = new createjs.Shape();
-  timerBox.graphics.beginFill("#222c33");
-  timerBox.graphics.drawRect(
+  timerBox.graphics.setStrokeStyle(4).beginStroke('#2c2b2d').beginFill("#262526");
+  timerBox.graphics.drawRoundRect(
     0,
     0,
-    200,
-    60
+    180,
+    60,
+    4
   );
   timerBox.graphics.endFill();
   timer_container.addChild(timerBox);
 
-  timeT = new createjs.Text("", "30px Open Sans", "#fff");
-  timeT.x = 95;
+  timeT = new createjs.Text("", "30px Inter", "#fff");
+  timeT.x = 90;
   timeT.y = 15;
   timeT.textAlign = "center";
   timer_container.addChild(timeT);
 
   timer_container.x = compassArrow.x - 200/2;
-  timer_container.y = canvas.height*3/4 - 60 / 2;
+  timer_container.y = canvas.height - 200;
 
   gameCont.addChild(timer_container);
 
@@ -726,13 +753,13 @@ function createInterface() {
   screenm.regY = screenm.image.height / 2;
   screenm.scaleX = 0.5;
   screenm.scaleY = 0.5;
-  screenm.x = 1200;
-  screenm.y = 750 ;
+  screenm.x = horizon_x;
+  screenm.y = 150 ;
   var circle = new createjs.Shape(
     new createjs.Graphics().drawCircle(0, 0, 120)
   );
-  circle.x = 1200;
-  circle.y = 750 - 10;
+  circle.x = horizon_x;
+  circle.y = 150 - 10;
 
   screenm.mask = circle;
   gameCont.addChild(screenm);
@@ -742,7 +769,7 @@ function createInterface() {
   crossX.graphics.beginFill("#e022b3");
   crossX.graphics.drawRect(
     centerCross.x - centerCross.w / 2,
-    centerCross.y - centerCross.h / 2,
+    centerCross.y - centerCross.h / 2 + 4,
     centerCross.w,
     centerCross.h
   );
@@ -753,7 +780,7 @@ function createInterface() {
   crossY.graphics.beginFill("#e022b3");
   crossY.graphics.drawRect(
     centerCross.x - centerCross.h / 2,
-    centerCross.y - centerCross.w / 2,
+    centerCross.y - centerCross.w / 2 - 2,
     centerCross.h,
     centerCross.w
   );
@@ -762,6 +789,16 @@ function createInterface() {
 
   crossCont.mask = circle;
   gameCont.addChild(crossCont);
+
+  //load screen front
+  screenf = new createjs.Bitmap(loader.getResult("ScreenF"));
+  screenf.regX = screenf.image.width / 2;
+  screenf.regY = screenf.image.height / 2;
+  screenf.scaleX = 0.62;
+  screenf.scaleY = 0.62;
+  screenf.x = horizon_x;
+  screenf.y = 145;
+  gameCont.addChild(screenf);
   //------------------------------
 
   currentS = 0;
@@ -778,7 +815,6 @@ function createInterface() {
   initScore();
   
   isDone = false;
-  relationSpeed = 0.888;
 
   headingAltSpeed();
   playAudio();
@@ -801,6 +837,7 @@ function initScore() {
 }
 function clickInstrument(e) {
   var tname = String(e.target.name);
+  var DialDisabledIcon = loader.getResult('DialDisabledIcon');
 
   if (tname.includes("on")) {
     gameCont.getChildByName(tname).image = loader.getResult("Off");
@@ -811,7 +848,11 @@ function clickInstrument(e) {
         tspT.visible = false;
         speedBug.visible = false;
         speedArrow.visible = false;
-        speedMeter.image = loader.getResult('DialDisabledIcon');
+        speedMeter.image = DialDisabledIcon;
+        speedMeter.scaleX = meter_width/speedMeter.image.naturalWidth;
+        speedMeter.scaleY = meter_width/speedMeter.image.naturalWidth;
+        speedMeter.x = 105;
+        speedMeter.y = speedMeter_Y * 1.5;
         break;
       case "in_alt":
         score.alt.flag = false;
@@ -819,14 +860,24 @@ function clickInstrument(e) {
         altArrow.visible = false;
         altBug.visible = false;
         altT.visible = false;
-        altimeter.image = loader.getResult('DialDisabledIcon');
+        altimeter.image = DialDisabledIcon;
+        altimeter.scaleX = meter_width/altimeter.image.width;
+        altimeter.scaleY = meter_width/altimeter.image.width;
+        altimeter.x = 900;
+        altimeter.y = speedMeter_Y * 1.5;
         break;
       case "in_head":
         score.head.flag = false;
         theadT.visible = false;
         compassArrow.visible = false;
         compassBug.visible = false;
-        compassMeter.image = loader.getResult('DialDisabledIcon');
+        compassMeter.image = DialDisabledIcon;
+        compassMeter.regX = DialDisabledIcon.width/2;
+        compassMeter.regY = DialDisabledIcon.height/2;
+        compassMeter.scaleX = meter_width/DialDisabledIcon.width;
+        compassMeter.scaleY = meter_width/DialDisabledIcon.width;
+        compassMeter.x = 500 + meter_width/2;
+        compassMeter.y = speedMeter_Y + meter_width/2;
         break;
       default:
         break;
@@ -843,6 +894,10 @@ function clickInstrument(e) {
         speedBug.visible = true;
         speedArrow.visible = true;
         speedMeter.image = loader.getResult('Airspeed');
+        speedMeter.scaleX = meter_width/speedMeter.image.naturalWidth;
+        speedMeter.scaleY = meter_width/speedMeter.image.naturalWidth;
+        speedMeter.x = 105;
+        speedMeter.y = speedMeter_Y * 1.5;
         break;
       case "in_alt":
         score.alt.flag = true;
@@ -850,7 +905,11 @@ function clickInstrument(e) {
         altBug.visible = true;
         altArrow.visible = true;
         altT.visible = true;
-        altimeter.image = loader.getResult('AltimeterForegroundAndBackground');
+        altimeter.image = loader.getResult('AltimeterForeground');
+        altimeter.scaleX = meter_width/altimeter.image.width;
+        altimeter.scaleY = meter_width/altimeter.image.width;
+        altimeter.x = 900;
+        altimeter.y = speedMeter_Y * 1.5;
         break;
       case "in_head":
         score.head.flag = true;
@@ -858,6 +917,12 @@ function clickInstrument(e) {
         compassArrow.visible = true;
         compassBug.visible = true;
         compassMeter.image = loader.getResult('CompassForeground');
+        compassMeter.regX = compassMeter.image.width/2;
+        compassMeter.regY = compassMeter.image.height/2;
+        compassMeter.scaleX = meter_width/compassMeter.image.width;
+        compassMeter.scaleY = meter_width/compassMeter.image.width;
+        compassMeter.x = 500 + meter_width/2;
+        compassMeter.y = speedMeter_Y + meter_width/2;
         break;
       default:
         break;
@@ -906,7 +971,7 @@ function updateAirCraft() {
   const SQUARE_STEP = 1;
   const BAR_HEIGHT = $('.power-setting-area .bar').height();
   const THROTTLE_STEP = 1/(BAR_HEIGHT - $('.square').height());
-  const DRAG = Math.pow(speed, 2)/100000;
+  const DRAG = Math.pow(speed/200, 2);
 
   if (wkey || jl_upk || gamepad_wkey) {
     if (throttle < 1){
@@ -955,35 +1020,21 @@ function updateAirCraft() {
     }
   }
 
-  heading += bankAngle/30 * speed/50;
+  heading += bankAngle/40 * speed/100;
   if (heading < 0) heading += 360;
   if (heading > 360) heading -= 360;
   compassMeter.rotation = heading;
   compassBug.rotation = (theading + heading) - 180;
   updateCompassBugPosition();
 
-  if (upk || gamepad_upk || jr_upk) {
-    if (alt < 9900){
-      alt += 10;
-      if (realism_flag){
-        temp_speed = speed - speec_change_rate_by_alt * alt;
-        if (temp_speed < 170 && temp_speed > 40){
-          speed = temp_speed;
-          speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
-        }
-      }
+  if (downk || gamepad_downk || jr_downk) {
+    if (pitch < 57){
+      pitch += upSpeed * 0.3;
     }
   }
-  if (downk || gamepad_downk || jr_downk) {
-    if (alt > 20){
-      alt -= 10;
-      if (realism_flag){
-        temp_speed = speed + speec_change_rate_by_alt * alt;
-        if (temp_speed < 170 && temp_speed > 40){
-          speed = temp_speed;
-          speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
-        }
-      }
+  if (upk || gamepad_upk || jr_upk) {
+    if (pitch > -57){
+      pitch -= upSpeed * 0.3;
     }
   }
 
@@ -993,19 +1044,55 @@ function updateAirCraft() {
       alt = temp_alt;
     }
   }
+  if (pitch > 0){
+    if (pitch <57){
+      if (alt < 9700){
+        alt += pitch * 0.1;
+        if (realism_flag){
+          temp_speed = speed - speec_change_rate_by_alt * alt;
+          if (temp_speed < 170 && temp_speed > 40){
+            speed = temp_speed;
+            speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
+          }
+        }
+      }
+    } else {
+      alt = 9600;
+    }
+    
+  } else {
+    if (pitch <-57){
+      alt = 20;
+    } else {
+      if (alt > 20){
+        alt += pitch * 0.1;
+        if (realism_flag){
+          temp_speed = speed + speec_change_rate_by_alt * alt;
+          if (temp_speed < 170 && temp_speed > 40){
+            speed = temp_speed;
+            speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
+          }
+        }
+      }
+      
+    }
+  }
   altArrow.rotation = alt/10000 * 360 - 180;
+  altT.text = parseInt(alt);
 
 
   const rot = (bankAngle * Math.PI) / 180;
   screenm.rotation = bankAngle;
-  screenm.y = 750 - (alt-5000) * 0.01 * Math.cos(rot) * 0.95;
-  screenm.x = 1200 + (alt-5000) * 0.01 * Math.sin(rot);
+  screenm.y = 150 + pitch * Math.cos(rot) * 0.95;
+  screenm.x = horizon_x - pitch * Math.sin(rot);
 
-  crossX.y = (alt-5000) * 0.01 * -Math.cos(rot);
-  crossY.x = (alt-5000) * 0.01 * Math.sin(rot);
+
+  crossX.y = pitch * -Math.cos(rot);
+  crossY.x = pitch * 0.01 * Math.sin(rot);
   screenm.visible = artificial_horizon_flag;
-  crossX.visible = artificial_horizon_flag;
-  crossY.visible = artificial_horizon_flag;
+  crossX.visible = false;
+  crossY.visible = false;
+  screenf.visible = artificial_horizon_flag;
 }
 function startMain() {
 
@@ -1236,6 +1323,7 @@ function makeTurbulence(){
 
 function gameOver() {
   createjs.Tween.removeAllTweens();
+  isDone = true;
   createjs.Sound.stop();
   gameCont.removeAllChildren();
   stage.removeChild(gameCont);
@@ -1244,6 +1332,44 @@ function gameOver() {
   sec = 0;
   showEndScreen();
 }
+
+function updateProgressCircle(score) {
+  // Get the SVG circle element with unique class name
+  const circle = document.querySelector('.score-progress-ring');
+  const scoreText = document.querySelector('.score-value');
+  const aircraft = document.querySelector('.aircraft-icon');
+
+  if (!circle || !scoreText || !aircraft) return;
+
+  // Get circle radius (matches SVG circle r attribute)
+  const radius = 45;
+  
+  // Calculate the circle's circumference
+  const circumference = 2 * Math.PI * radius;
+  
+  // Calculate filled amount
+  const fillAmount = (score / 100) * circumference;
+  
+  // Set the stroke-dasharray to display the progress
+  circle.style.strokeDasharray = `${fillAmount} ${circumference}`;
+  
+  // Update the score text inside the circle
+  scoreText.textContent = Math.round(score);
+  
+  // Calculate the angle (progress in degrees) and position aircraft on the circle
+  const angle = (score / 100) * 360;  // Starts at -90 degrees to position the aircraft at the top initially
+  
+  // Convert the angle to radians
+  const radians = (angle * Math.PI) / 180;
+
+  // Calculate the aircraft's new X and Y position on the circumference of the circle
+  const x = 50 + (radius * Math.sin(radians));  // Circle is centered at (50, 50)
+  const y = 50 - (radius * Math.cos(radians));  // Same for Y position
+
+  // Apply rotation to make sure the aircraft "points forward" along the arc
+  aircraft.setAttribute('transform', `rotate(${angle})`);  // +90 degrees for forward orientation
+}
+
 function showEndScreen() {
   document.getElementById("tsider").innerHTML = String("End of Exam");
   let _alt = score.alt.total == 0
@@ -1255,14 +1381,15 @@ function showEndScreen() {
   let _head = score.head.total == 0
             ? 0
             : ((score.head.correct / score.head.total) * 100);
-  let _audio = ((score.audio.correct / score.audio.total) * 100);
+  let _audio = score.audio.total == 0 ? 0 : (score.audio.correct / score.audio.total) * 100;
   let _total = ((_alt + _head + _speed + _audio) / 4);
   
   $("#result-speed").text(_speed.toFixed(0));
   $("#result-altitude").text(_alt.toFixed(0));
   $("#result-heading").text(_head.toFixed(0));
-  $("#result-audio").text(_audio.toFixed(0));
-  $("#average_accuracy").text(_total.toFixed(0));
+  $("#result-audio").text(score.audio.correct + ' out of ' + score.audio.total);
+  // $("#average_accuracy").text(_total.toFixed(0));
+  updateProgressCircle(_total);
 
   document.getElementsByTagName("body")[0].style = "background-color: white";
 
@@ -1274,7 +1401,7 @@ function showEndScreen() {
   stage.update();
 
   document
-    .querySelector("#restart-button")
+    .querySelector("#playAgainButton")
     .addEventListener("click", startAgain);
 }
 function startAgain() {
@@ -1410,7 +1537,7 @@ function generateIndex(){ //for avoiding duplicated random index
 }
 
 function playAudio(){
-  if (totalSec <= sec || sec == 0){
+  if (totalSec <= sec || isDone){
     return;
   }
   var index = generateIndex();
@@ -1429,7 +1556,7 @@ function playAudio(){
     }
     setTimeout(() => {
       playAudio();  
-    }, 1000);
+    }, 5000);
   });
 }
 
@@ -1437,8 +1564,8 @@ function headingAltSpeed() {
   // set Speed Target
   var isT = false;
   while (!isT) {
-    tspeed = Math.floor(Math.random() * 170) + 40;
-    if (tspeed % 5 == 0 && tspeed < 170) {
+    tspeed = Math.floor(Math.random() * 65) + 90;
+    if (tspeed % 5 == 0 && tspeed < 156) {
       tspT.text = "Maintain " + String(tspeed) + "kt";
       isT = true;
     }
@@ -1446,7 +1573,7 @@ function headingAltSpeed() {
   setSpeedBug();
 
   // set Alt Target
-  talt = Math.floor(Math.random() * 100) + 20;
+  talt = Math.floor(Math.random() * 95) + 2;
   var fstr = String(talt + "00");
   var intr = parseInt(fstr);
   talt = intr;
@@ -1494,8 +1621,6 @@ $(document).ready(function () {
       }
     });
     $(this).addClass("active");
-    intensity = parseFloat($(this).attr("key"));
-    CROSSHAIR_MOVE_INTERVAL = 0.25 / parseFloat($(this).attr("key"));
   });
 
   $("#logo").click(function () {
@@ -1523,6 +1648,7 @@ $(document).ready(function () {
 
     createjs.Tween.removeAllTweens();
     sec = 0;
+    isDone = true;
     createjs.Sound.stop();
     gameCont.removeAllChildren();
     stage.removeChild(gameCont);
@@ -1530,6 +1656,18 @@ $(document).ready(function () {
     window.removeEventListener("keyup", getKeyUp);
 
     showStartScreen(true);
+  });
+
+  $(".stepper-item").click(function () {
+    $(".stepper-item").each((index, el) => {
+      if (index <= $(this).index()) {
+        $(el).removeClass("active").addClass("completed");
+      } else {
+        $(el).removeClass("active").removeClass("completed");
+      }
+    });
+    $(this).addClass("active");
+    targetS = parseFloat($(this).attr("key"));
   });
 
   $(".alt_controller button").click(function () {
@@ -1808,14 +1946,25 @@ $(document).ready(function () {
   const SQUARE_STEP = 1;
   const BAR_HEIGHT = $('.power-setting-area .bar').height();
   const THROTTLE_STEP = 1/(BAR_HEIGHT - $('.square').height());
-  $('.decrease').click(function(){
-    $('.square').css('top',  Math.min($('.square').position().top + SQUARE_STEP, BAR_HEIGHT - $('.square').height()));
-    throttle = Math.max(0, throttle - THROTTLE_STEP);
+  let invervalId;
+  $('.decrease').on('mousedown', function () {
+    invervalId = setInterval(() => {
+      $('.square').css('top',  Math.min($('.square').position().top + SQUARE_STEP, BAR_HEIGHT - $('.square').height()));
+      throttle = Math.max(0, throttle - THROTTLE_STEP);
+    }, 100)
   })
-  $('.increase').click(function(){
-    $('.square').css('top', Math.max($('.square').position().top - SQUARE_STEP, 0));
-    throttle = Math.min(1, throttle + THROTTLE_STEP);
+  $('.increase').on('mousedown', function () {
+    invervalId = setInterval(() => {
+      $('.square').css('top', Math.max($('.square').position().top - SQUARE_STEP, 0));
+      throttle = Math.min(1, throttle + THROTTLE_STEP);
+    }, 100)
   })
+  $('.decrease').on('mouseup mouseleave', function () {
+    clearInterval(invervalId);
+  });
+  $('.increase').on('mouseup mouseleave', function () {
+    clearInterval(invervalId);
+  });
 
   $('#red-btn').click(function(){
     var len = audio_numbers.length;

@@ -12,7 +12,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
     <!-- <link rel="stylesheet" media="screen" href="additional-styles.css" /> -->
     <link rel="stylesheet" media="screen" href="../_common/css/styles.css?v=1" />
-    <link rel="stylesheet" href="styles.css?v=3" />
+    <link rel="stylesheet" href="styles.css?v=9" />
     <script src="../_common/js/jquery.min.js"></script>
     <script src="../_common/js/jqueryui.min.js"></script>
     <script src="../_common/js/game.js"></script>
@@ -21,7 +21,7 @@
     <script src="lib/soundjs-NEXT.min.js"></script>
     <script src="lib/preloadjs-NEXT.min.js"></script>
     <script src="joy.js"></script>
-    <script src="main.js?v=4"></script>
+    <script src="main.js?v=16"></script>
 
 </head>
 
@@ -141,35 +141,35 @@
                 <div class="set_content">
                     <p class="set_intensity">Intensity</p>
                     <div class="stepper-wrapper">
-                        <div class="stepper-item completed" key="90">
+                        <div class="stepper-item left-radius completed" key="50">
                             <div class="step-counter"></div>
                             <div class="step-name ">1</div>
                         </div>
-                        <div class="stepper-item completed" key="80">
+                        <div class="stepper-item completed" key="45">
                             <div class="step-counter"></div>
                             <div class="step-name">2</div>
                         </div>
-                        <div class="stepper-item completed" key="70">
+                        <div class="stepper-item completed" key="40">
                             <div class="step-counter"></div>
                             <div class="step-name">3</div>
                         </div>
-                        <div class="stepper-item completed" key="60">
+                        <div class="stepper-item completed" key="35">
                             <div class="step-counter"></div>
                             <div class="step-name">4</div>
                         </div>
-                        <div class="stepper-item left-radius completed active" key="50">
+                        <div class="stepper-item completed active" key="30">
                             <div class="step-counter"></div>
                             <div class="step-name">5</div>
                         </div>
-                        <div class="stepper-item right-radius" key="40">
+                        <div class="stepper-item" key="25">
                             <div class="step-counter"></div>
                             <div class="step-name">6</div>
                         </div>
-                        <div class="stepper-item right-radius" key="30">
+                        <div class="stepper-item" key="20">
                             <div class="step-counter"></div>
                             <div class="step-name">7</div>
                         </div>
-                        <div class="stepper-item right-radius" key="20">
+                        <div class="stepper-item" key="15">
                             <div class="step-counter"></div>
                             <div class="step-name">8</div>
                         </div>
@@ -188,7 +188,7 @@
                         <div id="right-letter-big-slide" class="big-slide-letter">Realism</div>
                     </label>
                 </div>
-                <div class="set_content">
+                <div class="setting_contonller set_content horizontal-container">
                     <p class="set_intensity">Artificial Horizon Aid</p>
                     <div class="" style="margin-bottom:30px;">
                         <label class="" style="font-size:12px;">Display the Artificial Horizon</label>
@@ -374,7 +374,7 @@
             </div>
         </div>
         <div class="screen off" id="results-screen">
-            <div id="result-container">
+            <!-- <div id="result-container">
                 <div id="result-type">Your Performance</div>
                 <div id="results-lights-acknowledged">
                     <p>Overall Scoring</p>
@@ -419,14 +419,73 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="bottom">
+            </div> -->
+            <!-- <div class="bottom">
                 <button id="restart-button" class="big start-button">
                     Restart Activity
                 </button>
+            </div> -->
+            <div id="reaction-container">
+                <h1 class="results-title">
+                    <span class="light-text">You have completed</span> Simulate
+                </h1>		
+                <div class="score-section">
+                        <h2>Your Score</h2>
+                            <div class="score-container">
+                    
+                                <div class="circular-progress">
+                                    <div class="score-value"></div>
+                                        <div class="score-symbol">%</div>
+                                            <svg viewBox="0 0 100 100" style="width: 250px;">
+                                                <circle class="score-ring-background"
+                                                    cx="50" cy="50" r="45" 
+                                                    fill="none"/>
+                                                <circle class="score-progress-ring"
+                                                    cx="50" cy="50" r="45" 
+                                                    fill="none"/>
+                                                <image id="aircraftIcon" 
+                                                    href="images/icon_aircraft.svg"
+                                                    width="20" height="20" x="42" y="-5" rotate="0deg"
+                                                    class="aircraft-icon"
+                                                />
+                                            </svg>
+                                </div>
+                                    
+                                <div class="stats-container">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Speed Control</span>
+                                        <span class="stat-value" id="result-speed">60</span><span class="stat-value">%</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Altitude Control</span>
+                                        <span class="stat-value" id="result-altitude"></span><span class="stat-value">%</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Heading Control</span>
+                                        <span class="stat-value" id="result-heading">60</span><span class="stat-value">%</span>
+                                    </div>
+                                    <div class="stat-item" style="border-bottom: none !important;">
+                                        <span class="stat-label">Audio task</span>
+                                        <span class="stat-value" id="result-audio">60</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="graph-container" style="min-width: 550px; position: relative;">
+                                    <div class="reaction-time-label">Reaction Time <span>vs</span> Time</div>
+                                    <div class="reaction-graph" style=""></div>
+                                </div>
+                            </div>
+                                
+                        </div>
+                
+                        <div class="results-actions">
+                            <button id="playAgainButton" class="action-button">↺</button>
+                            <a href="#" onclick="window.open( '/user-guide/simulate', 'name', 'location=no,scrollbars=yes,status=no,toolbar=no,resizable=yes' )" target="”_blank”" rel="noopener"><button class="action-button"><img src="images/help_button.svg"></button></a>
+                            <a href="/performance?filter-key=activity-119-Simulate" target="_blank"><button class="action-button"><img src="images/performance_button.svg"></button></a>
+                        </div>
+                </div>
             </div>
         </div>
-    </div>
 </body>
 
 </html>
