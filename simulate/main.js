@@ -559,20 +559,31 @@ function createInterface() {
   stage.addChild(gameCont);
 
   //add speed meter
+  var speedBackground = new createjs.Bitmap(loader.getResult("CircleBackground"));
+  speedBackground.regX = speedBackground.image.width/2;
+  speedBackground.regY = speedBackground.image.height/2;
+  speedBackground.scaleX = (meter_width)/speedBackground.image.width;
+  speedBackground.scaleY = (meter_width)/speedBackground.image.width;
+  speedBackground.x = 105 + meter_width/2;
+  speedBackground.y = speedMeter_Y * 1.5 + meter_width/2;
+  gameCont.addChild(speedBackground);
+
   speedMeter = new createjs.Bitmap(loader.getResult("Airspeed"));
+  speedMeter.regX = speedMeter.image.width/2;
+  speedMeter.regY = speedMeter.image.height/2;
   speedMeter.scaleX = meter_width/speedMeter.image.naturalWidth;
   speedMeter.scaleY = meter_width/speedMeter.image.naturalWidth;
-  speedMeter.x = 105;
-  speedMeter.y = speedMeter_Y * 1.5;
+  speedMeter.x = 105 + meter_width/2;
+  speedMeter.y = speedMeter_Y * 1.5 + meter_width/2;
   gameCont.addChild(speedMeter);
 
   speedArrow = new createjs.Bitmap(loader.getResult("Pointer"));
   speedArrow.scaleX = arrow_length/speedArrow.image.naturalHeight;
   speedArrow.scaleY = arrow_length/speedArrow.image.naturalHeight;
   speedArrow.regX = speedArrow.image.naturalWidth /2;
-  speedArrow.regY = 0;
-  speedArrow.x = speedMeter.x + meter_width/2;
-  speedArrow.y = speedMeter.y + meter_width/2;
+  speedArrow.regY = 2;
+  speedArrow.x = speedMeter.x;
+  speedArrow.y = speedMeter.y;
   speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
   gameCont.addChild(speedArrow);
 
@@ -582,12 +593,12 @@ function createInterface() {
   speedBug.regX = speedBug.image.naturalWidth /2;
   speedBug.regY = speedBug.image.naturalHeight /2;
   speedBug.rotation = (tspeed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
-  speedBug.x = speedMeter.x + meter_width/2 + (arrow_length + 20) * Math.cos((speedBug.rotation + 90) * Math.PI / 180);
-  speedBug.y = speedMeter.y + meter_width/2 + (arrow_length + 20) * Math.sin((speedBug.rotation + 90) * Math.PI / 180);
+  speedBug.x = speedMeter.x + (arrow_length + 20) * Math.cos((speedBug.rotation + 90) * Math.PI / 180);
+  speedBug.y = speedMeter.y + (arrow_length + 20) * Math.sin((speedBug.rotation + 90) * Math.PI / 180);
   gameCont.addChild(speedBug);
 
   spInst = addBmp("On", 0, 0, false);
-  spInst.x = speedArrow.x - 25;
+  spInst.x = speedArrow.x - 35;
   spInst.y = speedArrow.y + meter_width/2 + 10;
   spInst.cursor = "pointer";
   spInst.name = "in_speed_on";
@@ -597,7 +608,7 @@ function createInterface() {
 
   tspT = new createjs.Text("Maintain " + tspeed + "kt", "20px Open Sans", "#222c33");
   tspT.x = speedArrow.x - 55;
-  tspT.y = speedMeter.y - 30;
+  tspT.y = speedMeter.y - 30 - meter_width/2;
   tspT.textAlign = "left";
   if (!trainMode) tspT.visible = false;
   gameCont.addChild(tspT);
@@ -607,8 +618,8 @@ function createInterface() {
   var CircleBackground = new createjs.Bitmap(loader.getResult("CircleBackground"));
   CircleBackground.regX = CircleBackground.image.width/2;
   CircleBackground.regY = CircleBackground.image.height/2;
-  CircleBackground.scaleX = (meter_width+30)/CircleBackground.image.width;
-  CircleBackground.scaleY = (meter_width+30)/CircleBackground.image.width;
+  CircleBackground.scaleX = (meter_width+35)/CircleBackground.image.width;
+  CircleBackground.scaleY = (meter_width+35)/CircleBackground.image.width;
   CircleBackground.x = 500 + meter_width/2;
   CircleBackground.y = speedMeter_Y + meter_width/2;
   gameCont.addChild(CircleBackground);
@@ -638,13 +649,13 @@ function createInterface() {
   compassBug.regX = compassBug.image.naturalWidth /2;
   compassBug.regY = compassBug.image.naturalHeight /2;
   compassBug.rotation = (theading + heading) - 180;
-  compassBug.x = compassMeter.x + (arrow_length + 20) * Math.cos((compassBug.rotation + 90) * Math.PI / 180);
-  compassBug.y = compassMeter.y + (arrow_length + 20) * Math.sin((compassBug.rotation + 90) * Math.PI / 180);
+  compassBug.x = compassMeter.x + (arrow_length + 25) * Math.cos((compassBug.rotation + 90) * Math.PI / 180);
+  compassBug.y = compassMeter.y + (arrow_length + 25) * Math.sin((compassBug.rotation + 90) * Math.PI / 180);
   gameCont.addChild(compassBug);
 
   headInst = addBmp("On", 0, 0, false);
-  headInst.x = compassArrow.x - 25;
-  headInst.y = compassArrow.y + meter_width/2 + 10;
+  headInst.x = compassArrow.x - 35;
+  headInst.y = compassArrow.y + meter_width/2 + 20;
   headInst.cursor = "pointer";
   headInst.name = "in_head_on";
   headInst.on("click", clickInstrument);
@@ -653,27 +664,38 @@ function createInterface() {
 
   theadT = new createjs.Text("Adjust heading to " + (theading/10>0?"0"+theading/10:"00"+theading/10), "20px Open Sans", "#222c33");
   theadT.x = compassArrow.x - 90;
-  theadT.y = compassMeter.y - 35 - meter_width/2;
+  theadT.y = compassMeter.y - 45 - meter_width/2;
   theadT.textAlign = "left";
   if (!trainMode) theadT.visible = false;
   gameCont.addChild(theadT);
   //-------------------------
 
   //add altimeter-------------
+  var altBackground = new createjs.Bitmap(loader.getResult("CircleBackground"));
+  altBackground.regX = altBackground.image.width/2;
+  altBackground.regY = altBackground.image.height/2;
+  altBackground.scaleX = (meter_width)/altBackground.image.width;
+  altBackground.scaleY = (meter_width)/altBackground.image.width;
+  altBackground.x = 900 + meter_width/2;
+  altBackground.y = speedMeter_Y * 1.5 + meter_width/2;
+  gameCont.addChild(altBackground);
+
   altimeter = new createjs.Bitmap(loader.getResult("AltimeterForeground"));
+  altimeter.regX = altimeter.image.width/2;
+  altimeter.regY = altimeter.image.height/2;
   altimeter.scaleX = meter_width/altimeter.image.width;
   altimeter.scaleY = meter_width/altimeter.image.width;
-  altimeter.x = 900;
-  altimeter.y = speedMeter_Y * 1.5;
+  altimeter.x = 900 + meter_width/2;
+  altimeter.y = speedMeter_Y * 1.5 + meter_width/2;
   gameCont.addChild(altimeter);
 
   altArrow = new createjs.Bitmap(loader.getResult("Pointer"));
   altArrow.regX = altArrow.image.naturalWidth /2;
-  altArrow.regY = 0;
+  altArrow.regY = 2;
   altArrow.scaleX = arrow_length/altArrow.image.height;
   altArrow.scaleY = arrow_length/altArrow.image.height;
-  altArrow.x = altimeter.x + meter_width/2 + 10;
-  altArrow.y = altimeter.y + meter_width/2;
+  altArrow.x = altimeter.x;
+  altArrow.y = altimeter.y;
   altArrow.rotation = alt/10000 * 360 - 180;
   gameCont.addChild(altArrow);
 
@@ -683,12 +705,12 @@ function createInterface() {
   altBug.regX = altBug.image.naturalWidth /2;
   altBug.regY = altBug.image.naturalHeight /2;
   altBug.rotation = talt/10000 * 360 - 180;
-  altBug.x = altimeter.x + meter_width/2 + (arrow_length + 20) * Math.cos((altBug.rotation + 90) * Math.PI / 180);
-  altBug.y = altimeter.y + meter_width/2 + (arrow_length + 20) * Math.sin((altBug.rotation + 90) * Math.PI / 180);
+  altBug.x = altimeter.x + (arrow_length + 20) * Math.cos((altBug.rotation + 90) * Math.PI / 180);
+  altBug.y = altimeter.y + (arrow_length + 20) * Math.sin((altBug.rotation + 90) * Math.PI / 180);
   gameCont.addChild(altBug);
 
   altInst = addBmp("On", 0, 0, false);
-  altInst.x = altArrow.x - 25;
+  altInst.x = altArrow.x - 35;
   altInst.y = altArrow.y + meter_width/2 + 10;
   altInst.cursor = "pointer";
   altInst.name = "in_alt_on";
@@ -697,15 +719,15 @@ function createInterface() {
   gameCont.addChild(altInst);
 
   taltT = new createjs.Text("Maintain " + talt + "m", "20px Open Sans", "#222c33");
-  taltT.x = altArrow.x - 80;
-  taltT.y = altimeter.y - 30;
+  taltT.x = altArrow.x - 75;
+  taltT.y = altimeter.y - 30 - meter_width/2;
   taltT.textAlign = "left";
   if (!trainMode) taltT.visible = false;
   gameCont.addChild(taltT);
 
   altT = new createjs.Text(alt, "22px Open Sans", "#fff");
-  altT.x = altArrow.x - 10;
-  altT.y = altimeter.y + meter_width/3 - 10;
+  altT.x = altimeter.x;
+  altT.y = altimeter.y - 68;
   altT.textAlign = "center";
   gameCont.addChild(altT);
 
@@ -719,7 +741,7 @@ function createInterface() {
   .beginFill('#0c0c0c')
   .drawRoundRect(-4, -4, 188, 68, 4);
 
-  shadowRect.x = compassArrow.x - 200/2;
+  shadowRect.x = compassArrow.x - 90;
   shadowRect.y = canvas.height - 200;
   gameCont.addChild(shadowRect);
 
@@ -737,12 +759,12 @@ function createInterface() {
   timer_container.addChild(timerBox);
 
   timeT = new createjs.Text("", "30px Inter", "#fff");
-  timeT.x = 90;
+  timeT.x = 95;
   timeT.y = 15;
   timeT.textAlign = "center";
   timer_container.addChild(timeT);
 
-  timer_container.x = compassArrow.x - 200/2;
+  timer_container.x = compassArrow.x - 90;
   timer_container.y = canvas.height - 200;
 
   gameCont.addChild(timer_container);
@@ -849,10 +871,12 @@ function clickInstrument(e) {
         speedBug.visible = false;
         speedArrow.visible = false;
         speedMeter.image = DialDisabledIcon;
-        speedMeter.scaleX = meter_width/speedMeter.image.naturalWidth;
-        speedMeter.scaleY = meter_width/speedMeter.image.naturalWidth;
-        speedMeter.x = 105;
-        speedMeter.y = speedMeter_Y * 1.5;
+        speedMeter.scaleX = meter_width/3/speedMeter.image.naturalWidth;
+        speedMeter.scaleY = meter_width/3/speedMeter.image.naturalWidth;
+        speedMeter.regX = DialDisabledIcon.width/2;
+        speedMeter.regY = DialDisabledIcon.height/2;
+        speedMeter.x = 105 + meter_width/2;
+        speedMeter.y = speedMeter_Y * 1.5 + meter_width/2;
         break;
       case "in_alt":
         score.alt.flag = false;
@@ -861,10 +885,12 @@ function clickInstrument(e) {
         altBug.visible = false;
         altT.visible = false;
         altimeter.image = DialDisabledIcon;
-        altimeter.scaleX = meter_width/altimeter.image.width;
-        altimeter.scaleY = meter_width/altimeter.image.width;
-        altimeter.x = 900;
-        altimeter.y = speedMeter_Y * 1.5;
+        altimeter.scaleX = meter_width/3/altimeter.image.width;
+        altimeter.scaleY = meter_width/3/altimeter.image.width;
+        altimeter.regX = DialDisabledIcon.width/2;
+        altimeter.regY = DialDisabledIcon.height/2;
+        altimeter.x = 900 + meter_width/2;
+        altimeter.y = speedMeter_Y * 1.5 + meter_width/2;
         break;
       case "in_head":
         score.head.flag = false;
@@ -874,8 +900,8 @@ function clickInstrument(e) {
         compassMeter.image = DialDisabledIcon;
         compassMeter.regX = DialDisabledIcon.width/2;
         compassMeter.regY = DialDisabledIcon.height/2;
-        compassMeter.scaleX = meter_width/DialDisabledIcon.width;
-        compassMeter.scaleY = meter_width/DialDisabledIcon.width;
+        compassMeter.scaleX = meter_width/3/DialDisabledIcon.width;
+        compassMeter.scaleY = meter_width/3/DialDisabledIcon.width;
         compassMeter.x = 500 + meter_width/2;
         compassMeter.y = speedMeter_Y + meter_width/2;
         break;
@@ -896,8 +922,10 @@ function clickInstrument(e) {
         speedMeter.image = loader.getResult('Airspeed');
         speedMeter.scaleX = meter_width/speedMeter.image.naturalWidth;
         speedMeter.scaleY = meter_width/speedMeter.image.naturalWidth;
-        speedMeter.x = 105;
-        speedMeter.y = speedMeter_Y * 1.5;
+        speedMeter.regX = speedMeter.image.width/2;
+        speedMeter.regY = speedMeter.image.height/2;
+        speedMeter.x = 105 + meter_width/2;
+        speedMeter.y = speedMeter_Y * 1.5 + meter_width/2;
         break;
       case "in_alt":
         score.alt.flag = true;
@@ -908,8 +936,10 @@ function clickInstrument(e) {
         altimeter.image = loader.getResult('AltimeterForeground');
         altimeter.scaleX = meter_width/altimeter.image.width;
         altimeter.scaleY = meter_width/altimeter.image.width;
-        altimeter.x = 900;
-        altimeter.y = speedMeter_Y * 1.5;
+        altimeter.regX = altimeter.image.width/2;
+        altimeter.regY = altimeter.image.height/2;
+        altimeter.x = 900 + meter_width/2;
+        altimeter.y = speedMeter_Y * 1.5 + meter_width/2;
         break;
       case "in_head":
         score.head.flag = true;
@@ -1483,8 +1513,8 @@ function getKeyDown(e) {
   }
 }
 function updateSpeedBugPosition() {
-  speedBug.x = speedMeter.x + meter_width/2 + (arrow_length + 20) * Math.cos((speedBug.rotation + 90) * Math.PI / 180);
-  speedBug.y = speedMeter.y + meter_width/2 + (arrow_length + 20) * Math.sin((speedBug.rotation + 90) * Math.PI / 180);
+  speedBug.x = speedMeter.x + (arrow_length + 20) * Math.cos((speedBug.rotation + 90) * Math.PI / 180);
+  speedBug.y = speedMeter.y + (arrow_length + 20) * Math.sin((speedBug.rotation + 90) * Math.PI / 180);
 }
 function setSpeedBug() {
   createjs.Tween.get(speedBug, { loop: false })
@@ -1498,8 +1528,8 @@ function setSpeedBug() {
 }
 
 function updateAltBugPosition(){
-  altBug.x = altimeter.x + meter_width/2 + (arrow_length + 20) * Math.cos((altBug.rotation + 90) * Math.PI / 180);
-  altBug.y = altimeter.y + meter_width/2 + (arrow_length + 20) * Math.sin((altBug.rotation + 90) * Math.PI / 180);
+  altBug.x = altimeter.x + (arrow_length + 20) * Math.cos((altBug.rotation + 90) * Math.PI / 180);
+  altBug.y = altimeter.y + (arrow_length + 20) * Math.sin((altBug.rotation + 90) * Math.PI / 180);
 }
 
 function setAltBug() {
@@ -1513,8 +1543,8 @@ function setAltBug() {
   totalCount++;
 }
 function updateCompassBugPosition(){
-  compassBug.x = compassMeter.x + (arrow_length + 20) * Math.cos((compassBug.rotation + 90) * Math.PI / 180);
-  compassBug.y = compassMeter.y + (arrow_length + 20) * Math.sin((compassBug.rotation + 90) * Math.PI / 180);
+  compassBug.x = compassMeter.x + (arrow_length + 25) * Math.cos((compassBug.rotation + 90) * Math.PI / 180);
+  compassBug.y = compassMeter.y + (arrow_length + 25) * Math.sin((compassBug.rotation + 90) * Math.PI / 180);
 }
 
 function setHeadBug() {

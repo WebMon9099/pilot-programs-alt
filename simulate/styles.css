@@ -1087,7 +1087,7 @@ option:disabled{
 .audio-btn-area{
     display: flex;
     margin-left: 45px;
-    padding-top: 92%;
+    padding-top: 95%;
 }
 .audio-btn{
     width:60px;
@@ -1208,12 +1208,12 @@ option:disabled{
     justify-content: space-around;
     flex-direction: row;
     align-items: stretch;
-    height: 40vh;
+    height: 42vh;
 }
 
 .score-value {
     position: absolute;
-    top: 57%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 85px;
@@ -1224,7 +1224,7 @@ option:disabled{
 
 .score-symbol {
     position: absolute;
-    top: 85%;
+    top: 65%;
     left: 47%;
     font-size: 1.2rem;
     color: #c4c4c4;

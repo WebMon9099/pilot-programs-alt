@@ -436,7 +436,7 @@
                                 <div class="circular-progress">
                                     <div class="score-value"></div>
                                         <div class="score-symbol">%</div>
-                                            <svg viewBox="0 0 100 100" style="width: 250px;">
+                                            <svg viewBox="0 0 100 100" style="width: 200px;">
                                                 <circle class="score-ring-background"
                                                     cx="50" cy="50" r="45" 
                                                     fill="none"/>
