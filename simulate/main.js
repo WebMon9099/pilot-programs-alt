@@ -55,7 +55,7 @@ var alt_turbulence = 0;
 var heading_turbulence = 0;
 
 const turblence_steps = 150;
-const speec_change_rate_by_alt = 0.00003;
+const speec_change_rate_by_alt = 0.0003;
 
 const gamepads = {
   9: { index: 9, id: "No Controller" },
@@ -102,6 +102,14 @@ var centerCross = {
 };
 var pitch = 0;
 var upSpeed = 0.5;
+var graph_data = {
+  time:[],
+  speed: [],
+  alt: [],
+  head: [],
+  audio: [],
+};
+const graph_interval = 3;
 //-----------------------------------
 
 function Main() {
@@ -122,7 +130,6 @@ function Main() {
     { src: "images/off.png", id: "Off" },
 
     { src: "images/Airspeed_nobackground.png", id: "Airspeed" },
-    { src: "images/AltimeterForegroundAndBackground.png", id: "AltimeterForegroundAndBackground" },
     { src: "images/Altimeter_nobackground.png", id: "AltimeterForeground" },
     { src: "images/circle-background.png", id: "CircleBackground" },
     { src: "images/Background.png", id: "Background" },
@@ -543,7 +550,7 @@ function createInterface() {
 
   speed = 100;
   tspeed = 90;
-  alt = 6500;
+  alt = 2500;
   talt = 3500;
   heading = 100;
   theading = 180;
@@ -581,9 +588,9 @@ function createInterface() {
   speedArrow.scaleX = arrow_length/speedArrow.image.naturalHeight;
   speedArrow.scaleY = arrow_length/speedArrow.image.naturalHeight;
   speedArrow.regX = speedArrow.image.naturalWidth /2;
-  speedArrow.regY = 2;
-  speedArrow.x = speedMeter.x;
-  speedArrow.y = speedMeter.y;
+  speedArrow.regY = 12;
+  speedArrow.x = speedMeter.x + 2;
+  speedArrow.y = speedMeter.y + 2;
   speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
   gameCont.addChild(speedArrow);
 
@@ -631,7 +638,7 @@ function createInterface() {
   compassMeter.scaleY = meter_width/compassMeter.image.width;
   compassMeter.x = 500 + meter_width/2;
   compassMeter.y = speedMeter_Y + meter_width/2;
-  compassMeter.rotation = heading;
+  compassMeter.rotation = -heading;
   gameCont.addChild(compassMeter);
 
   compassArrow = new createjs.Bitmap(loader.getResult("CompassArrow"));
@@ -648,9 +655,9 @@ function createInterface() {
   compassBug.scaleY = bug_width/compassBug.image.naturalWidth;
   compassBug.regX = compassBug.image.naturalWidth /2;
   compassBug.regY = compassBug.image.naturalHeight /2;
-  compassBug.rotation = (theading + heading) - 180;
-  compassBug.x = compassMeter.x + (arrow_length + 25) * Math.cos((compassBug.rotation + 90) * Math.PI / 180);
-  compassBug.y = compassMeter.y + (arrow_length + 25) * Math.sin((compassBug.rotation + 90) * Math.PI / 180);
+  compassBug.rotation = (theading - heading) - 180;
+  compassBug.x = compassMeter.x + (arrow_length + 36) * Math.cos((compassBug.rotation + 90) * Math.PI / 180);
+  compassBug.y = compassMeter.y + (arrow_length + 36) * Math.sin((compassBug.rotation + 90) * Math.PI / 180);
   gameCont.addChild(compassBug);
 
   headInst = addBmp("On", 0, 0, false);
@@ -663,7 +670,7 @@ function createInterface() {
   gameCont.addChild(headInst);
 
   theadT = new createjs.Text("Adjust heading to " + (theading/10>0?"0"+theading/10:"00"+theading/10), "20px Open Sans", "#222c33");
-  theadT.x = compassArrow.x - 90;
+  theadT.x = compassArrow.x - 95;
   theadT.y = compassMeter.y - 45 - meter_width/2;
   theadT.textAlign = "left";
   if (!trainMode) theadT.visible = false;
@@ -691,7 +698,7 @@ function createInterface() {
 
   altArrow = new createjs.Bitmap(loader.getResult("Pointer"));
   altArrow.regX = altArrow.image.naturalWidth /2;
-  altArrow.regY = 2;
+  altArrow.regY = 12;
   altArrow.scaleX = arrow_length/altArrow.image.height;
   altArrow.scaleY = arrow_length/altArrow.image.height;
   altArrow.x = altimeter.x;
@@ -972,7 +979,14 @@ function keepTime() {
   if (sec % 3 == 1){
     makeTurbulence();
   }
-  
+  if (sec % graph_interval == 0){
+    graph_data.time.push(sec);
+    graph_data.speed.push(score.speed.total == 0 ? 0: parseFloat(score.speed.correct/score.speed.total).toFixed(2));
+    graph_data.head.push(score.head.total == 0 ? 0: parseFloat(score.head.correct/score.head.total).toFixed(2));
+    graph_data.audio.push(score.audio.total == 0 ? 0: parseFloat(score.audio.correct/score.audio.total).toFixed(2));
+    graph_data.alt.push(score.alt.total == 0 ? 0: parseFloat(score.alt.correct/score.alt.total).toFixed(2));
+  }
+  console.log('graph data', graph_data);
   manageTest();
   if (sec > totalSec) {
     clearInterval(trackTime);
@@ -1053,17 +1067,17 @@ function updateAirCraft() {
   heading += bankAngle/40 * speed/100;
   if (heading < 0) heading += 360;
   if (heading > 360) heading -= 360;
-  compassMeter.rotation = heading;
-  compassBug.rotation = (theading + heading) - 180;
+  compassMeter.rotation = -heading;
+  compassBug.rotation = (theading - heading) - 180;
   updateCompassBugPosition();
 
   if (downk || gamepad_downk || jr_downk) {
-    if (pitch < 57){
+    if (pitch < 60){
       pitch += upSpeed * 0.3;
     }
   }
   if (upk || gamepad_upk || jr_upk) {
-    if (pitch > -57){
+    if (pitch > -60){
       pitch -= upSpeed * 0.3;
     }
   }
@@ -1074,37 +1088,28 @@ function updateAirCraft() {
       alt = temp_alt;
     }
   }
+  
   if (pitch > 0){
-    if (pitch <57){
-      if (alt < 9700){
-        alt += pitch * 0.1;
-        if (realism_flag){
-          temp_speed = speed - speec_change_rate_by_alt * alt;
-          if (temp_speed < 170 && temp_speed > 40){
-            speed = temp_speed;
-            speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
-          }
+    if (alt < 9700){
+      alt += pitch * 0.1;
+      if (realism_flag){
+        temp_speed = speed - Math.abs(speec_change_rate_by_alt * pitch);
+        if (temp_speed < 170 && temp_speed > 40){
+          speed = temp_speed;
+          speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
         }
       }
-    } else {
-      alt = 9600;
     }
-    
   } else {
-    if (pitch <-57){
-      alt = 20;
-    } else {
-      if (alt > 20){
-        alt += pitch * 0.1;
-        if (realism_flag){
-          temp_speed = speed + speec_change_rate_by_alt * alt;
-          if (temp_speed < 170 && temp_speed > 40){
-            speed = temp_speed;
-            speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
-          }
+    if (alt > 20){
+      alt += pitch * 0.1;
+      if (realism_flag){
+        temp_speed = speed + Math.abs(speec_change_rate_by_alt * pitch);
+        if (temp_speed < 170 && temp_speed > 40){
+          speed = temp_speed;
+          speedArrow.rotation = (speed - min_speed_on_meter) * degree_per_speed + init_degree - 180;
         }
       }
-      
     }
   }
   altArrow.rotation = alt/10000 * 360 - 180;
@@ -1318,7 +1323,7 @@ function initASDWGamepadPressed() {
 }
 function calculatePrevious() {
   proximityCheck("speed", speed, tspeed, 11);
-  proximityCheck("head", heading, theading, 6);
+  proximityCheck("head", heading, theading, 10);
   proximityCheck("alt", alt, talt, 50);
 }
 
@@ -1543,14 +1548,14 @@ function setAltBug() {
   totalCount++;
 }
 function updateCompassBugPosition(){
-  compassBug.x = compassMeter.x + (arrow_length + 25) * Math.cos((compassBug.rotation + 90) * Math.PI / 180);
-  compassBug.y = compassMeter.y + (arrow_length + 25) * Math.sin((compassBug.rotation + 90) * Math.PI / 180);
+  compassBug.x = compassMeter.x + (arrow_length + 36) * Math.cos((compassBug.rotation + 90) * Math.PI / 180);
+  compassBug.y = compassMeter.y + (arrow_length + 36) * Math.sin((compassBug.rotation + 90) * Math.PI / 180);
 }
 
 function setHeadBug() {
   createjs.Tween.get(compassBug, { loop: false })
     .to({ 
-      rotation: (theading + heading) - 180,
+      rotation: (theading - heading) - 180,
     }, 1000, createjs.Ease.linear)
     .addEventListener("change", updateCompassBugPosition);
   score["head"].total++;
@@ -1603,7 +1608,7 @@ function headingAltSpeed() {
   setSpeedBug();
 
   // set Alt Target
-  talt = Math.floor(Math.random() * 95) + 2;
+  talt = Math.floor(Math.random() * 30) + 10;
   var fstr = String(talt + "00");
   var intr = parseInt(fstr);
   talt = intr;
@@ -1977,22 +1982,22 @@ $(document).ready(function () {
   const BAR_HEIGHT = $('.power-setting-area .bar').height();
   const THROTTLE_STEP = 1/(BAR_HEIGHT - $('.square').height());
   let invervalId;
-  $('.decrease').on('mousedown', function () {
+  $('.decrease').on('mousedown touchstart', function () {
     invervalId = setInterval(() => {
       $('.square').css('top',  Math.min($('.square').position().top + SQUARE_STEP, BAR_HEIGHT - $('.square').height()));
       throttle = Math.max(0, throttle - THROTTLE_STEP);
     }, 100)
   })
-  $('.increase').on('mousedown', function () {
+  $('.increase').on('mousedown touchstart', function () {
     invervalId = setInterval(() => {
       $('.square').css('top', Math.max($('.square').position().top - SQUARE_STEP, 0));
       throttle = Math.min(1, throttle + THROTTLE_STEP);
     }, 100)
   })
-  $('.decrease').on('mouseup mouseleave', function () {
+  $('.decrease').on('mouseup mouseleave touchend touchcancel', function () {
     clearInterval(invervalId);
   });
-  $('.increase').on('mouseup mouseleave', function () {
+  $('.increase').on('mouseup mouseleave touchend touchcancel', function () {
     clearInterval(invervalId);
   });
 
