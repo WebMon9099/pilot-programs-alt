@@ -974,7 +974,7 @@ function keepTime() {
   var tStr = String(Math.floor(rsec / 60) + " mins " + (rsec % 60) + " secs");
   document.getElementById("tsider").innerHTML = String(tStr);
 
-  timeT.text = "0" + String(Math.floor(rsec / 60) + " : " + ((rsec % 60) > 9 ? (rsec % 60) : "0"+(rsec % 60)));
+  timeT.text = String(Math.floor(rsec / 60) + " : " + ((rsec % 60) > 9 ? (rsec % 60) : "0"+(rsec % 60)));
 
   if (sec % 3 == 1){
     makeTurbulence();
@@ -1620,10 +1620,12 @@ function headingAltSpeed() {
   while (!isH) {
     theading = Math.floor(Math.random() * 360);
     if (theading % 5 == 0) {
-      if (theading < 100) {
-        theadT.text = "Adjust heading to " + "00" + String(parseInt(theading/10));
+      if (theading < 10) {
+        theadT.text = "Adjust heading to " + "00" + String(parseInt(theading));
+      } else if (theading < 100){
+        theadT.text = "Adjust heading to " + "0" + String(parseInt(theading));
       } else {
-        theadT.text = "Adjust heading to " + "0" + String(parseInt(theading/10));
+        theadT.text = "Adjust heading to " + String(parseInt(theading));
       }
       isH = true;
     }

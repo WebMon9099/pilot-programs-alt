@@ -12,7 +12,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
     <!-- <link rel="stylesheet" media="screen" href="additional-styles.css" /> -->
     <link rel="stylesheet" media="screen" href="../_common/css/styles.css?v=1" />
-    <link rel="stylesheet" href="styles.css?v=9" />
+    <link rel="stylesheet" href="styles.css?v=11" />
     <script src="../_common/js/jquery.min.js"></script>
     <script src="../_common/js/jqueryui.min.js"></script>
     <script src="../_common/js/game.js"></script>
@@ -21,7 +21,7 @@
     <script src="lib/soundjs-NEXT.min.js"></script>
     <script src="lib/preloadjs-NEXT.min.js"></script>
     <script src="joy.js"></script>
-    <script src="main.js?v=2"></script>
+    <script src="main.js?v=3"></script>
 
 </head>
 
@@ -45,160 +45,162 @@
             </div>
             <div id="setting">
                 <div class="setting_title">Settings</div>
-                <div class="setting_contonller alt_controller">
-                    <p class="controller_name">Altitude <span class="controller_target">Controller</span></p>
-                    <div class="controller_content">
-                        <button class="left_controller"></button>
-                        <p class="set_controller">Saitek ST90 USB Joystick</p>
-                        <button class="right_controller"></button>
-                    </div>
-                    <div class="axis-setting">
-                        <div style="display:flex;justify-content:space-between;">
-                            <div style="display:flex;">
-                                <div class="arrow-icon-container">
-                                    <img src="images/up-down-icon.svg" />
-                                </div>
-                                <label class="switch-title">Altitude Axis:</label>
-                            </div>
-                            <select class="alt-axis axis-select">
-                            </select>
-                        </div>
-                        <div  style="display:flex;justify-content:space-between;">
-                            <div class="invert-label">Invert the Altitude Axis:</div>
-                            <div><input type="checkbox" class="alt-invert invert"/></div>
-                        </div>
-                    </div>
-                    <div class="switch-container">
-                        <label class="switch-title">Turbulence</label>
-                        <label class="switch">
-                            <input type="checkbox" id="alt_trubulence_check" checked>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="setting_contonller head_controller">
-                    <p class="controller_name">Heading <span class="controller_target">Controller</span></p>
-                    <div class="controller_content">
-                        <button class="left_controller"></button>
-                        <p class="set_controller">Saitek ST90 USB Joystick</p>
-                        <button class="right_controller"></button>
-                    </div>
-                    <div class="axis-setting">
-                        <div style="display:flex;justify-content:space-between;">
-                            <div style="display:flex;">
-                                <div class="arrow-icon-container">
-                                    <img src="images/left-right-icon.svg" />
-                                </div>
-                                <label class="switch-title">Heading Axis:</label>
-                            </div>
-                            <select class="head-axis axis-select">
-                            </select>
-                        </div>
-                        <div  style="display:flex;justify-content:space-between;">
-                            <div class="invert-label">Invert the Heading Axis:</div>
-                            <div><input type="checkbox" class="head-invert invert"/></div>
-                        </div>
-                    </div>
-                    <div class="switch-container">
-                        <label class="switch-title">Turbulence</label>
-                        <label class="switch">
-                            <input type="checkbox" id="head_trubulence_check" checked>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="setting_contonller speed_controller">
-                    <p class="controller_name">Power <span class="controller_target">Controller</span></p>
-                    <div class="controller_content">
-                        <button class="left_controller"></button>
-                        <p class="set_controller">Saitek ST90 USB Joystick</p>
-                        <button class="right_controller"></button>
-                    </div>
-                    <div class="axis-setting">
-                        <div style="display:flex;justify-content:space-between;">
-                            <div style="display:flex;">
-                                <div class="arrow-icon-container">
-                                    <img src="images/up-down-icon.svg" />
-                                </div>
-                                <label class="switch-title">Power Axis:</label>
-                            </div>
-                            <select class="speed-axis axis-select">
-                            </select>
-                        </div>
-                        <div  style="display:flex;justify-content:space-between;">
-                            <div class="invert-label">Invert the Power Axis:</div>
-                            <div><input type="checkbox" class="speed-invert invert"/></div>
-                        </div>
-                    </div>
-                    <div class="switch-container">
-                        <label class="switch-title">Turbulence</label>
-                        <label class="switch">
-                            <input type="checkbox" id="speed_trubulence_check" checked>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="set_content">
-                    <p class="set_intensity">Intensity</p>
-                    <div class="stepper-wrapper">
-                        <div class="stepper-item left-radius completed" key="50">
-                            <div class="step-counter"></div>
-                            <div class="step-name ">1</div>
-                        </div>
-                        <div class="stepper-item completed" key="45">
-                            <div class="step-counter"></div>
-                            <div class="step-name">2</div>
-                        </div>
-                        <div class="stepper-item completed" key="40">
-                            <div class="step-counter"></div>
-                            <div class="step-name">3</div>
-                        </div>
-                        <div class="stepper-item completed" key="35">
-                            <div class="step-counter"></div>
-                            <div class="step-name">4</div>
-                        </div>
-                        <div class="stepper-item completed active" key="30">
-                            <div class="step-counter"></div>
-                            <div class="step-name">5</div>
-                        </div>
-                        <div class="stepper-item" key="25">
-                            <div class="step-counter"></div>
-                            <div class="step-name">6</div>
-                        </div>
-                        <div class="stepper-item" key="20">
-                            <div class="step-counter"></div>
-                            <div class="step-name">7</div>
-                        </div>
-                        <div class="stepper-item" key="15">
-                            <div class="step-counter"></div>
-                            <div class="step-name">8</div>
-                        </div>
-                        <div class="stepper-item right-radius" key="10">
-                            <div class="step-counter"></div>
-                            <div class="step-name">9</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="setting_contonller realism-container">
-                    <p class="controller_name">Realism</p>
-                    <label class="realism">
-                        <input type="checkbox" id="realism_check" checked>
-                        <span class="big-slider slider round"></span>
-                        <div id="left-letter-big-slide" class="big-slide-letter">Enabled</div>
-                        <div id="right-letter-big-slide" class="big-slide-letter">Realism</div>
-                    </label>
-                </div>
-                <div class="setting_contonller set_content horizontal-container">
-                    <p class="set_intensity">Artificial Horizon Aid</p>
-                    <div class="" style="margin-bottom:30px;">
-                        <label class="" style="font-size:12px;">Display the Artificial Horizon</label>
-                        <label class="switch">
-                            <input type="checkbox" id="artificial_horizon_check">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </div>
-                <div id="exit_setting">Exit to Main Menu</div>
+				<div class="settings_container">
+					<div class="setting_contonller alt_controller">
+						<p class="controller_name">Altitude <span class="controller_target">Controller</span></p>
+						<div class="controller_content">
+							<button class="left_controller"></button>
+							<p class="set_controller">Saitek ST90 USB Joystick</p>
+							<button class="right_controller"></button>
+						</div>
+						<div class="axis-setting">
+							<div style="display:flex;justify-content:space-between;">
+								<div style="display:flex;">
+									<div class="arrow-icon-container">
+										<img src="images/up-down-icon.svg" />
+									</div>
+									<label class="switch-title">Altitude Axis:</label>
+								</div>
+								<select class="alt-axis axis-select">
+								</select>
+							</div>
+							<div  style="display:flex;justify-content:space-between;">
+								<div class="invert-label">Invert the Altitude Axis:</div>
+								<div><input type="checkbox" class="alt-invert invert"/></div>
+							</div>
+						</div>
+						<div class="switch-container">
+							<label class="switch-title">Turbulence</label>
+							<label class="switch">
+								<input type="checkbox" id="alt_trubulence_check" checked>
+								<span class="slider round"></span>
+							</label>
+						</div>
+					</div>
+					<div class="setting_contonller head_controller">
+						<p class="controller_name">Heading <span class="controller_target">Controller</span></p>
+						<div class="controller_content">
+							<button class="left_controller"></button>
+							<p class="set_controller">Saitek ST90 USB Joystick</p>
+							<button class="right_controller"></button>
+						</div>
+						<div class="axis-setting">
+							<div style="display:flex;justify-content:space-between;">
+								<div style="display:flex;">
+									<div class="arrow-icon-container">
+										<img src="images/left-right-icon.svg" />
+									</div>
+									<label class="switch-title">Heading Axis:</label>
+								</div>
+								<select class="head-axis axis-select">
+								</select>
+							</div>
+							<div  style="display:flex;justify-content:space-between;">
+								<div class="invert-label">Invert the Heading Axis:</div>
+								<div><input type="checkbox" class="head-invert invert"/></div>
+							</div>
+						</div>
+						<div class="switch-container">
+							<label class="switch-title">Turbulence</label>
+							<label class="switch">
+								<input type="checkbox" id="head_trubulence_check" checked>
+								<span class="slider round"></span>
+							</label>
+						</div>
+					</div>
+					<div class="setting_contonller speed_controller">
+						<p class="controller_name">Power <span class="controller_target">Controller</span></p>
+						<div class="controller_content">
+							<button class="left_controller"></button>
+							<p class="set_controller">Saitek ST90 USB Joystick</p>
+							<button class="right_controller"></button>
+						</div>
+						<div class="axis-setting">
+							<div style="display:flex;justify-content:space-between;">
+								<div style="display:flex;">
+									<div class="arrow-icon-container">
+										<img src="images/up-down-icon.svg" />
+									</div>
+									<label class="switch-title">Power Axis:</label>
+								</div>
+								<select class="speed-axis axis-select">
+								</select>
+							</div>
+							<div  style="display:flex;justify-content:space-between;">
+								<div class="invert-label">Invert the Power Axis:</div>
+								<div><input type="checkbox" class="speed-invert invert"/></div>
+							</div>
+						</div>
+						<div class="switch-container">
+							<label class="switch-title">Turbulence</label>
+							<label class="switch">
+								<input type="checkbox" id="speed_trubulence_check" checked>
+								<span class="slider round"></span>
+							</label>
+						</div>
+					</div>
+					<div class="set_content">
+						<p class="set_intensity">Intensity</p>
+						<div class="stepper-wrapper">
+							<div class="stepper-item left-radius completed" key="50">
+								<div class="step-counter"></div>
+								<div class="step-name ">1</div>
+							</div>
+							<div class="stepper-item completed" key="45">
+								<div class="step-counter"></div>
+								<div class="step-name">2</div>
+							</div>
+							<div class="stepper-item completed" key="40">
+								<div class="step-counter"></div>
+								<div class="step-name">3</div>
+							</div>
+							<div class="stepper-item completed" key="35">
+								<div class="step-counter"></div>
+								<div class="step-name">4</div>
+							</div>
+							<div class="stepper-item completed active" key="30">
+								<div class="step-counter"></div>
+								<div class="step-name">5</div>
+							</div>
+							<div class="stepper-item" key="25">
+								<div class="step-counter"></div>
+								<div class="step-name">6</div>
+							</div>
+							<div class="stepper-item" key="20">
+								<div class="step-counter"></div>
+								<div class="step-name">7</div>
+							</div>
+							<div class="stepper-item" key="15">
+								<div class="step-counter"></div>
+								<div class="step-name">8</div>
+							</div>
+							<div class="stepper-item right-radius" key="10">
+								<div class="step-counter"></div>
+								<div class="step-name">9</div>
+							</div>
+						</div>
+					</div>
+					<div class="setting_contonller realism-container">
+						<p class="controller_name">Realism</p>
+						<label class="realism">
+							<input type="checkbox" id="realism_check" checked>
+							<span class="big-slider slider round"></span>
+							<div id="left-letter-big-slide" class="big-slide-letter">Enabled</div>
+							<div id="right-letter-big-slide" class="big-slide-letter">Realism</div>
+						</label>
+					</div>
+					<div class="setting_contonller set_content horizontal-container">
+						<p class="set_intensity">Artificial Horizon Aid</p>
+						<div class="" style="margin-bottom:30px;">
+							<label class="" style="font-size:12px;">Display the Artificial Horizon</label>
+							<label class="switch">
+								<input type="checkbox" id="artificial_horizon_check">
+								<span class="slider round"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+                <div id="exit_setting">Exit to Menu</div>
             </div>
         </div>
         <div id="tsiderx">- / -</div>
@@ -340,13 +342,13 @@
             <div class="time-screen-title">Select your duration:</div>
             <ul id="time-buttons">
                 <li>
-                    <button class="big time-button" data-time="120">2 Minutes</button>
-                </li>
-                <li>
                     <button class="big time-button" data-time="300">5 Minutes</button>
                 </li>
                 <li>
-                    <button class="big time-button" data-time="420">7 Minutes</button>
+                    <button class="big time-button" data-time="900">15 Minutes</button>
+                </li>
+                <li>
+                    <button class="big time-button" data-time="1800">30 Minutes</button>
                 </li>
             </ul>
         </div>
