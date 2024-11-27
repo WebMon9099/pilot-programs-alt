@@ -6,6 +6,8 @@ var loader;
 var currentS = 0,
   targetS = 30; //30 headinAltSpeed Normal version
 
+var isPaused = false;
+
 var totalSec = 300;
 var leftk, rightk, upk, downk;
 var skey, wkey, akey, dkey;
@@ -430,7 +432,7 @@ function showStartScreen(restart = false) {
 
   showScreen("#logo-screen");
   document.querySelector("#tside .logo-title").innerHTML = String(
-    "Simulate<span>Legacy</span>"
+    "Simulate"
   );
   document.getElementById("tsider").innerHTML = String("Start of Exam");
   document.getElementById("tsiderx").innerHTML = String("- / -");
@@ -519,29 +521,50 @@ function gamepadHandler(event, connecting) {
   }
 }
 function showSecondScreen(train) {
-  showSetting = false;
-  trainMode = train;
-  if (trainMode) {
-    document.querySelector("#title").style = "background-color: #7ad304";
-    document.querySelector("#tsider-train").style = "display: flex !important";
-    $('.realism-container').show();
-    $('.horizontal-container').show();
-  } else {
-    $('.realism-container').hide();
-    $('.horizontal-container').hide();
-  }
-  if (trainMode){
-    $('#time-screen ul#time-buttons li button').addClass('traing_mode');
-  } else {
-    $('#time-screen ul#time-buttons li button').removeClass('traing_mode');
-  }
-  showScreen("#time-screen");
+    showSetting = false;
+    trainMode = train;
+    
+    const titleElement = document.querySelector("#title");
+    
+    if (trainMode) {
+        document.querySelector("#title").style = "background-color: #7ad304";
+        document.querySelector("#tsider-train").style = "display: flex !important";
+        $('.realism-container').show();
+        $('.horizontal-container').show();
+        // Add training mode class
+        titleElement.classList.add('training-mode-active');
+    } else {
+        document.querySelector("#title").style = "background-color: #3793d1";
+        document.querySelector("#tsider-train").style = "display: none !important";
+        $('.realism-container').hide();
+        $('.horizontal-container').hide();
+        // Remove training mode class
+        titleElement.classList.remove('training-mode-active');
+    }
+    
+    if (trainMode) {
+        $('#time-screen ul#time-buttons li button').addClass('traing_mode');
+    } else {
+        $('#time-screen ul#time-buttons li button').removeClass('traing_mode');
+    }
+    
+    showScreen("#time-screen");
 }
+
 $(document).on("click", "#time-screen #time-buttons .time-button", function () {
   totalSec = Number($(this).attr("data-time"));
   createInterface();
 });
 function createInterface() {
+
+ const pauseButton = document.getElementById('pauseButton');
+  if (pauseButton) {
+    pauseButton.addEventListener('click', togglePause);
+  }
+
+  isPaused = false;
+  pauseIndicator.style.display = 'none';
+	
   document.getElementsByTagName("body")[0].style =
     "background-color: rgb(239, 239, 239) !important";
 
@@ -1048,13 +1071,14 @@ function updateAirCraft() {
   //------------------------------------------
 
   if (rightk || gamepad_rightk || jr_rightk) {
-    if (bankAngle > -45) {
-      bankAngle -= 0.2;
-    }
-  }
-  if (leftk || gamepad_leftk || jr_leftk) {
     if (bankAngle < 45) {
       bankAngle += 0.2;
+    }
+    
+  }
+  if (leftk || gamepad_leftk || jr_leftk) {
+    if (bankAngle > -45) {
+      bankAngle -= 0.2;
     }
   }
   if (heading_turbulence_flag){
@@ -1072,13 +1096,13 @@ function updateAirCraft() {
   updateCompassBugPosition();
 
   if (downk || gamepad_downk || jr_downk) {
-    if (pitch < 60){
-      pitch += upSpeed * 0.3;
+    if (pitch > -60){
+      pitch -= upSpeed * 0.3;
     }
   }
   if (upk || gamepad_upk || jr_upk) {
-    if (pitch > -60){
-      pitch -= upSpeed * 0.3;
+    if (pitch < 60){
+      pitch += upSpeed * 0.3;
     }
   }
 
@@ -1090,8 +1114,8 @@ function updateAirCraft() {
   }
   
   if (pitch > 0){
-    if (alt < 9700){
-      alt += pitch * 0.1;
+    if (alt > 20){
+      alt -= pitch * 0.1;
       if (realism_flag){
         temp_speed = speed - Math.abs(speec_change_rate_by_alt * pitch);
         if (temp_speed < 170 && temp_speed > 40){
@@ -1101,8 +1125,8 @@ function updateAirCraft() {
       }
     }
   } else {
-    if (alt > 20){
-      alt += pitch * 0.1;
+    if (alt < 9700){
+      alt -= pitch * 0.1;
       if (realism_flag){
         temp_speed = speed + Math.abs(speec_change_rate_by_alt * pitch);
         if (temp_speed < 170 && temp_speed > 40){
@@ -1134,19 +1158,50 @@ function startMain() {
   createjs.Ticker.setFPS(60);
   createjs.Ticker.addEventListener("tick", updateGame);
 }
+
 function updateGame(e) {
-  if (isGame) {
-    if (gameCont != null) {
-      gameCont.updateCache();
+  if (isGame && !isDone) {
+    if (!isPaused) {
+      if (gameCont != null) {
+        gameCont.updateCache();
+      }
+      updateAirCraft();
+      moveLeftJoystick();
+      moveRightJoystick();
+      if (gamepad_conneted.alt != 9) gamepadCheck("alt");
+      if (gamepad_conneted.head != 9) gamepadCheck('head');
+      if (gamepad_conneted.speed != 9) gamepadCheck("speed");
     }
-    updateAirCraft();
-    moveLeftJoystick();
-    moveRightJoystick();
-    if (gamepad_conneted.alt != 9) gamepadCheck("alt");
-    if (gamepad_conneted.head != 9) gamepadCheck('head');
-    if (gamepad_conneted.speed != 9) gamepadCheck("speed");
   }
   stage.update();
+}
+
+function togglePause() {
+  if (!isGame || isDone) return;
+  
+  isPaused = !isPaused;
+  
+  const pauseIndicator = document.getElementById('pauseIndicator');
+  
+  if (isPaused) {
+    // Pause game
+    clearInterval(trackTime);
+    if (soundInstance) {
+      soundInstance.paused = true;
+    }
+    if (pauseIndicator) {
+      pauseIndicator.style.display = 'block';
+    }
+  } else {
+    // Resume game
+    trackTime = setInterval(keepTime, 1000);
+    if (soundInstance) {
+      soundInstance.paused = false;
+    }
+    if (pauseIndicator) {
+      pauseIndicator.style.display = 'none';
+    }
+  }
 }
 
 function moveLeftJoystick() {
@@ -1359,6 +1414,8 @@ function makeTurbulence(){
 function gameOver() {
   createjs.Tween.removeAllTweens();
   isDone = true;
+  isPaused = false;
+  pauseIndicator.style.display = 'none';
   createjs.Sound.stop();
   gameCont.removeAllChildren();
   stage.removeChild(gameCont);
@@ -1366,6 +1423,220 @@ function gameOver() {
   window.removeEventListener("keyup", getKeyUp);
   sec = 0;
   showEndScreen();
+}
+
+function createFlightParametersGraph(graphData) {
+    // Create main container with relative positioning
+    const containerWrapper = document.createElement('div');
+    containerWrapper.className = 'graph-wrapper';
+    containerWrapper.style.position = 'relative';
+    containerWrapper.style.height = '100%';
+    containerWrapper.style.display = 'flex';
+    
+    // Create fixed axis container
+    const fixedAxisContainer = document.createElement('div');
+    fixedAxisContainer.className = 'fixed-axis';
+    fixedAxisContainer.style.position = 'sticky';
+    fixedAxisContainer.style.left = '0';
+    fixedAxisContainer.style.width = '60px';
+    fixedAxisContainer.style.height = '100%';
+    fixedAxisContainer.style.backgroundColor = '#cde6ff70';
+    fixedAxisContainer.style.zIndex = '2';
+    
+    // Create scrollable graph container
+    const graphContainer = document.createElement('div');
+    graphContainer.className = 'flight-parameters-graph';
+    graphContainer.style.overflowX = 'auto';
+    graphContainer.style.overflowY = 'hidden';
+    graphContainer.style.flex = '1';
+    
+    // Create SVG container
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    const graphWidth = Math.max(475, graphData.time.length * 80);
+    svg.setAttribute('viewBox', `0 0 ${graphWidth} 400`);
+    svg.style.width = `${graphWidth}px`;
+    svg.style.height = '100%';
+    
+    // Add tooltip
+    const tooltip = document.createElement('div');
+    tooltip.className = 'graph-tooltip';
+    tooltip.style.display = 'none';
+    graphContainer.appendChild(tooltip);
+
+    if (graphData.time.length > 0) {
+        // Set up Y-axis labels (0-100%)
+        const yLabels = 5;
+        const fixedYAxis = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        fixedYAxis.setAttribute('viewBox', '0 0 60 400');
+        fixedYAxis.style.width = '60px';
+        fixedYAxis.style.height = '100%';
+        
+        const plotHeight = 300;
+        
+        for (let i = 0; i <= yLabels; i++) {
+            const value = Math.round((100 * (yLabels - i)) / yLabels);
+            const y = 50 + ((plotHeight / yLabels) * i);
+            
+            const fixedLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            fixedLabel.setAttribute('x', '50');
+            fixedLabel.setAttribute('y', y);
+            fixedLabel.setAttribute('text-anchor', 'end');
+            fixedLabel.setAttribute('fill', '#83b3c4');
+            fixedLabel.setAttribute('font-size', '11');
+            fixedLabel.setAttribute('font-family', 'Inter, sans-serif');
+            fixedLabel.textContent = `${value}%`;
+            fixedYAxis.appendChild(fixedLabel);
+            
+            // Add horizontal grid lines
+            const gridLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            gridLine.setAttribute('x1', '15');
+            gridLine.setAttribute('y1', y);
+            gridLine.setAttribute('x2', graphWidth - 20);
+            gridLine.setAttribute('y2', y);
+            gridLine.setAttribute('stroke', '#d3e7ed');
+            gridLine.setAttribute('stroke-width', '0.5');
+            gridLine.setAttribute('stroke-dasharray', '2,2');
+            svg.appendChild(gridLine);
+        }
+        
+        fixedAxisContainer.appendChild(fixedYAxis);
+        
+        // X-axis labels and grid lines
+        const maxTime = graphData.time[graphData.time.length - 1];
+        const xLabels = Math.min(10, maxTime);
+        
+        for (let i = 0; i <= xLabels; i++) {
+            const value = Math.round((maxTime * i) / xLabels);
+            const x = 30 + ((graphWidth - 50) * i / xLabels);
+            
+            // Add vertical grid lines
+            const gridLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            gridLine.setAttribute('x1', x);
+            gridLine.setAttribute('y1', '50');
+            gridLine.setAttribute('x2', x);
+            gridLine.setAttribute('y2', '350');
+            gridLine.setAttribute('stroke', '#E5E9EB');
+            gridLine.setAttribute('stroke-width', '0.5');
+            gridLine.setAttribute('stroke-dasharray', '2,2');
+            svg.appendChild(gridLine);
+            
+            // Add X-axis labels
+            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            label.setAttribute('x', x);
+            label.setAttribute('y', '350');
+            label.setAttribute('dy', '25');
+            label.setAttribute('text-anchor', 'middle');
+            label.setAttribute('fill', '#83b3c4');
+            label.setAttribute('font-size', '14');
+            label.setAttribute('font-family', 'Inter, sans-serif');
+            label.setAttribute('font-weight', '600');
+            label.textContent = `${value}s`;
+            svg.appendChild(label);
+        }
+
+        // Define parameter colors
+        const paramColors = {
+			speed: { color: '#FF6B6B', label: 'Speed' },    // Red
+			alt: { color: '#4ECDC4', label: 'Altitude' },   // Teal
+			head: { color: '#45B7D1', label: 'Heading' }    // Blue
+		};
+
+        // Create paths for each parameter
+        Object.entries(paramColors).forEach(([param, color]) => {
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            let d = '';
+            
+            graphData[param].forEach((value, i) => {
+                const x = 30 + (graphData.time[i] / maxTime) * (graphWidth - 50);
+                const y = 50 + (plotHeight * (1 - value));
+                
+                if (i === 0) {
+                    d = `M ${x} ${y}`;
+                } else {
+                    d += ` L ${x} ${y}`;
+                }
+            });
+            
+            path.setAttribute('d', d);
+            path.setAttribute('stroke', color);
+            path.setAttribute('stroke-width', '2');
+            path.setAttribute('fill', 'none');
+            svg.appendChild(path);
+
+            // Add data points with hover effect
+            graphData[param].forEach((value, i) => {
+                const x = 30 + (graphData.time[i] / maxTime) * (graphWidth - 50);
+                const y = 50 + (plotHeight * (1 - value));
+                
+                const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                point.setAttribute('cx', x);
+                point.setAttribute('cy', y);
+                point.setAttribute('r', '4');
+                point.setAttribute('fill', color);
+                point.setAttribute('class', 'graph-point');
+                point.setAttribute('stroke', 'white');
+                point.setAttribute('stroke-width', '1.5');
+                
+                point.addEventListener('mouseover', (e) => {
+                    point.setAttribute('r', '6');
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${e.pageX + 10}px`;
+                    tooltip.style.top = `${e.pageY - 20}px`;
+                    tooltip.textContent = `${param.toUpperCase()}: ${(value * 100).toFixed(1)}% at ${graphData.time[i]}s`;
+                });
+                
+                point.addEventListener('mouseout', () => {
+                    point.setAttribute('r', '4');
+                    tooltip.style.display = 'none';
+                });
+                
+                svg.appendChild(point);
+            });
+        });
+
+        // Add legend
+        const legend = document.createElement('div');
+        legend.className = 'flight-parameters-legend';
+        legend.style.position = 'absolute';
+        legend.style.top = '10px';
+        legend.style.right = '10px';
+        legend.style.padding = '8px 12px';
+        legend.style.background = 'white';
+        legend.style.borderRadius = '30px';
+        legend.style.display = 'flex';
+        legend.style.gap = '15px';
+        legend.style.boxShadow = '0 0 6px 1px #ddd';
+
+        // In the legend creation section, update the text creation:
+		Object.entries(paramColors).forEach(([param, config]) => {
+			const item = document.createElement('span');
+			item.style.display = 'flex';
+			item.style.alignItems = 'center';
+			item.style.gap = '5px';
+			item.style.color = '#525252';
+			item.style.fontFamily = "'Open Sans', sans-serif";
+			item.style.fontSize = '14px';
+			item.style.fontWeight = '500';
+
+			const dot = document.createElement('span');
+			dot.style.width = '8px';
+			dot.style.height = '8px';
+			dot.style.backgroundColor = config.color;
+			dot.style.borderRadius = '50%';
+			
+			item.appendChild(dot);
+			item.appendChild(document.createTextNode(config.label)); // Use the proper label instead of uppercase param
+			legend.appendChild(item);
+		});
+
+        graphContainer.appendChild(legend);
+    }
+    
+    graphContainer.appendChild(svg);
+    containerWrapper.appendChild(fixedAxisContainer);
+    containerWrapper.appendChild(graphContainer);
+    
+    return containerWrapper;
 }
 
 function updateProgressCircle(score) {
@@ -1406,41 +1677,69 @@ function updateProgressCircle(score) {
 }
 
 function showEndScreen() {
-  document.getElementById("tsider").innerHTML = String("End of Exam");
-  let _alt = score.alt.total == 0
-            ? 0
-            : ((score.alt.correct / score.alt.total) * 100);
-  let _speed = score.speed.total == 0
-            ? 0
-            : ((score.speed.correct / score.speed.total) * 100);
-  let _head = score.head.total == 0
-            ? 0
-            : ((score.head.correct / score.head.total) * 100);
-  let _audio = score.audio.total == 0 ? 0 : (score.audio.correct / score.audio.total) * 100;
-  let _total = ((_alt + _head + _speed + _audio) / 4);
-  
-  $("#result-speed").text(_speed.toFixed(0));
-  $("#result-altitude").text(_alt.toFixed(0));
-  $("#result-heading").text(_head.toFixed(0));
-  $("#result-audio").text(score.audio.correct + ' out of ' + score.audio.total);
-  // $("#average_accuracy").text(_total.toFixed(0));
-  updateProgressCircle(_total);
+    document.getElementById("tsider").innerHTML = String("End of Exam");
+    
+    // Calculate all scores
+    let _alt = score.alt.total == 0 ? 0 : ((score.alt.correct / score.alt.total) * 100);
+    let _speed = score.speed.total == 0 ? 0 : ((score.speed.correct / score.speed.total) * 100);
+    let _head = score.head.total == 0 ? 0 : ((score.head.correct / score.head.total) * 100);
+    let _audio = score.audio.total == 0 ? 0 : (score.audio.correct / score.audio.total) * 100;
+    let _total = ((_alt + _head + _speed + _audio) / 4);
+    
+    // Update the basic stats
+    $("#result-speed").text(_speed.toFixed(0));
+    $("#result-altitude").text(_alt.toFixed(0));
+    $("#result-heading").text(_head.toFixed(0));
+    
+	$("#result-audio").html(
+    score.audio.correct + 
+    ' <span style="color: #bbb; font-size: 0.9em;">out of</span> ' + 
+    score.audio.total
+	);
+	
+    updateProgressCircle(_total);
 
-  document.getElementsByTagName("body")[0].style = "background-color: white";
+    // Update graph in existing .graph-container
+    const graphContainer = document.querySelector('.graph-container');
+    if (graphContainer) {
+        graphContainer.innerHTML = ''; // Clear existing content
 
-  clearInterval(joyRTimer);
-  clearInterval(joyLTimer);
-  showScreen("#results-screen");
-  showSetting = false;
-  insertResults(_total, totalSec);
-  stage.update();
+        // Add graph
+        const graphDiv = document.createElement('div');
+        graphDiv.className = 'reaction-graph';
+        
+        if (graph_data.time.length > 0) {
+            graphDiv.appendChild(createFlightParametersGraph(graph_data));
+        } else {
+            graphDiv.innerHTML = '<div class="no-data">No flight data recorded</div>';
+        }
+        
+        graphContainer.appendChild(graphDiv);
+    }
 
-  document
-    .querySelector("#playAgainButton")
-    .addEventListener("click", startAgain);
+    // Reset and cleanup
+    document.getElementsByTagName("body")[0].style = "background-color: white";
+    clearInterval(joyRTimer);
+    clearInterval(joyLTimer);
+    
+    // Show results screen
+    showScreen("#results-screen");
+    showSetting = false;
+    
+    // Save results
+    insertResults(_total, totalSec);
+    
+    // Update stage and add event listener
+    stage.update();
+    document.querySelector("#playAgainButton")
+        .addEventListener("click", startAgain);
 }
+
 function startAgain() {
   showStartScreen(restart = true);
+  // Remove training mode class before restarting
+    document.querySelector("#title").classList.remove('training-mode-active');
+    showStartScreen(restart = true);
 }
 
 function addBmp(bname, tx, ty, isR) {
@@ -1514,6 +1813,9 @@ function getKeyDown(e) {
       break;
     case 68:
       dkey = true;
+      break;
+	  case 80: // P key
+      togglePause();
       break;
   }
 }
@@ -1660,9 +1962,9 @@ $(document).ready(function () {
     $(this).addClass("active");
   });
 
-  $("#logo").click(function () {
+  $(document).on('click', '#logo', function() {
     if (!showSetting) return;
-    $("#setting").slideDown();
+    $("#setting").show();
   });
 
   $("body").click(function (event) {
@@ -1670,12 +1972,12 @@ $(document).ready(function () {
       !$(event.target).closest("#setting").length &&
       !$(event.target).closest("#logo").length
     ) {
-      $("#setting").slideUp();
+      $("#setting").hide();
     }
   });
 
   $("#exit_setting").click(function () {
-    $("#setting").slideUp();
+    $("#setting").hide();
 
     document.getElementsByTagName("body")[0].style = "background-color: white";
 
@@ -1691,6 +1993,9 @@ $(document).ready(function () {
     stage.removeChild(gameCont);
     window.removeEventListener("keydown", getKeyDown);
     window.removeEventListener("keyup", getKeyUp);
+
+	// Remove training mode class before resetting
+    document.querySelector("#title").classList.remove('training-mode-active');
 
     showStartScreen(true);
   });

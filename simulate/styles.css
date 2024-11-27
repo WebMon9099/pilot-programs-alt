@@ -21,12 +21,13 @@ html {
 }
 
 #mainb {
-    width: 94%;
-    max-width: 1200px;
+    /* width: 94%; */
+    /* max-width: 1200px; */
     margin: 0 auto;
     /* margin-top: 50px; */
-    /* overflow: hidden; */
-    padding-left: 6%;
+    overflow: hidden;
+    /* padding-left: 6%; */
+    height: calc(100% - 55px);
 }
 #title {
     position: relative;
@@ -86,7 +87,7 @@ html {
     margin: 0px;
     width: 200px;
     height: 38px;
-    display: block;
+    
     position: relative;
     text-align: right;
     padding-top: 17px;
@@ -104,7 +105,7 @@ html {
     margin: 0px;
     width: 97px !important;
     height: 39px;
-    display: block;
+    
     position: relative;
     text-align: left;
     padding-top: 16px;
@@ -121,9 +122,8 @@ html {
 
 #tsidery {
     margin: 0px;
-    width: 80px;
+    width: fit-content;!i;!;
     height: 55px;
-    display: block;
     position: relative;
     /* text-align:center; */
     /* padding-top: 10px; */
@@ -136,6 +136,7 @@ html {
     color: #cdcdcd !important;
     font-size: 15px;
     padding-right: 15px;
+    /* display: flex; */
 }
 
 a.help {
@@ -167,26 +168,57 @@ a.exit {
 
 #tsider-train {
     height: 55px;
-    float: right !important;
-    font-size: 15px;
+    /* float: right !important; */
+    font-size: 18px;
     display: none !important;
     justify-content: center;
     align-items: center;
     padding-right: 13px;
-    background-color: #50C21C;
+    opacity: 0.6;
 }
 #tsider-train > img {
     padding: 12.5px;
     width: 30px;
 }
 
+/* Exit Button Styles */
+.title-button {
+	position: absolute;
+	right: 0px;
+	border-top-right-radius: 10px;
+	background-color: #1B8AC0;
+	padding: 0px 15px 0 20px;
+	height: 55px;
+	display: inline-block;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.title-button img {
+	width: 20px;
+	height: 30px;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.title-button:hover {
+	background-color: #177eb0;	
+}
+
 #test {
     position: relative;
-    width: 100%;
+    width: 98%;
+    max-width: 1300px;
     margin: 0 auto;
-    padding: 0 px;
+    /* top: -30px; */
     height: auto;
+    padding-left: 4%;
     background: transparent;
+}
+
+#title.training-mode-active .title-button {
+    background-color: #71c404 !important;
 }
 
 #loader {
@@ -210,10 +242,32 @@ a.exit {
     margin: 0 auto !important;
     padding: 0 px;
     height: auto;
-    /* background: #212222; */
-    /* max-height: 710px; */
-    /* max-width: 1400px; */
 }
+
+/* Hide exit button by default */
+.exit-button-link {
+    display: none !important;
+}
+
+/* Show exit button only on specific screens */
+#title:has(~ #mainb #logo-screen.on) .exit-button-link,
+#title:has(~ #mainb #time-screen.on) .exit-button-link,
+#title:has(~ #mainb #results-screen.on) .exit-button-link {
+    display: block !important;
+}
+
+/* Hide by default */
+#tsider, #tsiderx, #tsidery {
+    display: none !important;!i;!;
+}
+
+/* Only show when main screen is visible */
+#title:has(~ #mainb #main-screen.on) #tsider,
+#title:has(~ #mainb #main-screen.on) #tsiderx,
+#title:has(~ #mainb #main-screen.on) #tsidery {
+    display: block !important;
+}
+
 #logo-screen {
     background: none;
     color: #cecece;
@@ -238,7 +292,9 @@ a.exit {
 }
 .time-screen-title {
     margin-top: 10rem;
-    /* color: #e2e2e2; */
+    color: #696969;
+    font-size: 20px;
+    font-family: 'Inter';
 }
 #result-title {
     margin-top: 200px;
@@ -691,7 +747,8 @@ button#train-button:hover {
     text-align: center;
   }
   #time-screen ul#time-buttons li button {
-    padding: 13px 70px;
+    width: 230px;
+	height: 50px;  
     font-size: 16px;
     text-align: center;
     margin: 0 auto;
@@ -700,19 +757,23 @@ button#train-button:hover {
     font-weight: 500;
     color: #646464;
     border-radius: 6px;
-    border: 1px solid #d8d8d8;
+    border: 1px solid #e8e8e8;
     box-shadow: 1px 1px 4px #e8e8e8;
     transition: 0.2s;
   }
   #time-screen ul#time-buttons li button:hover {
-    background-color: #fff;
     cursor: pointer;
-    border:1px solid #00ACDD;
-    box-shadow: 0px 1px 6px #48A8EF;
+	border:0.5px solid #00ACDD;
+	box-shadow: 0px 0px 6px #48A8EF;
+	transform: scale(1.05);
+	background: white;
   }
   #time-screen ul#time-buttons li button.traing_mode:hover {
-    border:1px solid #6BDB00;
-    box-shadow: 0px 1px 6px #8DE022;
+	cursor: pointer;
+    border: 0.5px solid #6BDB00;
+    box-shadow: 0px 0px 6px #8DE022;
+	transform: scale(1.05);
+	background: white;
   }
 
   .switch {
@@ -1123,11 +1184,11 @@ option:disabled{
 }
 .audio-btn-area{
     display: flex;
-    margin-left: 65px;
+    margin-left: 95px;
     /* padding-top: 95%; */
     align-items: flex-end;
     position: fixed;
-    bottom: 100px;
+    bottom: 65px;
 }
 .audio-btn{
     width:60px;
@@ -1170,6 +1231,7 @@ option:disabled{
     flex: 1;
     height: -webkit-fill-available;
     position: relative;
+    /* display: flex; */
 }
 
 /* Update training mode styles */
@@ -1179,11 +1241,12 @@ option:disabled{
 
 
 #results-screen {
-    /* background: #f5f5f5; */
-    height: calc(100% - 90px) !important;
+    background: #f5f5f5;
+    /* height: 100%; */
     position: relative;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+    /* display: flex; */
 }
     
 #startScreen .subtitle {
@@ -1207,8 +1270,8 @@ option:disabled{
     margin-bottom: 3rem;
     font-family: 'Inter';
     color: #474747;
-    margin-top: 0;
-    /* padding-top: 60px; */
+    margin-top: 0 !important;!i;!;
+    padding-top: 60px;
 }
 
 .light-text {
@@ -1227,7 +1290,7 @@ option:disabled{
     background: white;
     /* flex: 1; */
     border-radius: 4px;
-    /* width: 1020px; */
+    width: 1020px;
     border: 1px solid #eae9e9;
     box-shadow: 0 1px 2px 0px #eee;
 }
@@ -1246,7 +1309,7 @@ option:disabled{
 
 .score-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-direction: row;
     align-items: stretch;
     height: 42vh;
@@ -1254,7 +1317,7 @@ option:disabled{
 
 .score-value {
     position: absolute;
-    top: 45%;
+    top: 57%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 85px;
@@ -1265,7 +1328,7 @@ option:disabled{
 
 .score-symbol {
     position: absolute;
-    top: 65%;
+    top: 85%;
     left: 47%;
     font-size: 1.2rem;
     color: #c4c4c4;
@@ -1275,7 +1338,6 @@ option:disabled{
 .circular-progress {
         position: relative;
         width: 200px;
-        max-width: 200px;
         height: 200px;
         flex: 1;
         margin-top: 19px;
@@ -1355,6 +1417,25 @@ option:disabled{
     color: lightgrey;
 }
 
+.flight-parameters-graph::-webkit-scrollbar {
+    height: 7px;
+}
+
+.flight-parameters-graph::-webkit-scrollbar-track {
+    background: #e9f4ff;
+ 
+}
+
+.flight-parameters-graph::-webkit-scrollbar-thumb {
+    background-color: #95d2e88c;
+
+}
+
+.flight-parameters-graph::-webkit-scrollbar-thumb:hover {
+    background-color: #82c9e2;
+    cursor: pointer;
+}
+
 .results-actions {
     display: flex;
     justify-content: center;
@@ -1398,10 +1479,11 @@ option:disabled{
 .graph-wrapper {
     width: 100%;
     height: 300px;
-    display: flex;
+    display: flex !important;!i;!;
     background: #cde6ff70;
     /* border-radius: 4px; */
     overflow: hidden;
+    flex: 1;
 }
 
 .reaction-time-label {
@@ -1473,17 +1555,66 @@ option:disabled{
 }
 
 /* Training mode specific styles */
-.game-container.training-mode-active .graph-point {
+.training-mode-active .graph-point {
     fill: rgb(122, 211, 4);
 }
 
-.game-container.training-mode-active .reaction-time-graph path {
+.training-mode-active .reaction-time-graph path {
     stroke: rgb(122, 211, 4);
 }
 
+/* Pause Button */
+
+	.control-button {
+		background: none;
+		border: none;
+		color: white;
+		cursor: pointer;
+		padding: 15px 12px;
+		/* display: flex; */
+		/* align-items: center; */
+		/* justify-content: center; */
+		transition: opacity 0.2s;
+		height: 55px;
+	}
+	
+	:not(.training-mode-active) .control-button {
+		opacity: 0.5;
+		cursor: default;
+		pointer-events: none;
+	}
+	
+	.pause-icon {
+		width: 24px;
+		height: 24px;
+		cursor: pointer;
+	}
+	
+	.pause-icon.disabled {
+		opacity: 0.5;
+		cursor: default;
+}
+
+/* Pause Indicator */
+		.pause-indicator {
+			position: fixed;
+			top: 84px;  /* Position it below the header/progress bar */
+			right: 32.5px;
+			width: 35px;  /* Circular dimensions */
+			height: 35px;
+			display: none;
+			animation: flash 1s infinite;
+			z-index: 1000;
+		}
+
+		@keyframes flash {
+			0%, 100% { opacity: 1; }
+			50% { opacity: 0; }
+		}
+
 @media all and (max-height: 768px) {
 
-	.results-title {font-size: 26px; margin-bottom: 2rem;}
+	.results-title {font-size: 26px;margin-bottom: 2rem;padding-top: 40px;}
 
 	.results-actions {margin-top: 50px !important;}
 	
@@ -1493,6 +1624,12 @@ option:disabled{
 }
 
 @media all and (max-width: 1366px) {
-button#start-button, button#train-button, button#setting-button, button#userguide-button {font-size: 1.2rem;font-weight: 500;border-radius: 5px;width: 220px;padding: 86px 0px 32px 0px;background-size: 45px;background-position: 50% 26%;box-shadow: 0px 1px 4px #eee;}
+button#start-button {font-size: 1.2rem;font-weight: 500;border-radius: 5px;width: 220px;padding: 86px 0px 32px 0px;background-size: 44px;background-position: 50% 26%;box-shadow: 0px 1px 4px #eee;}
+button#train-button {font-size: 1.2rem;font-weight: 500;border-radius: 5px;width: 220px;padding: 86px 0px 32px 0px;background-size: 38px;background-position: 50% 29%;box-shadow: 0px 1px 4px #eee;}
+button#setting-button {font-size: 1.2rem;font-weight: 500;border-radius: 5px;width: 220px;padding: 86px 0px 32px 0px;background-size: 27px;background-position: 50% 30%;box-shadow: 0px 1px 4px #eee;}
+button#userguide-button {font-size: 1.2rem;font-weight: 500;border-radius: 5px;width: 220px;padding: 86px 0px 32px 0px;background-size: 45px;background-position: 50% 26%;box-shadow: 0px 1px 4px #eee;}
 button#train-button {margin: 0px;}
+#left-control-div {left: 40px !important; bottom: 40px}
+.audio-btn-area {bottom: 40px; margin-left: 70px;}
+#joystick-right-div {bottom: 30px !important; right: 40px}	
 }	

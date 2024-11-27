@@ -12,7 +12,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
     <!-- <link rel="stylesheet" media="screen" href="additional-styles.css" /> -->
     <link rel="stylesheet" media="screen" href="../_common/css/styles.css?v=1" />
-    <link rel="stylesheet" href="styles.css?v=11" />
+    <link rel="stylesheet" href="styles.css?v=9" />
     <script src="../_common/js/jquery.min.js"></script>
     <script src="../_common/js/jqueryui.min.js"></script>
     <script src="../_common/js/game.js"></script>
@@ -21,7 +21,7 @@
     <script src="lib/soundjs-NEXT.min.js"></script>
     <script src="lib/preloadjs-NEXT.min.js"></script>
     <script src="joy.js"></script>
-    <script src="main.js?v=3"></script>
+    <script src="main.js?v=1"></script>
 
 </head>
 
@@ -206,13 +206,22 @@
         <div id="tsiderx">- / -</div>
         <div id="tsider"></div>
         <div id="tsidery">
+			<button id="pauseButton" class="control-button">
+						<img src="images/playpause.svg" alt="Play/Pause" class="pause-icon">
+					</button>
             <a href="#" onclick="window.open( '/user-guide/simulate', 'name', 'location=no,scrollbars=yes,status=no,toolbar=no,resizable=yes' )" target="”_blank”" rel="noopener" class="help"></a>
             <a href="javascript:window.open('','_self').close();" class="exit"></a>
         </div>
         <div id="tsider-train">
-            <img src="images/icon_mortarboard.svg" />
             <span>Training Mode</span>
         </div>
+		
+		<a href="javascript:window.close();" class="exit-button-link">
+			<div id="exitButton" class="title-button">
+            <img src="images/exit_button.svg" alt="Exit">
+			</div>
+		</a>
+		
     </div>
 
     <div id="mainb">
@@ -342,7 +351,7 @@
             <div class="time-screen-title">Select your duration:</div>
             <ul id="time-buttons">
                 <li>
-                    <button class="big time-button" data-time="300">5 Minutes</button>
+                    <button class="big time-button" data-time="30">5 Minutes</button>
                 </li>
                 <li>
                     <button class="big time-button" data-time="900">15 Minutes</button>
@@ -353,7 +362,7 @@
             </ul>
         </div>
         <div class="screen off" id="main-screen">
-
+		<img src="images/paused_indicator.png" alt="Paused" class="pause-indicator" id="pauseIndicator">
             <canvas id="test" width="1440" height="900"></canvas>
             <div id="left-control-div">
                 <div class="power-setting-area">
@@ -376,58 +385,8 @@
             </div>
         </div>
         <div class="screen off" id="results-screen">
-            <!-- <div id="result-container">
-                <div id="result-type">Your Performance</div>
-                <div id="results-lights-acknowledged">
-                    <p>Overall Scoring</p>
-                    <span id="average_accuracy">0</span>
-                    <span class="tag">%</span>
-                </div>
-                <div id="overall-detail">
-                    <div class="end">
-                        <div class="end-item">
-                            <img src="./images/results-img-speed.png" alt="speed"></img>
-                            <div class="end-item-description">
-                                <p>Speed Control</p>
-                                <span id="result-speed" class="end-value">64</span>
-                                <span class="end-pro">&nbsp;%</span>
-                            </div>
-                        </div>
-                        <div class="end-item">
-                            <img src="./images/altimeter_img.png" alt="altitude"></img>
-                            <div class="end-item-description">
-                                <p>Altitude Control</p>
-                                <span id="result-altitude" class="end-value">64</span>
-                                <span class="end-pro">&nbsp;%</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="end">
-                        <div class="end-item">
-                            <img src="./images/compass_img.png" alt="heading"></img>
-                            <div class="end-item-description">
-                                <p>Heading Control</p>
-                                <span id="result-heading" class="end-value">64</span>
-                                <span class="end-pro">&nbsp;%</span>
-                            </div>
-                        </div>
-                        <div class="end-item">
-                            <img src="./images/audio_task_img.png" alt="audio"></img>
-                            <div class="end-item-description">
-                                <p>Audio task</p>
-                                <span id="result-audio" class="end-value">64</span>
-                                <span class="end-pro">&nbsp;%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-            <!-- <div class="bottom">
-                <button id="restart-button" class="big start-button">
-                    Restart Activity
-                </button>
-            </div> -->
-            <div id="reaction-container">
+            
+            <div id="reaction-container" style="display: flex; flex-direction: column; align-content: center; align-items: center;">
                 <h1 class="results-title">
                     <span class="light-text">You have completed</span> Simulate
                 </h1>		
@@ -438,7 +397,7 @@
                                 <div class="circular-progress">
                                     <div class="score-value"></div>
                                         <div class="score-symbol">%</div>
-                                            <svg viewBox="0 0 100 100" style="width: 200px;">
+                                            <svg viewBox="0 0 100 100" style="width: 250px;">
                                                 <circle class="score-ring-background"
                                                     cx="50" cy="50" r="45" 
                                                     fill="none"/>
@@ -453,28 +412,27 @@
                                             </svg>
                                 </div>
                                     
-                                <div class="stats-container">
-                                    <div class="stat-item">
-                                        <span class="stat-label">Speed Control</span>
-                                        <span class="stat-value" id="result-speed">60</span><span class="stat-value">%</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Altitude Control</span>
-                                        <span class="stat-value" id="result-altitude"></span><span class="stat-value">%</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Heading Control</span>
-                                        <span class="stat-value" id="result-heading">60</span><span class="stat-value">%</span>
-                                    </div>
-                                    <div class="stat-item" style="border-bottom: none !important;">
-                                        <span class="stat-label">Audio task</span>
-                                        <span class="stat-value" id="result-audio">60</span>
-                                    </div>
-                                </div>
+							<div class="stats-container">
+								<div class="stat-item">
+									<span class="stat-label">Speed Control</span>
+									<span class="stat-value" id="result-speed">60</span><span class="stat-value" style="color: #bbb; font-size: 0.7em; margin-left: 4px;">%</span>
+								</div>
+								<div class="stat-item">
+									<span class="stat-label">Altitude Control</span>
+									<span class="stat-value" id="result-altitude"></span><span class="stat-value" style="color: #bbb; font-size: 0.7em; margin-left: 4px;">%</span>
+								</div>
+								<div class="stat-item">
+									<span class="stat-label">Heading Control</span>
+									<span class="stat-value" id="result-heading"></span><span class="stat-value" style="color: #bbb; font-size: 0.7em; margin-left: 4px;">%</span>
+								</div>
+								<div class="stat-item" style="border-bottom: none !important;">
+									<span class="stat-label">Audio Task</span>
+									<span class="stat-value" id="result-audio"></span>
+								</div>
+							</div>
                                 
-                                <div class="graph-container" style="min-width: 550px; position: relative;">
-                                    <div class="reaction-time-label">Reaction Time <span>vs</span> Time</div>
-                                    <div class="reaction-graph" style=""></div>
+                                <div class="graph-container" style="width: 475px; position: relative;">
+                                     <div class="reaction-graph" style=""></div>
                                 </div>
                             </div>
                                 
